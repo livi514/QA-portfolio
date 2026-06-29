@@ -20,25 +20,19 @@ No need to deal with...
 - anything prior to performing an action: Playwright automatically waits for the wide range of actionability checks to pass prior to performing each action.
 - race conditions when performing the checks: Playwright assertions are designed in a way that they describe the expectations that need to be eventually met.
 
-Working with SauceDemo because it's intentionally built for testing:
-https://www.saucedemo.com/
+## Actions
 
-## The structure of a UI test:
+### Navigation 
+To navigate to a specified URL:
+page.goto("https://playwright.dev/")
+Playwright will wait for the page to reach the load state prior to moving forward.
 
-Every UI test follows the same mental model:
-1. Arrange: set up the browser and go to the page 
-2. Act: interact with the page (click, type, select)
-3. Assert: check results
-
-## ARRANGE — Opening the browser + navigating
-
-In Playwright, this is the minimal setup:
-
-def test_example(page):
-    page.goto("https://www.saucedemo.com/")
-
-
-What’s happening?
-- page is a fresh browser tab
-- goto() loads a URL
-- Playwright waits for the page to finish loading
+The method will throw an error if:
+- there's an SSL eror (e.g. in the case of self-signed certificates)
+- target URL is invalid
+- the timeout is exceeded during navigation
+- the remote server does not respond or is unreachable 
+- the main resource failed to load
+The method will not throw an error when any valid HTTP status code is returned, including 404 and 500.
+The status codes for such responses can be retrieved by calling response.status.
+The goto method either throws an error or returns a main resource response. The only exceptions are navigation to about:blank or navigation to the same URL with a different hash, which would succeed and return null.
