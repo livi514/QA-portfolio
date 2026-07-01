@@ -96,3 +96,93 @@ Most popular async assertions:
 - **expect(locator).to_have_value()**: input element has value
 - **expect(page).to_have_title()**: page has title
 - **expect(page).to_have_url()**: page has url
+
+### Test isolation 
+
+The Playwright Pytest plugin is based on the concept of text fixtures such as the built in page fixture, which is passed into your test.
+Pages are isolated between tests due to the Browser Context, which is equivalent to a brand new browser profile, where every test gets a fresh environment, even when multiple tests run in a single browser.
+
+from playwright.sync_api import Page
+
+def test_example_test(page: Page):
+  pass
+  # "page" belongs to an isolated BrowserContext, created for this specific test.
+
+def test_another_test(page: Page):
+  pass
+  # "page" in this second test is completely isolated from the first test.
+
+
+### Using fixtures
+
+You can use various fixtures to execute code before or after your tests and to share objects between them.
+
+A function scoped fixture e.g. with autouse behaves like a beforeEach/afterEach. And a module scoped fixture with autouse behaves like a beforeAll/afterAll which runs before all and after all the tests.
+
+import pytest
+from playwright.sync_api import Page, expect
+
+@pytest.fixture(scope="function", autouse=True)
+def before_each_after_each(page: Page):
+    
+    print("before the test runs")
+
+    # Go to the starting url before each test.
+    page.goto("https://playwright.dev/")
+    yield
+    
+    print("after the test runs")
+
+def test_main_navigation(page: Page):
+    # Assertions use the expect API.
+    expect(page).to_have_url("https://playwright.dev/")
+
+# Running and debugging tests
+
+You can run a single test, a set of tests, or all tests.
+Tests can be run on one browser or multiple browsers by using the --browser flag.
+By default, tests are run in a headless manner.
+- Running tests headless means executing automated browser tests without a visible graphical user interface.
+- Running tests headed means executing the tests in a real, visible browser window that renders every frame.
+
+Headless mode is faster and uses fewer resources, making it the industry standard for CI/CD pipelines and large regression suites. Headed mode is best utilized for local debugging, visually verifying UI interactions, and test development.
+
+If running tests in a headless manner, the results will be shown in the terminal.
+If you prefer, you can run your tests in headed mode by using the --headed CLI argument.
+
+## Running tests
+
+### Command Line 
+
+To run your tests, use the pytest command. This will run your tests on the Chromium browser by default. Tests run in headless mode by default meaning no browser window will be opened while running the tests and results will be seen in the terminal.
+
+### Run tests in headed mode
+
+To run your tests in headed mode, use the --headed flag. This will open up a browser window while running your tests and once finished the browser window will close.
+
+pytest --headed
+
+### Run tests on different browsers
+
+To specify which browser you would like to run your tests on, use the --browser flag followed by the name of the browser.
+
+pytest --browser webkit
+
+To specify multiple browsers to run your tests on, use the --browser flag multiple times followed by the name of each browser.
+
+pytest --browser webkit --browser firefox
+
+### Run specific tests
+
+To run a single test file, pass in the name of the test file that you want to run.
+
+pytest test_login.py
+
+To run a set of test files, pass in the names of the test files that you want to run.
+
+pytest tests/test_todo_page.py tests/test_landing_page.py
+
+To run a specific test, pass in the function name of the test you want to run.
+
+pytest -k test_add_a_todo_item
+

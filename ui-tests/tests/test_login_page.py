@@ -82,6 +82,14 @@ def test_login_button_text(page):
     # assert that the button contains the expected text
     expect(button).to_contain_text("Login")
 
+def test_response_code(page):
+    # The page should load correcly with the response code 200 OK.
+
+    # navigate to the login page
+    response = page.goto("https://www.saucedemo.com/") 
+    # test response status code
+    assert response.status == 200
+
 # ---- Successful login  ------
 
 def test_url_after_login(page):
