@@ -102,17 +102,6 @@ Most popular async assertions:
 The Playwright Pytest plugin is based on the concept of text fixtures such as the built in page fixture, which is passed into your test.
 Pages are isolated between tests due to the Browser Context, which is equivalent to a brand new browser profile, where every test gets a fresh environment, even when multiple tests run in a single browser.
 
-from playwright.sync_api import Page
-
-def test_example_test(page: Page):
-  pass
-  # "page" belongs to an isolated BrowserContext, created for this specific test.
-
-def test_another_test(page: Page):
-  pass
-  # "page" in this second test is completely isolated from the first test.
-
-
 ### Using fixtures
 
 You can use various fixtures to execute code before or after your tests and to share objects between them.
@@ -187,4 +176,3 @@ pytest tests/test_todo_page.py tests/test_landing_page.py
 To run a specific test, pass in the function name of the test you want to run.
 
 pytest -k test_add_a_todo_item
-

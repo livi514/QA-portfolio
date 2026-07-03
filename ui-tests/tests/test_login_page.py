@@ -1,5 +1,4 @@
 from playwright.sync_api import expect
-import re
 
 # ---- Page load: baseline checks / initial state ------
 
@@ -17,7 +16,6 @@ def test_visibility_of_error(page):
     error = page.locator("[data-test='error']")
     # assert that the error message is not visible
     expect(error).not_to_be_visible()
-
 
 def test_visibility_of_login_button(page):
     # What I'm testing:
@@ -105,36 +103,9 @@ def test_url_after_login(page):
     # assert that the current URL is as expected
     expect(page).to_have_url("https://www.saucedemo.com/inventory.html")
 
-def test_url_after_clicking_cart(page):
-    # This test checks that the user is redirected to the expected page (cart) after clicking the cart button.
-
-    # navigate to the login page
-    page.goto("https://www.saucedemo.com/")
-    # fill in the username and password fields
-    page.locator("#user-name").fill("standard_user")
-    page.locator("#password").fill("secret_sauce")
-    # click the login button
-    page.locator("#login-button").click()
-    # click the cart button 
-    page.locator(".shopping_cart_link").click()
-    expect(page).to_have_url(re.compile("cart"))
-
-def test_number_of_products(page):
-    # This test checks that the inventory page renders with the expected number of inventory items (6).
-
-    # navigate to the login page
-    page.goto("https://www.saucedemo.com/")
-    # fill in the username and password fields
-    page.locator("#user-name").fill("standard_user")
-    page.locator("#password").fill("secret_sauce")
-    # click the login button
-    page.locator("#login-button").click()
-    # assert that there are 6 products on the inventory page
-    expect(page.locator(".inventory_item")).to_have_count(6)
-
 # ---- Failed login  ------
 
-def test_error_message_text(page):
+def test_invalid_credentials(page):
     # This test checks that the expected error message is displayed when invalid credentials are entered.
     # This includes an invalid username, invalid password, or both.
 

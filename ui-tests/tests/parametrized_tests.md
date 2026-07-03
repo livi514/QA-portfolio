@@ -1,4 +1,4 @@
-# Parametrised tests
+# Parametrized tests
 
 Parametrized tests aren't exclusive to Playwright - however, this is a concept I happened to stumble across during my journey of learning Playwright, hence why I wanted to make some notes about it.
 In fact, this is a pure pytest feature. It works for any test, Playwright or not.
