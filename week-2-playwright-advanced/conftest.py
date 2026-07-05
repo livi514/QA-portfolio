@@ -2,6 +2,7 @@
 
 import pytest
 
+# for valid login credentials, we can create a fixture that performs the login steps and returns the logged-in page object. This fixture can then be used in multiple test cases that require a logged-in state.
 def perform_login(page):
     page.goto("https://www.saucedemo.com/")
     page.locator("#user-name").fill("standard_user")

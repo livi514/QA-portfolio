@@ -56,6 +56,18 @@ The method will not throw an error when any valid HTTP status code is returned, 
 The status codes for such responses can be retrieved by calling response.status.
 The goto method either throws an error or returns a main resource response. The only exceptions are navigation to about:blank or navigation to the same URL with a different hash, which would succeed and return null.
 
+### Selectors and Locators
+
+#### Selectors
+
+Selectors are used to create Playwright locators that help testers find any element on the page. There are a few popular types of selectors in Playwright:
+- **Text selectors**: use text content selectors to find elements based on their visible text content.
+- **CSS selectors**: target elements based on their attributes, clases, IDs, and other properties.
+- **XPath selectors**: navigate the XML structure of web pages, and select elements based on their relationships within the document.
+
+#### Locators
+
+Locators follow the format `page.locator(selector[, options])`. They are key components utilised to precisely detect and interact with elements via various methods, including click(), fill(), type(), etc.
 
 ### Interactions 
 Performing actions starts with locating the elements. Playwright uses Locators API for that.
@@ -176,3 +188,22 @@ pytest tests/test_todo_page.py tests/test_landing_page.py
 To run a specific test, pass in the function name of the test you want to run.
 
 pytest -k test_add_a_todo_item
+
+# Why do development and testing teams choose Python Playwright for e2e testing?
+
+- They can effortlessly run tests across major browsers like Chrome, Firefox, Microsoft Edge, and Safari without the need for separate tools for each browser.
+- Intuitive and Python-friendly API allows developers and testers to focus on the functionality of their tests without struggling with the complex syntax of code.
+- Developers and QAs can simulate real-world user experiences on various mobile devices and screen sizes to deliver apps that function flawlessly across different platforms.
+- They can leverage plugins and extensions for popular IDEs (e.g. VSCode) to conduct a smoother development process.
+- With great visual debugging functionality, teams can pinpoint issues quickly and accurately.
+
+# Best Practices for Successful Playwright Python e2e Testing
+
+- Understand application requirements and user flows and define what you’re going to test before writing any code.
+- When creating test cases, it is essential to use descriptive test names that indicate what each test is testing for easier understanding and organization.
+- Each test should focus on a single specific functionality that makes your tests easier to understand and update.
+- Try to choose appropriate assertions that verify the expected behavior of the application.
+- Take advantage of Playwright’s parallel tests execution feature to speed up test execution, especially for larger test suites.
+- Set up continuous integration and continuous delivery (CI/CD) pipelines to run tests automatically after every code change.
+- Choose appropriate test runners like Pytest to manage your test cases and provide additional functionalities.
+- Implement reporting mechanisms to track test execution, analyze results, and identify potential issues.
