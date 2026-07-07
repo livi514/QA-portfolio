@@ -206,3 +206,22 @@ Tests that verify **selective removal** or **persistence** use `add_backpack_and
 
 **The broader principle:** Even tests that appear “read‑only” still click buttons, navigate, or change UI state. Keeping everything function‑scoped ensures consistent behaviour, no order-dependent failures, safe future modifications, and complete isolation of cart state.
 
+### test_checkout_page_with_fixtures.py
+
+**This file also uses only function‑scoped fixtures**, which is necessary because checkout behaviour depends entirely on the cart state set up before each test. The two fixtures used here are `log_in_to_saucedemo` and `add_backpack_and_bike_light_to_cart`. They each provide a clean, controlled starting point:
+
+- **`log_in_to_saucedemo`** → logged‑in page with an empty cart  
+- **`add_backpack_and_bike_light_to_cart`** → logged‑in page with exactly two items  
+
+Because both fixtures chain from `page`, they inherit Playwright’s built‑in isolation: a fresh context and a fresh page for every test. This ensures that checkout behaviour is tested consistently, without interference from earlier tests that may have added, removed, or modified cart contents.
+
+**Checkout with an empty cart:** The first test uses `log_in_to_saucedemo`, guaranteeing an authenticated page with an empty cart. This allows the test to document Saucedemo’s behaviour when checking out with no items. Function scope is essential here — if any previous test had added items, a shared fixture would cause this test to fail or produce misleading results.
+
+**Checkout with items:** The second test uses `add_backpack_and_bike_light_to_cart`, which ensures the cart contains exactly two items before checkout begins. The test verifies that the checkout flow correctly displays item details, calculates totals, and completes the order. Function scope prevents earlier tests from altering the cart, which is critical for verifying tax and total calculations accurately.
+
+**The broader principle:** Checkout tests rely heavily on the initial cart state. Even though both tests follow the same checkout steps, they require different starting conditions. Keeping fixtures function‑scoped ensures:
+- predictable cart contents  
+- no cross‑test contamination  
+- accurate total and tax calculations  
+- safe future modifications to test behaviour  
+
