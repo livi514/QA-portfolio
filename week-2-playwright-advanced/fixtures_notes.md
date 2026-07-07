@@ -147,3 +147,37 @@ The teammate is creating new pages within the same context, rather than creating
 
 ---
 
+## Applying this knowledge to my tests
+
+### test_login_page_with_fixtures.py
+
+**This file uses only function-scoped fixtures.**
+
+Every test in this file falls into one of three groups: baseline checks, successful login, and failed login.
+
+**Baseline checks** (`page` fixture) navigate to the login page and assert things such as the page title, button visibility, and placeholder text. They don't change any state, so technically they couldn't interfere with each other, but function scope is still the right choice for consistency and safety. If a future baseline check were to type in a field or interact with the page, it wouldn't unexpectedly affect the next test.
+
+**Failed login tests** (`page` fixture) fill in credentials and click the login button, which triggers an error message. Each test covers a different failure scenario — invalid credentials, empty username, empty password. These must be isolated from each other because each test needs to start from a clean login form with no pre-existing error state.
+
+**Successful login test** (`log_in_to_saucedemo` fixture) uses a custom fixture that chains from `page`, so it inherits function scope. Each run gets a fresh context, logs in, and returns an isolated logged-in page.
+
+If `log_in_to_saucedemo` were session-scoped, it would run once and stay logged in for the entire test session. Baseline tests would land on the inventory page instead of the login form, and failed login tests would skip the login page entirely, causing widespread, unpredictable failures.
+
+**The rule:** default to function scope unless you have a specific, justified reason to share state. The performance cost is negligible; the isolation benefit is significant.
+
+### test_inventory_page_with_fixtures.py
+
+Just like the login page tests described above, **this file uses only function-scoped fixtures**.
+
+This is because each test requires a clean starting state.
+
+The difference from the login file is what the clean state looks like:
+- **Login file**: needs a clean, unathenticated page.
+- **Inventory page**: needs a clean, authenticated page with an empty cart.
+
+In order to set up the clean, authenticated page with an empty cart, all of the tests in this file use the log_in_to_saucedemo fixture.
+
+Limiting the cart tests to function-scope ensures that the state doesn't leak between them and that the assertions to check the number of items in the cart do not fail.
+
+While the sorting tests are read-only so they wouldn't interfere, keeping them function-scoped is still best practice, for the following reasons:
+- **Consistency:** if all tests in the file are function-scoped, the behaviour is predictable and uniform. A developer reading the file doesn't need to think about which tests share state and which don't.
