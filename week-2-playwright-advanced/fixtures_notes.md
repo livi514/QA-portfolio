@@ -184,3 +184,25 @@ While the sorting tests are read-only so they wouldn't interfere, keeping them f
 - **Future-proofing:** if someone later modifies a sorting test to also add an item to the cart (e.g. to test sorting after adding items), a session-scoped fixture would suddenly cause that test to bleed into others. Function scope prevents this problem before it starts.
 - **The broader principle:** read-only doesn't necessarily mean side-effect free. A sorting test selects a drop-down option, which changes the page state. If that state were shared, the next test would start with the dropdown already set to a non-default value, which could subtly affect results. Any state that depends on the default state order (for example, checking the name of the first product on the page), could fail unexpectedly. Function scope prevents this by resettng the page between tests.
 
+### test_cart_page_with_fixtures.py
+
+**This file uses only function‑scoped fixtures**, which is essential because every test interacts with **mutable cart state**. Items are added, removed, persisted, and checked across navigation and logout/login flows. Any shared fixture would immediately cause cross‑test contamination.
+
+The three fixtures used here each provide a clean, predictable starting point:
+
+- **`log_in_to_saucedemo`** → logged‑in page with an empty cart  
+- **`add_backpack_to_cart`** → logged‑in page with exactly one item  
+- **`add_backpack_and_bike_light_to_cart`** → logged‑in page with exactly two items  
+
+Because they all chain from `page`, they inherit Playwright’s built‑in isolation: a fresh context and a fresh page for every test.
+
+**Empty cart tests:** `log_in_to_saucedemo` guarantees a fresh login and an empty cart. Even simple checks need function scope. If any previous test had added items, a shared fixture would break this immediately.
+
+**Single‑item tests:** Tests that add or remove the backpack rely on `add_backpack_to_cart`. Function scope ensures the cart always starts with one item and never accumulates or loses items because of earlier tests.
+
+Tests that verify **selective removal** or **persistence** use `add_backpack_and_bike_light_to_cart`. Function scope prevents any removal or navigation in one test from affecting the next.
+
+**Navigation and logout/login tests:** Several tests click “Continue Shopping” or even log out and log back in. These actions significantly mutate page state. With a session‑scoped fixture, these mutations would permanently affect all subsequent tests. Function scope avoids this entirely.
+
+**The broader principle:** Even tests that appear “read‑only” still click buttons, navigate, or change UI state. Keeping everything function‑scoped ensures consistent behaviour, no order-dependent failures, safe future modifications, and complete isolation of cart state.
+
