@@ -225,3 +225,89 @@ Because both fixtures chain from `page`, they inherit Playwright’s built‑in 
 - accurate total and tax calculations  
 - safe future modifications to test behaviour  
 
+---
+
+## Custom Fixtures (Playwright Python)
+
+In Playwright’s Python implementation, custom fixtures are created using **pytest’s fixture system**. They live in `conftest.py`, which pytest automatically discovers, making the fixtures available across all test files. Fixtures let you centralise repeated setup steps, so your tests stay clean, readable, and consistent.
+
+### How fixtures work  
+- Fixtures are defined with `@pytest.fixture`.  
+- They can depend on other fixtures (e.g., a cart fixture depends on the login fixture).  
+- They return whatever object the test needs—typically a `page` or a page object.  
+- They run once per test by default (**function scope**), which is ideal for UI tests because it guarantees isolation and prevents state leakage between tests.
+
+### Summary of project fixtures  
+- **`log_in_to_saucedemo`**  
+  Logs in using valid credentials and returns a fresh, authenticated page. Used by any test that requires a logged‑in state.
+
+- **`add_backpack_to_cart`**  
+  Starts from a logged‑in page, adds exactly one item to the cart, and navigates to the cart page. Used for tests that require a single‑item cart.
+
+- **`add_backpack_and_bike_light_to_cart`**  
+  Adds two specific items to the cart and opens the cart page. Used for tests that verify multi‑item behaviour, removal logic, or checkout totals.
+
+### Why function scope is correct  
+All fixtures operate on **mutable page state** (login status, cart contents, navigation). Function scope ensures each test begins with a clean context and prevents cross‑test contamination—critical for reliable UI automation.
+
+### Fixture Chaining
+
+Fixture chaining is the practice of building one fixture on top of another. In Playwright Python, this works because pytest allows fixtures to **depend on other fixtures simply by listing them as parameters**. Each fixture receives the output of the fixture it depends on, creating a clean, modular setup pipeline.
+
+### Why chaining matters  
+- It keeps fixtures **focused**: each fixture does one job (login, add one item, add two items).  
+- It avoids duplication: shared steps (like logging in) live in one place.  
+- It ensures **consistent test state**: every fixture starts from a known, validated baseline.  
+- It makes tests easier to read: tests describe *intent*, not setup details.
+
+### How chaining works  
+When a fixture depends on another fixture, pytest resolves them in order:
+
+1. The dependency runs first (e.g., `log_in_to_saucedemo`).  
+2. Its return value is passed into the next fixture (e.g., `add_backpack_to_cart`).  
+3. The final fixture returns the fully prepared state to the test.
+
+This creates a predictable sequence:
+
+```
+page → log_in_to_saucedemo → add_backpack_to_cart → test
+```
+
+Each step builds on the previous one, and because all fixtures are **function‑scoped**, the chain is rebuilt fresh for every test.
+
+### In my project  
+
+- **`log_in_to_saucedemo`**  
+  Base fixture: provides an authenticated page.
+
+- **`add_backpack_to_cart`**  
+  Depends on the login fixture to guarantee the correct starting page.
+
+- **`add_backpack_and_bike_light_to_cart`**  
+  Also depends on the login fixture, ensuring both items are added from a clean state.
+
+This structure keeps my cart tests reliable and prevents state leakage, while keeping the setup logic simple and reusable.
+
+### How Playwright’s built‑in fixtures interact with my custom ones
+
+Playwright provides built‑in fixtures such as `page`, `browser`, and `context`.
+
+Custom fixtures typically chain from `page`, which ensures each test receives a fresh browser context and isolated state.
+
+This is why function‑scoped custom fixtures remain safe and predictable.
+
+### What fixtures should and should not do
+
+Fixtures should:
+- prepare state needed by multiple tests
+- return objects required by tests (e.g., a logged‑in page or structured test data)
+- remain small, predictable, and single‑purpose
+
+Fixtures should not:
+- contain assertions
+- hide important test logic
+- perform excessive navigation or unrelated actions
+- be used for one‑off setup that only a single test requires
+
+Keeping fixtures minimal and intention‑focused ensures that tests remain clear and failures are easy to diagnose.
+
