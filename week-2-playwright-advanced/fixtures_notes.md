@@ -181,3 +181,6 @@ Limiting the cart tests to function-scope ensures that the state doesn't leak be
 
 While the sorting tests are read-only so they wouldn't interfere, keeping them function-scoped is still best practice, for the following reasons:
 - **Consistency:** if all tests in the file are function-scoped, the behaviour is predictable and uniform. A developer reading the file doesn't need to think about which tests share state and which don't.
+- **Future-proofing:** if someone later modifies a sorting test to also add an item to the cart (e.g. to test sorting after adding items), a session-scoped fixture would suddenly cause that test to bleed into others. Function scope prevents this problem before it starts.
+- **The broader principle:** read-only doesn't necessarily mean side-effect free. A sorting test selects a drop-down option, which changes the page state. If that state were shared, the next test would start with the dropdown already set to a non-default value, which could subtly affect results. Any state that depends on the default state order (for example, checking the name of the first product on the page), could fail unexpectedly. Function scope prevents this by resettng the page between tests.
+
