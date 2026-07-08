@@ -45,12 +45,12 @@ def test_pom_cart_badge_not_visible(log_in_to_saucedemo):
 def test_pom_product_names_visible(log_in_to_saucedemo):
     inventory = InventoryPage(log_in_to_saucedemo)
     inventory.wait_until_loaded()
-    expect(inventory.product_names).to_be_visible()
+    inventory.are_product_names_visible()
 
 def test_pom_product_prices_visible(log_in_to_saucedemo):
     inventory = InventoryPage(log_in_to_saucedemo)
     inventory.wait_until_loaded()
-    expect(inventory.product_prices).to_be_visible()
+    inventory.are_product_prices_visible()
 
 # Adding and removing items from cart 
 
