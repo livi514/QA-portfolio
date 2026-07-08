@@ -33,3 +33,11 @@ class CartPage:
 
     def get_item_prices(self):
         return self.item_prices.all_inner_texts()
+    
+    # Helper methods for testing
+    
+    def get_item_count(self):
+        return self.cart_items.count()
+
+    def get_item_names(self):
+        return self.item_names.all_inner_texts()
