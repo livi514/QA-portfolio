@@ -2,6 +2,7 @@ from playwright.sync_api import expect
 from conftest import perform_login
 from using_pom.pages.inventory_page import InventoryPage
 from using_pom.pages.cart_page import CartPage
+from using_pom.pages.menu_page import MenuPage
 
 def test_empty_cart_state(log_in_to_saucedemo):
     inventory = InventoryPage(log_in_to_saucedemo)
@@ -79,8 +80,9 @@ def test_cart_persists_after_logout_and_login(add_backpack_and_bike_light_to_car
     # check number of items in the cart
     assert cart.get_item_count() == 2
     # log out by clicking on the menu button and then clicking 'Logout'
-    add_backpack_and_bike_light_to_cart.locator("#react-burger-menu-btn").click()
-    add_backpack_and_bike_light_to_cart.locator("#logout_sidebar_link").click()
+    menu = MenuPage(add_backpack_and_bike_light_to_cart)
+    menu.open_menu()
+    menu.logout()
     # log back in
     perform_login(add_backpack_and_bike_light_to_cart)
     # click on the cart button again
