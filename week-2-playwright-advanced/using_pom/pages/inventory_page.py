@@ -1,3 +1,5 @@
+from playwright.sync_api import expect
+
 class InventoryPage:
     def __init__(self, page):
         self.page = page
@@ -8,7 +10,7 @@ class InventoryPage:
         self.cart_badge = page.locator("span.shopping_cart_badge")
 
         # Sort dropdown (actual <select> element)
-        self.sort_dropdown = page.locator("select[data-test='product_sort_container']")
+        self.sort_dropdown = page.locator("select[data-test='product-sort-container']")
 
         # Product containers
         self.product_items = page.locator("div.inventory_item")
@@ -104,4 +106,11 @@ class InventoryPage:
 
     def is_cart_icon_visible(self):
         return self.cart_icon.is_visible()
+    
+    def are_product_names_visible(self):
+        for i in range(6):
+            expect(self.product_names.nth(i)).to_be_visible()
 
+    def are_product_prices_visible(self):
+        for i in range(6):
+            expect(self.product_prices.nth(i)).to_be_visible()
