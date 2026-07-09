@@ -28,6 +28,7 @@ class CheckoutPage:
         self.finish_button.click()
 
     # Accessors
+
     def get_title_text(self) -> str:
         return self.title.inner_text()
 
@@ -47,3 +48,5 @@ class CheckoutPage:
         total_value = float(total_text.split("$")[1])
 
         return item_total_value, tax_value, total_value
+    
+

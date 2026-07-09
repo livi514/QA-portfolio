@@ -41,3 +41,6 @@ class CartPage:
 
     def get_item_names(self):
         return self.item_names.all_inner_texts()
+    
+    def get_title_text(self):
+        return self.page.locator(".title").inner_text()
