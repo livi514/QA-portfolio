@@ -3,6 +3,5 @@ testpaths = ["tests"]
 addopts = "--browser chromium --browser firefox --browser webkit -n 2 --base-url https://www.saucedemo.com"
 
 markers = [
-    "smoke: quick baseline checks",
-    "regression: full test suite",
+    "smoke: quick baseline checks that verify the site is up and rendering correctly",
 ]

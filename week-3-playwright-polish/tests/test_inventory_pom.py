@@ -63,7 +63,6 @@ def test_pom_product_prices_visible(log_in_to_saucedemo):
 
 # Adding and removing items from cart 
 
-@pytest.mark.regression
 def test_pom_add_and_remove_item_from_cart(log_in_to_saucedemo):
     inventory = InventoryPage(log_in_to_saucedemo)
     inventory.wait_until_loaded()
@@ -74,7 +73,6 @@ def test_pom_add_and_remove_item_from_cart(log_in_to_saucedemo):
     expect(inventory.cart_badge).not_to_be_visible()
     expect(inventory.backpack_add_button).to_have_text("Add to cart")
 
-@pytest.mark.regression
 def test_pom_add_two_items_to_cart(log_in_to_saucedemo):
     inventory = InventoryPage(log_in_to_saucedemo)
     inventory.wait_until_loaded()
@@ -86,7 +84,6 @@ def test_pom_add_two_items_to_cart(log_in_to_saucedemo):
 
 # Sorting tests
 
-@pytest.mark.regression
 @pytest.mark.parametrize("sort_value, expected_order", [
     ("az", "ascending"),
     ("za", "descending"),
@@ -102,7 +99,6 @@ def test_pom_sort_by_name(log_in_to_saucedemo, sort_value, expected_order):
     else:
         assert names == sorted(names, reverse=True)
 
-@pytest.mark.regression
 @pytest.mark.parametrize("sort_value, expected_order", [
     ("lohi", "ascending"),
     ("hilo", "descending")
@@ -121,7 +117,6 @@ def test_pom_sort_by_price(log_in_to_saucedemo, sort_value, expected_order):
 
 # Navigation to cart page
 
-@pytest.mark.regression
 def test_pom_url_after_clicking_cart(log_in_to_saucedemo):
     inventory = InventoryPage(log_in_to_saucedemo)
     inventory.wait_until_loaded()

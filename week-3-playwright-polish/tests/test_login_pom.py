@@ -58,14 +58,12 @@ def test_response_code(page):
 
 # ---- Successful login (fixture + POM) ------
 
-@pytest.mark.regression
 def test_url_after_login(log_in_to_saucedemo):
     # This test checks that the URL is correct after a successful login using the log_in_to_saucedemo fixture, which uses the LoginPage POM to perform the login action.
     expect(log_in_to_saucedemo).to_have_url("/inventory.html")
 
 # ---- Failed login (POM) ------
 
-@pytest.mark.regression
 def test_invalid_credentials(page):
     # This test checks that the error message is displayed when invalid credentials are used to log in using the LoginPage POM.
     login = LoginPage(page)
@@ -75,7 +73,6 @@ def test_invalid_credentials(page):
         "Epic sadface: Username and password do not match any user in this service"
     )
 
-@pytest.mark.regression
 def test_empty_username_text(page):
     # This test checks that the error message is displayed when the username field is left empty during login using the LoginPage POM.
     login = LoginPage(page)
@@ -83,7 +80,6 @@ def test_empty_username_text(page):
     login.login_with_empty_username()
     expect(login.error_message).to_contain_text("Epic sadface: Username is required")
 
-@pytest.mark.regression
 def test_empty_password_text(page):
     # This test checks that the error message is displayed when the password field is left empty during login using the LoginPage POM.
     login = LoginPage(page)

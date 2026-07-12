@@ -4,7 +4,6 @@ from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
 import pytest
 
-@pytest.mark.regression
 def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # saucedemo allows checkout with an empty cart — this documents that behaviour.
     # a bug report should be raised if this is not the intended behaviour.
@@ -33,7 +32,6 @@ def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # check that the checkout complete page is displayed
     assert checkout.get_title_text() == "Checkout: Complete!"
 
-@pytest.mark.regression
 def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
     # This test verifies that the checkout process works correctly when items are in the cart.
     
