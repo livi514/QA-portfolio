@@ -1,7 +1,6 @@
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--browser chromium --browser firefox --browser webkit -n 4"
-base_url = "https://www.saucedemo.com"
+addopts = "--browser chromium --browser firefox --browser webkit -n 2 --base-url https://www.saucedemo.com"
 
 markers = [
     "smoke: quick baseline checks",

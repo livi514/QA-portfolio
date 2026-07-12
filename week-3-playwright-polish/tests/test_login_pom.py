@@ -77,4 +77,3 @@ def test_empty_password_text(page):
     login.navigate()
     login.login_with_empty_password()
     expect(login.error_message).to_contain_text("Epic sadface: Password is required")
-
