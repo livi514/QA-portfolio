@@ -70,3 +70,9 @@ Here’s a summary of what pytest uses rootdir for:
 - Construct nodeids during collection; each test is assigned a unique nodeid which is rooted at the rootdir and takes into account the full path, class name, function name and parametrization (if any).
 - Is used by plugins as a stable location to store project/test run specific information; for example, the internal cache plugin creates a .pytest_cache subdirectory in rootdir to store its cross-test run state.
 
+## Writing your `pyproject.toml`
+
+`pyproject.toml` is a configuration file used by packaging tools, as well as other tools such as linters, type checkers, etc. There are three possible TOML tables in this file. 
+- The [build-system] table is strongly recommended. It allows you to declare which build backend you use and which other dependencies are needed to build your project.
+- The [project] table is the format that most build backends use to specify your project’s basic metadata, such as the dependencies, your name, etc.
+- The [tool] table has tool-specific subtables, e.g., [tool.hatch], [tool.black], [tool.mypy]. 

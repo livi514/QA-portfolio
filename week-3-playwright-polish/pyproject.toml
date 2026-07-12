@@ -1,7 +1,9 @@
-[tool.pytest]
-minversion = "9.0"
-addopts = ["-ra", "-q"]
-testpaths = [
-    "tests",
-    "integration",
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--browser chromium --browser firefox --browser webkit -n auto"
+base_url = "https://www.saucedemo.com"
+
+markers = [
+    "smoke: quick baseline checks",
+    "regression: full test suite",
 ]
