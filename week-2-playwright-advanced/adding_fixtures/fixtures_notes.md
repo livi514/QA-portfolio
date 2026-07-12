@@ -37,7 +37,7 @@ REMEMBER: `browser` is session-scoped by default, while `context` and `page` are
 
 **Scenario 1: You're writing a test suite with 50 tests. Every test needs to check the same read-only configuration file. What scope would you use for a fixture that loads that file, and why?**
 
-Use **session scope**. Since the file is read-only, no test can modify it, so sharing it across the entire test run is safe. Recreating it for every test would be wasteful with no benefit — the file content never changes, so there's nothing to isolate.
+Use **session scope**. Since the file is read-only, no test can modify it, so sharing it across the entire test run is safe. Recreating it for every test would be wasteful with no benefit, as the file content never changes, so there's nothing to isolate.
 
 ```python
 @pytest.fixture(scope="session")
@@ -50,13 +50,13 @@ def config():
 
 **Scenario 2: Two tests run back to back. Test 1 logs in and adds 3 items to the cart. Test 2 expects the cart to be empty. Both use the `page` fixture. Will Test 2 fail because of Test 1?**
 
-No. Each test gets a fresh **context**, which is equivalent to a new incognito window with its own cookies, storage, and session. Whatever Test 1 did to its page is completely invisible to Test 2. This is Playwright's built-in test isolation — it comes from the context, not the browser.
+No. Each test gets a fresh **context**, which is equivalent to a new incognito window with its own cookies, storage, and session. Whatever Test 1 did to its page is completely invisible to Test 2. This is Playwright's built-in test isolation. It comes from the context, not the browser.
 
 ---
 
 **Scenario 3: You want to test the same login flow on Chrome, Firefox, and WebKit. Which built-in Playwright fixture would you use to find out which browser is currently running?**
 
-Use the **`browser_name`** fixture, which returns `"chromium"`, `"firefox"`, or `"webkit"` as a string. The `browser` fixture gives you the browser instance itself, not its name — so it wouldn't help here.
+Use the **`browser_name`** fixture, which returns `"chromium"`, `"firefox"`, or `"webkit"` as a string. The `browser` fixture gives you the browser instance itself, not its name, so it wouldn't help here.
 
 ```python
 def test_something(page, browser_name):
@@ -69,7 +69,7 @@ def test_something(page, browser_name):
 
 **Scenario 4: You write a fixture that navigates to a page and fills in a form. A teammate says "just make it session-scoped so it's faster." Why might that be a bad idea?**
 
-A session-scoped fixture runs **once** for the entire test run, meaning all 50 tests share the same page state. If Test 3 submits the form, Test 4 will find the form already submitted — or on a completely different page — and fail. This is called **test pollution**: one test's actions contaminating another's state. The fix is to keep the fixture at **function scope** (the default), so every test starts fresh.
+A session-scoped fixture runs **once** for the entire test run, meaning all 50 tests share the same page state. If Test 3 submits the form, Test 4 will find the form already submitted, or on a completely different page, and fail. This is called **test pollution**: one test's actions contaminating another's state. The fix is to keep the fixture at **function scope** (the default), so every test starts fresh.
 
 ---
 
@@ -116,8 +116,6 @@ Each test gets its own context, so no test can interfere with another, even if t
 **`context`:** use it when you need to create multiple pages yourself, for example testing how the site behaves when a user has it open in two tabs simultaneously.
 
 **`browser`:** use it when you need direct control over the browser instance, for example creating multiple contexts with different configurations in the same test.
-
-Here are the polished notes first:
 
 ---
 

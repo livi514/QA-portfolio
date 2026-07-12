@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Week 1 of my QA Automation Roadmap focuses on learning the fundamentals of Playwright for Python, building confidence with browser automation, and writing my first structured UI test suite using pytest and Playwright’s built‑in fixtures.
+Week 1 of my QA Summer Roadmap focuses on learning the fundamentals of Playwright for Python, building confidence with browser automation, and writing my first structured UI test suite using pytest and Playwright’s built‑in fixtures.
 
 This week was all about understanding how Playwright works, how UI tests should be structured, and how to write reliable, readable tests that assert real behaviour.
 
