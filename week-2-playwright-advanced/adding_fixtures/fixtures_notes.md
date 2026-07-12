@@ -81,7 +81,7 @@ Think of the three layers like this:
 
 | Playwright | Real-world equivalent |
 |:-----------|:----------------------|
-| `browser` | The Chrome application running on your computer |
+| `browser` | The browser application (e.g. Chrome) running on your computer |
 | `context` | A new incognito window — isolated cookies, storage, and login state |
 | `page` | A tab within that incognito window |
 
