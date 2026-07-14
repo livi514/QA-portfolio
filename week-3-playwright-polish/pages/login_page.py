@@ -1,3 +1,5 @@
+from test_data import VALID_USER, INVALID_USER
+
 class LoginPage:
     def __init__(self, page):
         self.page = page
@@ -28,16 +30,16 @@ class LoginPage:
 
     # Common login scenarios
     def login_with_valid_credentials(self):
-        self.login("standard_user", "secret_sauce")
+        self.login(VALID_USER["username"], VALID_USER["password"])
 
     def login_with_invalid_credentials(self):
-        self.login("invalid_user", "invalid_password")
+        self.login(INVALID_USER["username"], INVALID_USER["password"])
 
     def login_with_empty_username(self):
-        self.login("", "secret_sauce")
+        self.login("", VALID_USER["password"])
 
     def login_with_empty_password(self):
-        self.login("standard_user", "")
+        self.login(VALID_USER["username"], "")
 
     # Accessors
     def get_error_message(self):

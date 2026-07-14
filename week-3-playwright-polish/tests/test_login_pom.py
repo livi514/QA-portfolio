@@ -1,6 +1,7 @@
 from playwright.sync_api import expect
 import pytest
 from pages.login_page import LoginPage
+from test_data import ERROR_MESSAGES
 
 # ---- Baseline checks (raw page, no POM) ------
 
@@ -69,20 +70,18 @@ def test_invalid_credentials(page):
     login = LoginPage(page)
     login.navigate()
     login.login_with_invalid_credentials()
-    expect(login.error_message).to_contain_text(
-        "Epic sadface: Username and password do not match any user in this service"
-    )
+    expect(login.error_message).to_contain_text(ERROR_MESSAGES["invalid_credentials"])
 
 def test_empty_username_text(page):
     # This test checks that the error message is displayed when the username field is left empty during login using the LoginPage POM.
     login = LoginPage(page)
     login.navigate()
     login.login_with_empty_username()
-    expect(login.error_message).to_contain_text("Epic sadface: Username is required")
+    expect(login.error_message).to_contain_text(ERROR_MESSAGES["missing_username"])
 
 def test_empty_password_text(page):
     # This test checks that the error message is displayed when the password field is left empty during login using the LoginPage POM.
     login = LoginPage(page)
     login.navigate()
     login.login_with_empty_password()
-    expect(login.error_message).to_contain_text("Epic sadface: Password is required")
+    expect(login.error_message).to_contain_text(ERROR_MESSAGES["missing_password"])

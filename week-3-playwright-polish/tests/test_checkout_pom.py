@@ -2,7 +2,7 @@ from playwright.sync_api import expect
 from pages.inventory_page import InventoryPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
-import pytest
+from test_data import CHECKOUT_INFO
 
 def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # saucedemo allows checkout with an empty cart — this documents that behaviour.
@@ -24,7 +24,7 @@ def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # check that the checkout page is displayed
     assert checkout.get_title_text() == "Checkout: Your Information"
     # fill in the checkout information
-    checkout.fill_information("John", "Doe", "12345")
+    checkout.fill_information(CHECKOUT_INFO["first_name"], CHECKOUT_INFO["last_name"], CHECKOUT_INFO["postal_code"])
     # check that the checkout overview page is displayed
     assert checkout.get_title_text() == "Checkout: Overview"
     # click on the 'Finish' button
@@ -44,7 +44,7 @@ def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
     # check that the checkout page is displayed
     assert checkout.get_title_text() == "Checkout: Your Information"
     # fill in the checkout information
-    checkout.fill_information("John", "Doe", "12345")
+    checkout.fill_information(CHECKOUT_INFO["first_name"], CHECKOUT_INFO["last_name"], CHECKOUT_INFO["postal_code"])
     # check that the checkout overview page is displayed
     assert checkout.get_title_text() == "Checkout: Overview"
     # check that the items are displayed on the checkout overview page
