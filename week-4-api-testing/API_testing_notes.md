@@ -1,10 +1,32 @@
 # API Testing with pytest and requests
 
+In this digital age, APIs have become the cornerstone of how data is shared and processed. This is why it's important to leverage API testing techniques to ensure that every aspect of your website or application works as expected.
+
+# What is an API?
+
+APIs (Application Programming Interfaces) are designed for developers to use. They are a coding tool that allows your application to communicate with other applications. APIs allow you to integrate third-party applications into your work, or use your own data and processes in the cloud.
+
+In today's development process, APIs have become an essential part in web and mobile applications.
+
+When dealing with APIs, you need to be sure that everything works together properly, before integrating the API into your applications. That's why testing them is essential. 
+
 ## What is API testing?
 
 API testing verifies that an API functions as intended, meets its specifications, and handles errors gracefully. Unlike UI testing, which automates a browser and checks what a user sees, API testing communicates directly with the server: no browser, no locators, no waiting for elements to render. You send an HTTP request and validate the response.
 
 This makes API tests faster, more stable, and less brittle than UI tests. They're also closer to the business logic, since they test what the server actually does rather than how it looks.
+
+## API testing principles
+
+Having a standard set of rules is the best way to ensure the quality of your APIs and their implementation.
+1. API testing should be a part of yoru continuous integration and delivery pipeline.
+2. API tests should be easy to maintain and write.
+3. A well-designed API will make your tests easier to write.
+4. You should test at the boundary of your system.
+5. Keep your tests small and focused.
+6. Make sure your tests are deterministic.
+7. Run your tests in parallel for speed.
+8. Use the available and freely-accessible tools to simplify API testing.
 
 ## Types of API testing
 
@@ -13,6 +35,20 @@ This makes API tests faster, more stable, and less brittle than UI tests. They'r
 - **Performance testing:** evaluates the API under load (high traffic, concurrent requests)
 - **Security testing:** checks for vulnerabilities and ensures compliance with security requirements
 - **Negative testing:** verifies that the API handles invalid input and edge cases gracefully
+
+## How to start API testing
+
+To get started with API testing, you will need to have access to an application with an exposed API. You will also need to choose a method for sending requests to the API (manual or automated), and select a tool or framework for writing your tests (if using automated testing).
+
+Once you have these things set up, you can begin writing your test cases and running them against the API.
+
+## API testing tips
+
+API testing can be a challenge, but regardless of the tools you decide to use, here are some tips that can help:
+1. Make sure you have a clear understanding of the API before you start testing. Read the documentation and any other available materials. This will help you know what to expct and how the API should work.
+2. Use API testing tools: This will give you a better understanding of how the API works and make it easier to find any issues.
+3. Test all aspects of the API, including input validation, error handling, and security.
+4. Keep your tests up-to-date as the API changes.
 
 ## HTTP response status codes
 
