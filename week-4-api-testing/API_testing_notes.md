@@ -1,32 +1,46 @@
 # API Testing with pytest and requests
 
-In this digital age, APIs have become the cornerstone of how data is shared and processed. This is why it's important to leverage API testing techniques to ensure that every aspect of your website or application works as expected.
+## What is an API?
 
-# What is an API?
+An API (Application Programming Interface) is a way for two software systems to communicate with each other. It defines the rules and structure for how requests should be made and how responses will be returned. It is essentially a contract between a client and a server.
 
-APIs (Application Programming Interfaces) are designed for developers to use. They are a coding tool that allows your application to communicate with other applications. APIs allow you to integrate third-party applications into your work, or use your own data and processes in the cloud.
+In web development, APIs are typically used to:
+- Expose data from a database to a frontend application
+- Allow third-party services to integrate with your application
+- Enable different parts of a system to communicate (e.g. a mobile app talking to a backend)
+- Share functionality between teams or organisations without exposing internal code
 
-In today's development process, APIs have become an essential part in web and mobile applications.
+The most common type in modern web development is a **REST API**, which uses standard HTTP methods (GET, POST, PUT, PATCH, DELETE) to perform operations on resources. Resources are typically represented as JSON.
 
-When dealing with APIs, you need to be sure that everything works together properly, before integrating the API into your applications. That's why testing them is essential. 
+## How a REST API works
+
+A client sends an HTTP request to a URL (called an endpoint), and the server returns a response. The response includes a status code indicating success or failure, and usually a JSON body containing the requested data.
+
+For example:
+
+```
+GET https://jsonplaceholder.typicode.com/users/1
+```
+
+Returns:
+```json
+{
+  "id": 1,
+  "name": "Leanne Graham",
+  "username": "Bret",
+  "email": "Sincere@april.biz"
+  ...
+}
+```
+
+The client (your test, a browser, a mobile app) doesn't need to know anything about how the server stores or processes the data, it just sends a request and handles the response.
+
 
 ## What is API testing?
 
 API testing verifies that an API functions as intended, meets its specifications, and handles errors gracefully. Unlike UI testing, which automates a browser and checks what a user sees, API testing communicates directly with the server: no browser, no locators, no waiting for elements to render. You send an HTTP request and validate the response.
 
 This makes API tests faster, more stable, and less brittle than UI tests. They're also closer to the business logic, since they test what the server actually does rather than how it looks.
-
-## API testing principles
-
-Having a standard set of rules is the best way to ensure the quality of your APIs and their implementation.
-1. API testing should be a part of yoru continuous integration and delivery pipeline.
-2. API tests should be easy to maintain and write.
-3. A well-designed API will make your tests easier to write.
-4. You should test at the boundary of your system.
-5. Keep your tests small and focused.
-6. Make sure your tests are deterministic.
-7. Run your tests in parallel for speed.
-8. Use the available and freely-accessible tools to simplify API testing.
 
 ## Types of API testing
 
@@ -36,19 +50,64 @@ Having a standard set of rules is the best way to ensure the quality of your API
 - **Security testing:** checks for vulnerabilities and ensures compliance with security requirements
 - **Negative testing:** verifies that the API handles invalid input and edge cases gracefully
 
-## How to start API testing
+## Getting started with API testing
 
-To get started with API testing, you will need to have access to an application with an exposed API. You will also need to choose a method for sending requests to the API (manual or automated), and select a tool or framework for writing your tests (if using automated testing).
+To start API testing you need three things: an API to test, a way to send requests, and a framework for writing and running tests.
 
-Once you have these things set up, you can begin writing your test cases and running them against the API.
+### Choosing an API
 
-## API testing tips
+For learning purposes, public APIs are a great starting point. I used **JSONPlaceholder** (`https://jsonplaceholder.typicode.com`), a free, fake REST API designed specifically for testing and prototyping. It provides realistic resources (users, posts, comments, todos, albums, photos) and supports all HTTP methods, though it doesn't actually persist any changes.
 
-API testing can be a challenge, but regardless of the tools you decide to use, here are some tips that can help:
-1. Make sure you have a clear understanding of the API before you start testing. Read the documentation and any other available materials. This will help you know what to expct and how the API should work.
-2. Use API testing tools: This will give you a better understanding of how the API works and make it easier to find any issues.
-3. Test all aspects of the API, including input validation, error handling, and security.
-4. Keep your tests up-to-date as the API changes.
+### Sending requests: the `requests` library
+
+Python's `requests` library is the standard choice for making HTTP calls in tests. Install it with:
+
+```
+pip install requests
+```
+
+A basic request looks like this:
+
+```python
+import requests
+
+response = requests.get("https://jsonplaceholder.typicode.com/users/1")
+print(response.status_code)  # 200
+print(response.json())       # {'id': 1, 'name': 'Leanne Graham', ...}
+```
+
+### Writing tests: pytest
+
+pytest works for API tests with no changes from UI testing: no browser, no page objects, no fixtures required to get started. The simplest possible API test looks like this:
+
+```python
+import requests
+
+BASE_URL = "https://jsonplaceholder.typicode.com"
+
+def test_get_user():
+    response = requests.get(f"{BASE_URL}/users/1")
+    assert response.status_code == 200
+    user = response.json()
+    assert user["id"] == 1
+    assert user["name"] == "Leanne Graham"
+```
+
+### Project structure
+
+For a small API test suite, a flat structure works well:
+
+```
+week-4-api-testing/
+├── tests/
+│   ├── test_users.py
+│   └── test_posts.py
+├── test_data.py       # expected values and request payloads
+├── pyproject.toml     # pytest configuration
+└── README.md
+```
+
+Unlike UI testing, you typically don't need page objects or complex fixture chains. API tests are simpler by nature, so the structure can be simpler too.
 
 ## HTTP response status codes
 
@@ -150,3 +209,11 @@ assert user["address"]["city"] == "Gwenborough"  # nested fields use chained bra
 ## Why pytest for API testing?
 
 I've already been using pytest for UI tests: the same framework works for API tests with no changes. The same features apply: fixtures, parametrize, markers, conftest.py. The only difference is that instead of using a `page` fixture, you just call `requests` directly.
+
+## Best practices
+- Keep tests small and focused: one test should verify one thing.
+- Test all HTTP methods relevant to your API (GET, POST, PUT, PATCH, DELETE).
+- Always validate status code, response structure, and response values.
+- Write negative tests to verify that the API handles invalid input gracefully.
+- Use descriptive assertion messages, so that failures are easy to diagnose.
+- Kep test data separate from test logic.
