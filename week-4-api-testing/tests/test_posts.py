@@ -126,6 +126,25 @@ def test_create_post_by_user():
     assert post["body"] == "New post by user 1", f"Expected 'New post by user 1', but got {post['body']}"
 
 
+def test_create_post_by_non_existent_user():
+    """Test creating a post via the nested user URL (/users/{id}/posts), where the id doesn't belong to an existing user.
+    JSON placeholder allows this."""
+    url = f"{BASE_URL}/users/999/posts"
+    data = {
+        "title": "User 999's post",
+        "body": "New post by user 999"
+    }
+    response = requests.post(url, json=data)
+    assert response.status_code == 201, f"Expected 201 but got {response.status_code}"
+    assert "application/json" in response.headers["Content-Type"]
+    post = response.json()
+    assert post["id"] == 101
+    # userId is returned as a string when posting via /users/{id}/posts
+    assert int(post["userId"]) == 999
+    assert post["title"] == "User 999's post", f"Expected 'User 999's post', but got {post['title']}"
+    assert post["body"] == "New post by user 999", f"Expected 'New post by user 99', but got {post['body']}"
+
+
 # PUT tests
 
 def test_put_replaces_post():
