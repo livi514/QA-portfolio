@@ -55,6 +55,14 @@ def test_get_posts_by_user_id():
         assert isinstance(post["title"], str)
         assert isinstance(post["body"], str)
 
+def test_get_posts_by_user_invalid_id():
+    # JSONPlaceholder returns 200 with an empty list for a non-existent userId
+    # This is valid REST design — the query succeeded but found no matching results
+    # A 404 would only be appropriate if the endpoint itself didn't exist
+    response = requests.get(f"{BASE_URL}/posts?userId=999")
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json() == [], "Expected empty list for non-existent userId"
+
 # POST tests
 
 def test_create_post():
@@ -77,6 +85,9 @@ def test_create_post():
 def test_create_post_with_missing_fields():
     pass
 
+@pytest.mark.skip(reason="JSONPlaceholder does not validate data types — POSTing with incorrect types returns 201 instead of 400. On a real API, this should return 400 Bad Request.")
+def test_create_post_with_incorrect_data_types():
+    pass
 
 def test_create_post_by_user():
     url = f"{BASE_URL}/users/1/posts"
