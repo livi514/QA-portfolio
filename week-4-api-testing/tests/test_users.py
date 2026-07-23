@@ -96,6 +96,10 @@ def test_create_user():
 def test_create_user_with_missing_fields():
     pass
 
+@pytest.mark.skip(reason="JSONPlaceholder does not validate data types — POSTing with incorrect types returns 201 instead of 400. On a real API, this should return 400 Bad Request.")
+def test_create_user_with_incorrect_data_types():
+    pass
+
 # PUT tests 
 
 def test_replacing_user():
