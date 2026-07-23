@@ -6,6 +6,7 @@ BASE_URL = "https://jsonplaceholder.typicode.com"
 # GET tests 
 
 def test_get_list_of_users():
+    """Test that the full list of users is returned with the correct structure."""
     response = requests.get(f"{BASE_URL}/users")
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert "application/json" in response.headers["Content-Type"]
@@ -22,9 +23,10 @@ def test_get_list_of_users():
         assert isinstance(user["phone"], str)
         assert isinstance(user["website"], str)
         assert isinstance(user["company"]["name"], str)
+
         
-# retrieve an existing user
 def test_get_user():
+    """Test that a single user is returned with the correct field values."""
     response = requests.get(f"{BASE_URL}/users/1")
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert "application/json" in response.headers["Content-Type"]    
@@ -40,8 +42,9 @@ def test_get_user():
     assert user["website"] == "hildegard.org", f"Expected 'hildegard.org', but got {user['website']}"
     assert user["company"]["name"] == "Romaguera-Crona", f"Expected 'Romaguera-Crona', but got {user['company']['name']}"
 
-# negative test: retrieve a non-existent user
+
 def test_get_non_existent_user():
+    """Negative test: requesting a user that doesn't exist should return 404 and an empty body."""
     response = requests.get(f"{BASE_URL}/users/999")
     assert response.status_code == 404, f"Expected 404 but got {response.status_code}"
     assert response.json() == {}
@@ -49,10 +52,11 @@ def test_get_non_existent_user():
 # POST tests
 
 def test_create_user():
-    '''
+    """
+    Test that a new user can be created. and that the response echoes back the correct data.
     Note: JSONPlaceholder doesn't actually persist the created user, so a follow-up GET /users/11 would return 404. 
     The POST response simulates what would be returned if the API were real.
-    '''
+    """
     
     url = f"{BASE_URL}/users"
     data = {
@@ -102,7 +106,11 @@ def test_create_user_with_incorrect_data_types():
 
 # PUT tests 
 
-def test_replacing_user():
+def test_put_replaces_user():
+    """
+    Test that PUT replaces all fields of an existing user.
+    The full resource must be sent in the request body, as partial updates aren't supported by PUT.
+    """
     url = f"{BASE_URL}/users/1"
     data = {
         "name": "Jane Doe",
@@ -141,9 +149,43 @@ def test_replacing_user():
     assert user["website"] == "jane.com", f"Expected 'jane.com', but got {user['website']}"
     assert user["company"]["name"] == "Some Business", f"Expected 'Some Business', but got {user['company']['name']}"
 
+
+def test_put_non_existent_user():
+    """Negative test: PUTting to a non-existent user.
+    According to the REST spec, PUT to a non-existent resource should either
+    create it (201) or return 404. JSONPlaceholder returns 500, which indicates
+    the server does not handle this case gracefully — this would be a bug on a real API."""
+    url = f"{BASE_URL}/users/999"
+    data = {
+        "name": "Jane Doe",
+        "username": "jane123",
+        "email": "janedoe123@somebusiness.com",
+        "address" : {
+            "street": "Sample Street",
+            "suite": "Apt. 1",
+            "city": "Sample City",
+            "zipcode": "123456",
+            "geo" : {
+                "lat": "-12.3456",
+                "lang": "78.9123"
+            }
+        },
+        "phone" : "10987654321",
+        "website" : "jane.com",
+        "company" : {
+            "name" : "Some Business",
+            "catchPhrase" : "We do things",
+            "bs" : "Nobody knows what we do but it is something"
+        },
+    }
+    response = requests.put(url, json=data)
+    assert response.status_code == 500, f"Expected 500 but got {response.status_code}"
+
+
 # PATCH tests 
 
 def test_patching_user():
+    """Test that PATCH updates only the specified fields, leaving all other fields unchanged."""
     url = f"{BASE_URL}/users/2"
     data = {
         "name": "Eva Howell",
@@ -167,7 +209,18 @@ def test_patching_user():
 # DELETE tests 
 
 def test_deleting_user():
+    """Test that DELETE returns 200 and an empty body, confirming the user was removed."""
     url = f"{BASE_URL}/users/3"
     response = requests.delete(url)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json() == {}
+
+
+def test_deleting_non_existent_user():
+    """Negative test: deleting a non-existent user.
+    JSONPlaceholder returns 200 regardless of whether the resource exists,
+    since it doesn't actually persist any changes.
+    On a real API, this would typically return 404."""
+    response = requests.delete(f"{BASE_URL}/users/999")
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert response.json() == {}
