@@ -165,6 +165,40 @@ def test_put_replaces_post():
     assert post["title"] == "New title"
     assert post["body"] == "New body"
 
+def test_put_with_other_users_id():
+    "Shouldn't be allowed"
+    url = f"{BASE_URL}/posts/1"
+    data = {
+        "userId": 2,
+        "title": "New title",
+        "body": "New body"
+    }
+    response = requests.put(url, json=data)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert "application/json" in response.headers["Content-Type"]
+    post = response.json()
+    assert int(post["userId"]) == 2
+    assert post["id"] == 1
+    assert post["title"] == "New title"
+    assert post["body"] == "New body"
+
+def test_put_with_invalid_user_id():
+    "Shouldn't be allowed."
+    url = f"{BASE_URL}/posts/1"
+    data = {
+        "userId": 999,
+        "title": "New title",
+        "body": "New body"
+    }
+    response = requests.put(url, json=data)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert "application/json" in response.headers["Content-Type"]
+    post = response.json()
+    assert int(post["userId"]) == 999
+    assert post["id"] == 1
+    assert post["title"] == "New title"
+    assert post["body"] == "New body"
+
 def test_put_non_existent_post():
     """Negative test: PUTting to a non-existent post.
     According to the REST spec, PUT to a non-existent resource should either
@@ -214,6 +248,67 @@ def test_patching_post_body():
     assert post["title"] == "ea molestias quasi exercitationem repellat qui ipsa sit aut"
     assert post["body"] == "New body"
 
+
+def test_patching_post_id_to_existing_post_id():
+    """This is interesting. This shouldn't be allowed as there is already a post with id 5."""
+    url = f"{BASE_URL}/posts/4"
+    data = {
+        "id": 5
+    }
+    response = requests.patch(url, json=data)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert "application/json" in response.headers["Content-Type"]
+    post = response.json()
+    assert int(post["userId"]) == 1
+    assert post["id"] == 5
+    assert post["title"] == "eum et est occaecati"
+    assert post["body"] == "ullam et saepe reiciendis voluptatem adipisci\nsit amet autem assumenda provident rerum culpa\nquis hic commodi nesciunt rem tenetur doloremque ipsam iure\nquis sunt voluptatem rerum illo velit"
+
+
+def test_patching_post_id_to_nonexistent_post_id():
+    url = f"{BASE_URL}/posts/4"
+    data = {
+        "id": 5
+    }
+    response = requests.patch(url, json=data)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert "application/json" in response.headers["Content-Type"]
+    post = response.json()
+    assert int(post["userId"]) == 1
+    assert post["id"] == 5
+    assert post["title"] == "eum et est occaecati"
+    assert post["body"] == "ullam et saepe reiciendis voluptatem adipisci\nsit amet autem assumenda provident rerum culpa\nquis hic commodi nesciunt rem tenetur doloremque ipsam iure\nquis sunt voluptatem rerum illo velit"
+
+
+def test_patching_user_id_to_existing_user_id():
+    """The API seems to essentially ignore the request and keep the userID as it currently is."""
+    url = f"{BASE_URL}/posts/5"
+    data = {
+        "userID": 2
+    }
+    response = requests.patch(url, json=data)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert "application/json" in response.headers["Content-Type"]
+    post = response.json()
+    assert int(post["userId"]) == 1
+    assert post["id"] == 5
+    assert post["title"] == "nesciunt quas odio"
+    assert post["body"] == "repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus quis\nest aut tenetur dolor neque"
+
+def test_patching_user_id_to_nonexistent_user_id():
+    url = f"{BASE_URL}/posts/5"
+    data = {
+        "userID": 999
+    }
+    response = requests.patch(url, json=data)
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert "application/json" in response.headers["Content-Type"]
+    post = response.json()
+    assert int(post["userId"]) == 1
+    assert post["id"] == 5
+    assert post["title"] == "nesciunt quas odio"
+    assert post["body"] == "repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus quis\nest aut tenetur dolor neque"
+    
 
 # DELETE tests
 
