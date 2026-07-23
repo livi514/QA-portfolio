@@ -191,3 +191,12 @@ def test_deleting_post():
     response = requests.delete(url)
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert response.json() == {}
+
+def test_delete_non_existent_post():
+    """Negative test: deleting a non-existent post.
+    JSONPlaceholder returns 200 regardless of whether the resource exists,
+    since it doesn't actually persist any changes.
+    On a real API, this would typically return 404."""
+    response = requests.delete(f"{BASE_URL}/posts/999")
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert response.json() == {}
