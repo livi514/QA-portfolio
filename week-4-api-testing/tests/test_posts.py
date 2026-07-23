@@ -127,8 +127,9 @@ def test_create_post_by_user():
 
 
 def test_create_post_by_non_existent_user():
-    """Test creating a post via the nested user URL (/users/{id}/posts), where the id doesn't belong to an existing user.
-    JSON placeholder allows this."""
+    """Negative test: creating a post via /users/{id}/posts where the user doesn't exist.
+    JSONPlaceholder allows this and returns 201 — on a real API this should return 404
+    since the parent user resource doesn't exist."""
     url = f"{BASE_URL}/users/999/posts"
     data = {
         "title": "User 999's post",
@@ -142,14 +143,14 @@ def test_create_post_by_non_existent_user():
     # userId is returned as a string when posting via /users/{id}/posts
     assert int(post["userId"]) == 999
     assert post["title"] == "User 999's post", f"Expected 'User 999's post', but got {post['title']}"
-    assert post["body"] == "New post by user 999", f"Expected 'New post by user 99', but got {post['body']}"
+    assert post["body"] == "New post by user 999", f"Expected 'New post by user 999', but got {post['body']}"
 
 
 # PUT tests
 
 def test_put_replaces_post():
     """Test that PUT replaces all fields of an existing post.
-    The full resource must be sent in the request body, as partial updates are not supported by PUT."""
+    The full resource must be sent in the request body — partial updates are not supported by PUT."""
     url = f"{BASE_URL}/posts/1"
     data = {
         "userId": 1,
@@ -165,8 +166,26 @@ def test_put_replaces_post():
     assert post["title"] == "New title"
     assert post["body"] == "New body"
 
+
+def test_put_non_existent_post():
+    """Negative test: PUTting to a non-existent post.
+    According to the REST spec, PUT to a non-existent resource should either
+    create it (201) or return 404. JSONPlaceholder returns 500, which indicates
+    the server does not handle this case gracefully — this would be a bug on a real API."""
+    url = f"{BASE_URL}/posts/999"
+    data = {
+        "userId": 1,
+        "title": "New title",
+        "body": "New body"
+    }
+    response = requests.put(url, json=data)
+    assert response.status_code == 500, f"Expected 500 but got {response.status_code}"
+
+
 def test_put_with_other_users_id():
-    "Shouldn't be allowed"
+    """Test PUTting a post with a different userId than the original.
+    JSONPlaceholder allows this and returns 200 with the new userId — on a real API
+    this might be restricted to prevent users modifying each other's posts."""
     url = f"{BASE_URL}/posts/1"
     data = {
         "userId": 2,
@@ -182,8 +201,11 @@ def test_put_with_other_users_id():
     assert post["title"] == "New title"
     assert post["body"] == "New body"
 
+
 def test_put_with_invalid_user_id():
-    "Shouldn't be allowed."
+    """Test PUTting a post with a userId that doesn't correspond to any existing user.
+    JSONPlaceholder allows this and returns 200 — on a real API this should return 400
+    or 404 since the referenced user doesn't exist."""
     url = f"{BASE_URL}/posts/1"
     data = {
         "userId": 999,
@@ -199,19 +221,6 @@ def test_put_with_invalid_user_id():
     assert post["title"] == "New title"
     assert post["body"] == "New body"
 
-def test_put_non_existent_post():
-    """Negative test: PUTting to a non-existent post.
-    According to the REST spec, PUT to a non-existent resource should either
-    create it (201) or return 404. JSONPlaceholder returns 500, which indicates
-    the server does not handle this case gracefully — this would be a bug on a real API."""
-    url = f"{BASE_URL}/posts/999"
-    data = {
-        "userId": 1,
-        "title": "New title",
-        "body": "New body"
-    }
-    response = requests.put(url, json=data)
-    assert response.status_code == 500, f"Expected 500 but got {response.status_code}"
 
 # PATCH tests
 
@@ -250,7 +259,9 @@ def test_patching_post_body():
 
 
 def test_patching_post_id_to_existing_post_id():
-    """This is interesting. This shouldn't be allowed as there is already a post with id 5."""
+    """Test PATCHing a post's id to an id that already belongs to another post.
+    JSONPlaceholder allows this and returns 200 — on a real API this should return 400
+    or 409 Conflict since duplicate IDs violate data integrity."""
     url = f"{BASE_URL}/posts/4"
     data = {
         "id": 5
@@ -266,49 +277,60 @@ def test_patching_post_id_to_existing_post_id():
 
 
 def test_patching_post_id_to_nonexistent_post_id():
+    """Test PATCHing a post's id to an id that doesn't belong to any existing post.
+    JSONPlaceholder allows this and returns 200 — on a real API the behaviour
+    would depend on whether IDs are system-generated or user-assignable."""
     url = f"{BASE_URL}/posts/4"
     data = {
-        "id": 5
+        "id": 999
     }
     response = requests.patch(url, json=data)
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert "application/json" in response.headers["Content-Type"]
     post = response.json()
     assert int(post["userId"]) == 1
-    assert post["id"] == 5
+    assert post["id"] == 999
     assert post["title"] == "eum et est occaecati"
     assert post["body"] == "ullam et saepe reiciendis voluptatem adipisci\nsit amet autem assumenda provident rerum culpa\nquis hic commodi nesciunt rem tenetur doloremque ipsam iure\nquis sunt voluptatem rerum illo velit"
 
 
 def test_patching_user_id_to_existing_user_id():
-    """The API seems to essentially ignore the request and keep the userID as it currently is."""
+    """Test PATCHing a post's userId to an existing userId.
+    Note: the request body uses 'userID' (capital D) — JSONPlaceholder ignores
+    unrecognised fields, so the userId remains unchanged at 1.
+    This documents the API's behaviour when an incorrect field name is used."""
     url = f"{BASE_URL}/posts/5"
     data = {
-        "userID": 2
+        "userID": 2  # note: incorrect field name — should be 'userId'
     }
     response = requests.patch(url, json=data)
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert "application/json" in response.headers["Content-Type"]
     post = response.json()
-    assert int(post["userId"]) == 1
+    assert int(post["userId"]) == 1  # userId unchanged due to incorrect field name
     assert post["id"] == 5
     assert post["title"] == "nesciunt quas odio"
     assert post["body"] == "repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus quis\nest aut tenetur dolor neque"
 
+
 def test_patching_user_id_to_nonexistent_user_id():
+    """Test PATCHing a post's userId to a non-existent userId.
+    Note: same as above — 'userID' (capital D) is not a recognised field,
+    so the userId remains unchanged. On a real API with correct field names,
+    patching to a non-existent userId should return 400 or 404."""
     url = f"{BASE_URL}/posts/5"
     data = {
-        "userID": 999
+        "userID": 999  # note: incorrect field name — should be 'userId'
     }
     response = requests.patch(url, json=data)
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert "application/json" in response.headers["Content-Type"]
     post = response.json()
-    assert int(post["userId"]) == 1
+    assert int(post["userId"]) == 1  # userId unchanged due to incorrect field name
     assert post["id"] == 5
     assert post["title"] == "nesciunt quas odio"
     assert post["body"] == "repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus quis\nest aut tenetur dolor neque"
-    
+
 
 # DELETE tests
 
@@ -318,6 +340,7 @@ def test_deleting_post():
     response = requests.delete(url)
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert response.json() == {}
+
 
 def test_delete_non_existent_post():
     """Negative test: deleting a non-existent post.
