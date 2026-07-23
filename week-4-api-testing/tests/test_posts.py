@@ -17,6 +17,21 @@ def test_get_list_of_posts():
         assert isinstance(post["title"], str)
         assert isinstance(post["body"], str)
 
+def test_get_post():
+    response = requests.get(f"{BASE_URL}/posts/1")
+    assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
+    assert "application/json" in response.headers["Content-Type"]
+    post = response.json()
+    assert post["userId"] == 1
+    assert post["id"] == 1
+    assert post["title"] == "sunt aut facere repellat provident occaecati excepturi optio reprehenderit"
+    assert post["body"] == "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+
+def test_get_non_existent_post():
+    response = requests.get(f"{BASE_URL}/posts/999")
+    assert response.status_code == 404, f"Expected 404 but got {response.status_code}"
+    assert response.json() == {}
+
 def test_get_posts_by_user():
     response = requests.get(f"{BASE_URL}/users/1/posts")
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
