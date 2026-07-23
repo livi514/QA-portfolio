@@ -11,7 +11,13 @@ BASE_URL = "https://jsonplaceholder.typicode.com"
     "/users/1/posts",
 ])
 def test_response_time(endpoint):
-    """Test that the response time of crucial endpoints does not exceed one second."""
+    
+    """
+    Test that the response time of crucial endpoints does not exceed one second.
+    1.0 second is a reasonable threshold for a public API under normal conditions.
+    On a real project this threshold would be defined in performance requirements
+    """
+
     response = requests.get(f"{BASE_URL}{endpoint}")
     assert response.elapsed.total_seconds() < 1.0, \
         f"{endpoint} took {response.elapsed.total_seconds():.2f}s"
