@@ -130,7 +130,7 @@ def test_create_post_by_user():
 
 def test_put_replaces_post():
     """Test that PUT replaces all fields of an existing post.
-    The full resource must be sent in the request body — partial updates are not supported by PUT."""
+    The full resource must be sent in the request body, as partial updates are not supported by PUT."""
     url = f"{BASE_URL}/posts/1"
     data = {
         "userId": 1,
