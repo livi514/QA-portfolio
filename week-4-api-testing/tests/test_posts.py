@@ -146,6 +146,19 @@ def test_put_replaces_post():
     assert post["title"] == "New title"
     assert post["body"] == "New body"
 
+def test_put_non_existent_post():
+    """Negative test: PUTting to a non-existent post.
+    According to the REST spec, PUT to a non-existent resource should either
+    create it (201) or return 404. JSONPlaceholder returns 500, which indicates
+    the server does not handle this case gracefully — this would be a bug on a real API."""
+    url = f"{BASE_URL}/posts/999"
+    data = {
+        "userId": 1,
+        "title": "New title",
+        "body": "New body"
+    }
+    response = requests.put(url, json=data)
+    assert response.status_code == 500, f"Expected 500 but got {response.status_code}"
 
 # PATCH tests
 
