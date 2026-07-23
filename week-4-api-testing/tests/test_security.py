@@ -3,11 +3,13 @@ import requests
 BASE_URL = "https://jsonplaceholder.typicode.com"
 
 def test_api_uses_https():
+    """Test that the API uses the HTTPS protocol, rather than HTTP."""
     response = requests.get(f"{BASE_URL}/users")
     assert BASE_URL.startswith("https://"), "API should be served over HTTPS"
     assert response.status_code == 200
 
 def test_security_headers():
+    """Test that the API includes crucial security headers."""
     response = requests.get(f"{BASE_URL}/users")
     
     # X-Content-Type-Options should be set to 'nosniff' to prevent MIME type sniffing
