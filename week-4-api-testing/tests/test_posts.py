@@ -6,6 +6,7 @@ BASE_URL = "https://jsonplaceholder.typicode.com"
 # GET tests
 
 def test_get_list_of_posts():
+    """Test that the full list of posts is returned with the correct structure."""
     response = requests.get(f"{BASE_URL}/posts")
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert "application/json" in response.headers["Content-Type"]
@@ -13,11 +14,13 @@ def test_get_list_of_posts():
     assert len(posts) == 100, f"Expected 100 posts but got {len(posts)}"
     for i, post in enumerate(posts, start=1):
         assert post["id"] == i, f"Expected id == {i}, but got {post['id']}"
-        assert isinstance(post["userId"], int) and post["userId"] in range(1,11)
+        assert isinstance(post["userId"], int) and post["userId"] in range(1, 11)
         assert isinstance(post["title"], str)
         assert isinstance(post["body"], str)
 
+
 def test_get_post():
+    """Test that a single post is returned with the correct field values."""
     response = requests.get(f"{BASE_URL}/posts/1")
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert "application/json" in response.headers["Content-Type"]
@@ -27,12 +30,17 @@ def test_get_post():
     assert post["title"] == "sunt aut facere repellat provident occaecati excepturi optio reprehenderit"
     assert post["body"] == "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
 
+
 def test_get_non_existent_post():
+    """Negative test: requesting a post that doesn't exist should return 404 and an empty body."""
     response = requests.get(f"{BASE_URL}/posts/999")
     assert response.status_code == 404, f"Expected 404 but got {response.status_code}"
     assert response.json() == {}
 
+
 def test_get_posts_by_user():
+    """Test retrieving posts for a specific user via the nested URL (/users/{id}/posts).
+    Every post in the response should belong to user 1."""
     response = requests.get(f"{BASE_URL}/users/1/posts")
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert "application/json" in response.headers["Content-Type"]
@@ -44,7 +52,10 @@ def test_get_posts_by_user():
         assert isinstance(post["title"], str)
         assert isinstance(post["body"], str)
 
+
 def test_get_posts_by_user_id():
+    """Test retrieving posts for a specific user via query parameter (/posts?userId=1).
+    This is an alternative approach to test_get_posts_by_user — same result, different URL pattern."""
     response = requests.get(f"{BASE_URL}/posts?userId=1")
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     posts = response.json()
@@ -55,17 +66,21 @@ def test_get_posts_by_user_id():
         assert isinstance(post["title"], str)
         assert isinstance(post["body"], str)
 
+
 def test_get_posts_by_user_invalid_id():
-    # JSONPlaceholder returns 200 with an empty list for a non-existent userId
-    # This is valid REST design — the query succeeded but found no matching results
-    # A 404 would only be appropriate if the endpoint itself didn't exist
+    """Negative test: querying posts for a non-existent userId.
+    JSONPlaceholder returns 200 with an empty list for a non-existent userId.
+    This is valid REST design — the query succeeded but found no matching results.
+    A 404 would only be appropriate if the endpoint itself didn't exist."""
     response = requests.get(f"{BASE_URL}/posts?userId=999")
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert response.json() == [], "Expected empty list for non-existent userId"
 
+
 # POST tests
 
 def test_create_post():
+    """Test that a new post can be created and the response echoes back the correct data."""
     url = f"{BASE_URL}/posts"
     data = {
         "userId": 1,
@@ -81,15 +96,20 @@ def test_create_post():
     assert post["title"] == "Example title", f"Expected 'Example title', but got {post['title']}"
     assert post["body"] == "Example body", f"Expected 'Example body', but got {post['body']}"
 
+
 @pytest.mark.skip(reason="JSONPlaceholder does not validate input — POSTing with missing fields returns 201 instead of 400. On a real API, this should return 400 Bad Request.")
 def test_create_post_with_missing_fields():
     pass
+
 
 @pytest.mark.skip(reason="JSONPlaceholder does not validate data types — POSTing with incorrect types returns 201 instead of 400. On a real API, this should return 400 Bad Request.")
 def test_create_post_with_incorrect_data_types():
     pass
 
+
 def test_create_post_by_user():
+    """Test creating a post via the nested user URL (/users/{id}/posts).
+    Note: userId is returned as a string when posting via this endpoint — this is a JSONPlaceholder quirk."""
     url = f"{BASE_URL}/users/1/posts"
     data = {
         "title": "User 1's post",
@@ -105,27 +125,32 @@ def test_create_post_by_user():
     assert post["title"] == "User 1's post", f"Expected 'User 1's post', but got {post['title']}"
     assert post["body"] == "New post by user 1", f"Expected 'New post by user 1', but got {post['body']}"
 
-# PUT tests 
 
-def test_replacing_post_content():
+# PUT tests
+
+def test_put_replaces_post():
+    """Test that PUT replaces all fields of an existing post.
+    The full resource must be sent in the request body — partial updates are not supported by PUT."""
     url = f"{BASE_URL}/posts/1"
     data = {
         "userId": 1,
-        "title" : "New title",
-        "body" : "New body"
+        "title": "New title",
+        "body": "New body"
     }
     response = requests.put(url, json=data)
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
-    assert "application/json" in response.headers["Content-Type"]    
+    assert "application/json" in response.headers["Content-Type"]
     post = response.json()
     assert int(post["userId"]) == 1
     assert post["id"] == 1
     assert post["title"] == "New title"
     assert post["body"] == "New body"
 
+
 # PATCH tests
 
-def test_replacing_post_title():
+def test_patching_post_title():
+    """Test that PATCH updates only the title field, leaving all other fields unchanged."""
     url = f"{BASE_URL}/posts/2"
     data = {
         "title": "New title"
@@ -137,9 +162,12 @@ def test_replacing_post_title():
     assert int(post["userId"]) == 1
     assert post["id"] == 2
     assert post["title"] == "New title"
+    # body should be unchanged since it was not included in the PATCH request
     assert post["body"] == "est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla"
 
-def test_replacing_post_body():
+
+def test_patching_post_body():
+    """Test that PATCH updates only the body field, leaving all other fields unchanged."""
     url = f"{BASE_URL}/posts/3"
     data = {
         "body": "New body"
@@ -150,12 +178,15 @@ def test_replacing_post_body():
     post = response.json()
     assert int(post["userId"]) == 1
     assert post["id"] == 3
+    # title should be unchanged since it was not included in the PATCH request
     assert post["title"] == "ea molestias quasi exercitationem repellat qui ipsa sit aut"
     assert post["body"] == "New body"
 
-# DELETE tests 
+
+# DELETE tests
 
 def test_deleting_post():
+    """Test that DELETE returns 200 and an empty body, confirming the post was removed."""
     url = f"{BASE_URL}/posts/4"
     response = requests.delete(url)
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
