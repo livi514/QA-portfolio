@@ -9,7 +9,8 @@ def test_api_uses_https():
     assert response.status_code == 200
 
 def test_security_headers():
-    """Test that the API includes crucial security headers."""
+    """Test the presence and values of security-related response headers,
+    and document which expected headers are missing from JSONPlaceholder responses."""
     response = requests.get(f"{BASE_URL}/users")
     
     # X-Content-Type-Options should be set to 'nosniff' to prevent MIME type sniffing
