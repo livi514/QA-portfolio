@@ -73,6 +73,11 @@ def test_create_post():
     assert post["title"] == "Example title", f"Expected 'Example title', but got {post['title']}"
     assert post["body"] == "Example body", f"Expected 'Example body', but got {post['body']}"
 
+@pytest.mark.skip(reason="JSONPlaceholder does not validate input — POSTing with missing fields returns 201 instead of 400. On a real API, this should return 400 Bad Request.")
+def test_create_post_with_missing_fields():
+    pass
+
+
 def test_create_post_by_user():
     url = f"{BASE_URL}/users/1/posts"
     data = {
