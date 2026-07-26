@@ -16,4 +16,4 @@ jobs:
       - name: Install browsers
         run: playwright install --with-deps chromium firefox webkit
       - name: Run tests
-        run: pytest
+        run: pytest week-3-playwright-polish/tests
