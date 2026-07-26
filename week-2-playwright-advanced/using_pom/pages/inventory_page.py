@@ -1,5 +1,6 @@
 from playwright.sync_api import expect
 
+
 class InventoryPage:
     def __init__(self, page):
         self.page = page
@@ -18,11 +19,19 @@ class InventoryPage:
         self.product_prices = page.locator("div.inventory_item_price")
 
         # Specific product buttons
-        self.backpack_add_button = page.locator("[data-test='add-to-cart-sauce-labs-backpack']")
-        self.backpack_remove_button = page.locator("[data-test='remove-sauce-labs-backpack']")
+        self.backpack_add_button = page.locator(
+            "[data-test='add-to-cart-sauce-labs-backpack']"
+        )
+        self.backpack_remove_button = page.locator(
+            "[data-test='remove-sauce-labs-backpack']"
+        )
 
-        self.bike_light_add_button = page.locator("[data-test='add-to-cart-sauce-labs-bike-light']")
-        self.bike_light_remove_button = page.locator("[data-test='remove-sauce-labs-bike-light']")
+        self.bike_light_add_button = page.locator(
+            "[data-test='add-to-cart-sauce-labs-bike-light']"
+        )
+        self.bike_light_remove_button = page.locator(
+            "[data-test='remove-sauce-labs-bike-light']"
+        )
 
     # Navigation
     def navigate(self):
@@ -94,7 +103,11 @@ class InventoryPage:
         return self.product_items.count()
 
     def get_price_of(self, product_name):
-        locator = self.page.locator(f"text={product_name}").locator("..").locator(".inventory_item_price")
+        locator = (
+            self.page.locator(f"text={product_name}")
+            .locator("..")
+            .locator(".inventory_item_price")
+        )
         return locator.inner_text()
 
     # Visibility helpers
@@ -106,7 +119,7 @@ class InventoryPage:
 
     def is_cart_icon_visible(self):
         return self.cart_icon.is_visible()
-    
+
     def are_product_names_visible(self):
         for i in range(6):
             expect(self.product_names.nth(i)).to_be_visible()

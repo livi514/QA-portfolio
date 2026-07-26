@@ -1,5 +1,6 @@
 from playwright.sync_api import expect
 
+
 def test_checkout_with_empty_cart(page):
     # saucedemo allows checkout with an empty cart — this documents that behaviour.
     # a bug report should be raised if this is not the intended behaviour.
@@ -32,6 +33,7 @@ def test_checkout_with_empty_cart(page):
     # check that the checkout complete page is displayed
     expect(page.locator(".title")).to_have_text("Checkout: Complete!")
 
+
 def test_checkout_with_items(page):
     # navigate to the login page
     page.goto("https://www.saucedemo.com/")
@@ -62,8 +64,12 @@ def test_checkout_with_items(page):
     expect(page.locator(".title")).to_have_text("Checkout: Overview")
     # check that the items are displayed on the checkout overview page
     expect(page.locator(".cart_item")).to_have_count(2)
-    expect(page.locator(".inventory_item_name").nth(0)).to_have_text("Sauce Labs Backpack")
-    expect(page.locator(".inventory_item_name").nth(1)).to_have_text("Sauce Labs Bike Light")
+    expect(page.locator(".inventory_item_name").nth(0)).to_have_text(
+        "Sauce Labs Backpack"
+    )
+    expect(page.locator(".inventory_item_name").nth(1)).to_have_text(
+        "Sauce Labs Bike Light"
+    )
     # check item total and tax calculations
     item_total = page.locator(".summary_subtotal_label").text_content()
     tax = page.locator(".summary_tax_label").text_content()
@@ -78,4 +84,3 @@ def test_checkout_with_items(page):
     page.locator("[data-test='finish']").click()
     # check that the checkout complete page is displayed
     expect(page.locator(".title")).to_have_text("Checkout: Complete!")
-    

@@ -1,8 +1,8 @@
-from playwright.sync_api import expect
-from pages.inventory_page import InventoryPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
+from pages.inventory_page import InventoryPage
 from test_data import CHECKOUT_INFO
+
 
 def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # saucedemo allows checkout with an empty cart — this documents that behaviour.
@@ -11,7 +11,7 @@ def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # navigate to the inventory page
     inventory = InventoryPage(log_in_to_saucedemo)
     inventory.wait_until_loaded()
-    # check that the cart is empty 
+    # check that the cart is empty
     assert inventory.get_cart_count() == 0
     # click on the 'Cart' icon
     inventory.cart_icon.click()
@@ -24,7 +24,11 @@ def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # check that the checkout page is displayed
     assert checkout.get_title_text() == "Checkout: Your Information"
     # fill in the checkout information
-    checkout.fill_information(CHECKOUT_INFO["first_name"], CHECKOUT_INFO["last_name"], CHECKOUT_INFO["postal_code"])
+    checkout.fill_information(
+        CHECKOUT_INFO["first_name"],
+        CHECKOUT_INFO["last_name"],
+        CHECKOUT_INFO["postal_code"],
+    )
     # check that the checkout overview page is displayed
     assert checkout.get_title_text() == "Checkout: Overview"
     # click on the 'Finish' button
@@ -32,9 +36,10 @@ def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # check that the checkout complete page is displayed
     assert checkout.get_title_text() == "Checkout: Complete!"
 
+
 def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
     # This test verifies that the checkout process works correctly when items are in the cart.
-    
+
     cart = CartPage(add_backpack_and_bike_light_to_cart)
     # check number of items in the cart
     assert cart.get_item_count() == 2
@@ -44,7 +49,11 @@ def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
     # check that the checkout page is displayed
     assert checkout.get_title_text() == "Checkout: Your Information"
     # fill in the checkout information
-    checkout.fill_information(CHECKOUT_INFO["first_name"], CHECKOUT_INFO["last_name"], CHECKOUT_INFO["postal_code"])
+    checkout.fill_information(
+        CHECKOUT_INFO["first_name"],
+        CHECKOUT_INFO["last_name"],
+        CHECKOUT_INFO["postal_code"],
+    )
     # check that the checkout overview page is displayed
     assert checkout.get_title_text() == "Checkout: Overview"
     # check that the items are displayed on the checkout overview page

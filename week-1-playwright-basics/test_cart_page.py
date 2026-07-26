@@ -1,5 +1,6 @@
 from playwright.sync_api import expect
 
+
 def test_empty_cart_state(page):
     # navigate to the login page
     page.goto("https://www.saucedemo.com/")
@@ -8,11 +9,12 @@ def test_empty_cart_state(page):
     page.locator("#password").fill("secret_sauce")
     # click the login button
     page.locator("#login-button").click()
-    # click the cart button 
+    # click the cart button
     page.locator(".shopping_cart_link").click()
     # check that no elements are visible in the cart
     cart_item = page.locator(".cart_item")
     expect(cart_item).to_have_count(0)
+
 
 def test_add_item_to_cart(page):
     # navigate to the login page
@@ -24,7 +26,7 @@ def test_add_item_to_cart(page):
     page.locator("#login-button").click()
     # on the inventory page, click one of the "Add to cart" buttons
     page.locator("[data-test='add-to-cart-sauce-labs-backpack']").click()
-    # click on the cart button 
+    # click on the cart button
     page.locator(".shopping_cart_link").click()
     # check number of items in the cart
     cart_item = page.locator(".cart_item")
@@ -33,7 +35,10 @@ def test_add_item_to_cart(page):
     inventory_item_name = page.locator(".inventory_item_name")
     expect(inventory_item_name).to_have_text("Sauce Labs Backpack")
     # check the text on the 'Remove' button
-    expect(page.locator("[data-test='remove-sauce-labs-backpack']")).to_have_text("Remove")
+    expect(page.locator("[data-test='remove-sauce-labs-backpack']")).to_have_text(
+        "Remove"
+    )
+
 
 def test_remove_item_from_cart(page):
     # navigate to the login page
@@ -51,6 +56,7 @@ def test_remove_item_from_cart(page):
     page.locator("[data-test='remove-sauce-labs-backpack']").click()
     # check that the backpack no longer appears in the cart
     expect(page.locator(".cart_item")).to_have_count(0)
+
 
 def test_removing_item_doesnt_affect_others(page):
     # navigate to the login page
@@ -79,6 +85,7 @@ def test_removing_item_doesnt_affect_others(page):
     # check that the bike light still appears in the cart
     expect(page.locator(".inventory_item_name")).to_have_text("Sauce Labs Bike Light")
 
+
 def test_continue_shopping_button(page):
     # navigate to the login page
     page.goto("https://www.saucedemo.com/")
@@ -95,6 +102,7 @@ def test_continue_shopping_button(page):
     page.locator("[data-test='continue-shopping']").click()
     # check that the inventory page is displayed
     expect(page.locator(".title")).to_have_text("Products")
+
 
 def test_persistence_with_continue_shopping_button(page):
     # This test verifies that clicking the 'Continue Shopping' button does not remove items from the cart.
@@ -119,10 +127,11 @@ def test_persistence_with_continue_shopping_button(page):
     page.locator(".shopping_cart_link").click()
     # check that the items are still in the cart
     expect(page.locator(".cart_item")).to_have_count(2)
-    # check names of items 
+    # check names of items
     inventory_item_name = page.locator(".inventory_item_name")
     expect(inventory_item_name.nth(0)).to_have_text("Sauce Labs Backpack")
     expect(inventory_item_name.nth(1)).to_have_text("Sauce Labs Bike Light")
+
 
 def test_cart_persists_after_logout_and_login(page):
     # This test verifies that items in the cart persist after logging out and logging back in.

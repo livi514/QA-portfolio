@@ -1,7 +1,7 @@
-from playwright.sync_api import expect
-from using_pom.pages.inventory_page import InventoryPage
 from using_pom.pages.cart_page import CartPage
 from using_pom.pages.checkout_page import CheckoutPage
+from using_pom.pages.inventory_page import InventoryPage
+
 
 def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # saucedemo allows checkout with an empty cart — this documents that behaviour.
@@ -10,7 +10,7 @@ def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # navigate to the inventory page
     inventory = InventoryPage(log_in_to_saucedemo)
     inventory.wait_until_loaded()
-    # check that the cart is empty 
+    # check that the cart is empty
     assert inventory.get_cart_count() == 0
     # click on the 'Cart' icon
     inventory.cart_icon.click()
@@ -31,9 +31,10 @@ def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # check that the checkout complete page is displayed
     assert checkout.get_title_text() == "Checkout: Complete!"
 
+
 def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
     # This test verifies that the checkout process works correctly when items are in the cart.
-    
+
     cart = CartPage(add_backpack_and_bike_light_to_cart)
     # check number of items in the cart
     assert cart.get_item_count() == 2

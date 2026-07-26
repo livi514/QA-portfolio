@@ -1,4 +1,5 @@
-from test_data import VALID_USER, INVALID_USER
+from test_data import INVALID_USER, VALID_USER
+
 
 class LoginPage:
     def __init__(self, page):

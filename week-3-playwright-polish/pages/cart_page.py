@@ -5,8 +5,12 @@ class CartPage:
         self.item_names = page.locator(".inventory_item_name")
         self.item_prices = page.locator(".inventory_item_price")
 
-        self.remove_backpack_button = page.locator("[data-test='remove-sauce-labs-backpack']")
-        self.remove_bike_light_button = page.locator("[data-test='remove-sauce-labs-bike-light']")
+        self.remove_backpack_button = page.locator(
+            "[data-test='remove-sauce-labs-backpack']"
+        )
+        self.remove_bike_light_button = page.locator(
+            "[data-test='remove-sauce-labs-bike-light']"
+        )
 
         self.continue_shopping_button = page.locator("[data-test='continue-shopping']")
         self.checkout_button = page.locator("[data-test='checkout']")
@@ -33,6 +37,6 @@ class CartPage:
 
     def get_item_prices(self):
         return self.item_prices.all_inner_texts()
-        
+
     def get_title_text(self):
         return self.page.locator(".title").inner_text()

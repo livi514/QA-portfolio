@@ -48,5 +48,3 @@ class CheckoutPage:
         total_value = float(total_text.split("$")[1])
 
         return item_total_value, tax_value, total_value
-    
-

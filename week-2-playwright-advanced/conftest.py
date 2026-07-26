@@ -2,6 +2,7 @@
 
 import pytest
 
+
 # for valid login credentials, we can create a fixture that performs the login steps and returns the logged-in page object. This fixture can then be used in multiple test cases that require a logged-in state.
 def perform_login(page):
     page.goto("https://www.saucedemo.com/")
@@ -9,12 +10,14 @@ def perform_login(page):
     page.locator("#password").fill("secret_sauce")
     page.locator("#login-button").click()
 
+
 @pytest.fixture
 def log_in_to_saucedemo(page):
     perform_login(page)
     # Wait for navigation to inventory page
     page.wait_for_url("**/inventory.html")
     return page
+
 
 @pytest.fixture
 def add_backpack_to_cart(log_in_to_saucedemo):
@@ -24,6 +27,7 @@ def add_backpack_to_cart(log_in_to_saucedemo):
     # click on the cart button
     page.locator(".shopping_cart_link").click()
     return page
+
 
 @pytest.fixture
 def add_backpack_and_bike_light_to_cart(log_in_to_saucedemo):

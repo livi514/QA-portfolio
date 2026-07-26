@@ -1,6 +1,8 @@
 import re
-from playwright.sync_api import expect
+
 import pytest
+from playwright.sync_api import expect
+
 
 def test_number_of_products(page):
     # This test checks that the inventory page renders with the expected number of inventory items (6).
@@ -15,6 +17,7 @@ def test_number_of_products(page):
     # assert that there are 6 products on the inventory page
     expect(page.locator(".inventory_item")).to_have_count(6)
 
+
 def test_add_and_remove_item_from_cart(page):
     # navigate to the login page
     page.goto("https://www.saucedemo.com/")
@@ -27,13 +30,18 @@ def test_add_and_remove_item_from_cart(page):
     page.locator("[data-test='add-to-cart-sauce-labs-backpack']").click()
     # number of items in cart should equal 1
     expect(page.locator(".shopping_cart_badge")).to_have_text("1")
-    expect(page.locator("[data-test='remove-sauce-labs-backpack']")).to_have_text("Remove")
+    expect(page.locator("[data-test='remove-sauce-labs-backpack']")).to_have_text(
+        "Remove"
+    )
     # remove item from cart
     page.locator("[data-test='remove-sauce-labs-backpack']").click()
     # check that the cart badge disappears
     expect(page.locator(".shopping_cart_badge")).not_to_be_visible()
     # check that the text on the button updates to "Add to cart"
-    expect(page.locator("[data-test='add-to-cart-sauce-labs-backpack']")).to_have_text("Add to cart")
+    expect(page.locator("[data-test='add-to-cart-sauce-labs-backpack']")).to_have_text(
+        "Add to cart"
+    )
+
 
 def test_add_two_items_to_cart(page):
     # navigate to the login page
@@ -50,14 +58,21 @@ def test_add_two_items_to_cart(page):
     # number of items in cart should equal 2
     expect(page.locator(".shopping_cart_badge")).to_have_text("2")
     # backpack and bike light buttons should have "Remove" text
-    expect(page.locator("[data-test='remove-sauce-labs-backpack']")).to_have_text("Remove")
-    expect(page.locator("[data-test='remove-sauce-labs-bike-light']")).to_have_text("Remove")
+    expect(page.locator("[data-test='remove-sauce-labs-backpack']")).to_have_text(
+        "Remove"
+    )
+    expect(page.locator("[data-test='remove-sauce-labs-bike-light']")).to_have_text(
+        "Remove"
+    )
 
-@pytest.mark.parametrize("sort_value, expected_order", [
-    ("az", "ascending"),
-    ("za", "descending"),
-])
 
+@pytest.mark.parametrize(
+    "sort_value, expected_order",
+    [
+        ("az", "ascending"),
+        ("za", "descending"),
+    ],
+)
 def test_sort_by_name(page, sort_value, expected_order):
     # navigate to the login page
     page.goto("https://www.saucedemo.com/")
@@ -75,11 +90,10 @@ def test_sort_by_name(page, sort_value, expected_order):
     else:
         assert names == sorted(names, reverse=True)
 
-@pytest.mark.parametrize("sort_value, expected_order", [
-    ("lohi", "ascending"),
-    ("hilo", "descending")
-])
 
+@pytest.mark.parametrize(
+    "sort_value, expected_order", [("lohi", "ascending"), ("hilo", "descending")]
+)
 def test_sort_by_price(page, sort_value, expected_order):
     # navigate to the login page
     page.goto("https://www.saucedemo.com/")
@@ -93,10 +107,11 @@ def test_sort_by_price(page, sort_value, expected_order):
     # check ordering
     raw_prices = page.locator(".inventory_item_price").all_text_contents()
     prices = [float(price_text.replace("$", "")) for price_text in raw_prices]
-    if (expected_order == "ascending"):
+    if expected_order == "ascending":
         assert prices == sorted(prices)
     else:
         assert prices == sorted(prices, reverse=True)
+
 
 def test_url_after_clicking_cart(page):
     # This test checks that the user is redirected to the expected page (cart) after clicking the cart button.
@@ -108,6 +123,6 @@ def test_url_after_clicking_cart(page):
     page.locator("#password").fill("secret_sauce")
     # click the login button
     page.locator("#login-button").click()
-    # click the cart button 
+    # click the cart button
     page.locator(".shopping_cart_link").click()
     expect(page).to_have_url(re.compile("cart"))
