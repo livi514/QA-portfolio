@@ -6,7 +6,7 @@ from using_pom.pages.inventory_page import InventoryPage
 def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # saucedemo allows checkout with an empty cart — this documents that behaviour.
     # a bug report should be raised if this is not the intended behaviour.
-    
+
     # navigate to the inventory page
     inventory = InventoryPage(log_in_to_saucedemo)
     inventory.wait_until_loaded()
