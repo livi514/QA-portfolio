@@ -1,8 +1,9 @@
 import re
 
 import pytest
-from pages.inventory_page import InventoryPage
 from playwright.sync_api import expect
+
+from pages.inventory_page import InventoryPage
 
 # Inventory page baseline checks
 

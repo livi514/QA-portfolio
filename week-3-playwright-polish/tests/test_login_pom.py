@@ -1,6 +1,7 @@
 import pytest
-from pages.login_page import LoginPage
 from playwright.sync_api import expect
+
+from pages.login_page import LoginPage
 from test_data import ERROR_MESSAGES
 
 # ---- Baseline checks (raw page, no POM) ------

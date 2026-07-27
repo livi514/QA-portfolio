@@ -1,4 +1,5 @@
 import pytest
+
 from test_data import VALID_USER
 
 
