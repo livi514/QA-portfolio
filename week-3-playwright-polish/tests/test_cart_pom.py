@@ -1,10 +1,9 @@
 import pytest
-from playwright.sync_api import expect
-
 from conftest import perform_login
 from pages.cart_page import CartPage
 from pages.inventory_page import InventoryPage
 from pages.menu_page import MenuPage
+from playwright.sync_api import expect
 
 
 @pytest.mark.smoke
