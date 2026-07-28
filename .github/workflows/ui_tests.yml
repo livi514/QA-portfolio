@@ -1,5 +1,4 @@
 name: UI Tests
-
 on: [push, pull_request]
 
 jobs:
@@ -24,9 +23,11 @@ jobs:
         run: playwright install --with-deps chromium firefox webkit
 
       - name: Run tests
-        run: pytest week-3-playwright-polish/tests \
-             --html=week-3-playwright-polish/report.html \
-             --self-contained-html
+        run: |
+          cd week-3-playwright-polish
+          pytest tests \
+            --html=report.html \
+            --self-contained-html
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
@@ -34,3 +35,4 @@ jobs:
         with:
           name: ui-test-report-${{ matrix.os }}
           path: week-3-playwright-polish/report.html
+
