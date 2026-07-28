@@ -22,7 +22,7 @@ jobs:
       - name: Run API tests
         shell: bash
         run: |
-          cd week-4-api-tests
+          cd week-4-api-testing
           pytest tests \
             --html=report.html \
             --self-contained-html
