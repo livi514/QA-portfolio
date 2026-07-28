@@ -23,6 +23,7 @@ jobs:
         run: playwright install --with-deps chromium firefox webkit
 
       - name: Run tests
+        shell: bash
         run: |
           cd week-3-playwright-polish
           pytest tests \
@@ -35,4 +36,3 @@ jobs:
         with:
           name: ui-test-report-${{ matrix.os }}
           path: week-3-playwright-polish/report.html
-
