@@ -16,7 +16,7 @@ jobs:
       - name: Install browsers
         run: playwright install --with-deps chromium firefox webkit
       - name: Run tests
-        run: pytest --html=report.html --self-contained-html
+        run: pytest week-3-playwright-polish/tests --html=week-3-playwright-polish/report.html --self-contained-html
         working-directory: week-3-playwright-polish
       - name: Upload test report
         uses: actions/upload-artifact@v4
