@@ -22,4 +22,4 @@ jobs:
         if: always()
         with:
           name: ui-test-report
-          path: report.html
+          path: week-3-playwright-polish/report.html
