@@ -1,5 +1,11 @@
 name: API Tests
-on: [push, pull_request]
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
 
 jobs:
   api-tests:

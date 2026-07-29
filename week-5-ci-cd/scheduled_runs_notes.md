@@ -44,9 +44,9 @@ Normally, my workflows only run when I push or open a PR. But some things can br
 
 ## Cadence: why weekly, not daily
 
-"CI minutes" = GitHub Actions' usage quota for running workflows. Private repos/orgs get a limited monthly allowance; public repos (like mine) get unlimited minutes on standard runners, so cost isn't really the issue for me specifically.
+"CI minutes" = GitHub Actions' usage quota for running workflows. Private repos/orgs get a limited monthly allowance; public repos get unlimited minutes on standard runners.
 
-The real reasoning is proportionality, not expense:
+However, another part of my reasoning is proportionality:
 
 - Daily runs across 3 repos × a 3-OS matrix = a lot of checks reporting "still fine" for no real benefit
 - Weekly still catches drift within a reasonable window, without over-running checks nobody needs that often
