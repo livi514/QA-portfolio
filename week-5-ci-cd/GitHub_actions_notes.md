@@ -13,13 +13,13 @@ I created workflows for three related repositories:
 - **saucedemo-playwright-tests:** UI tests (Weeks 1–3)
 - **jsonplaceholder-api-tests:** API tests (Week 4)
 
-Each repo has workflows for running automated tests and checking linting/formatting. 
+Each repo has workflows for running automated tests and checking linting/formatting.
 
 You can configure a GitHub Actions workflow to be triggered when an event occurs in your repository, such as a pull request being opened or an issue being created. For example, I set up all my workflows so that they run on every push and every pull request, so I get immediate feedback whenever I update code.
 
 ## Checking workflow results
 
-Let's say you make an edit to your code and push it. You will then be able to see whether it passed (green tick) or failed (red cross) under the Actions tab for your GitHub repository. This is a quick way to see if there are any issues at first glance. However, it's important to check further. A "passed" workflow doesn't always mean that everything worked perfectly. 
+Let's say you make an edit to your code and push it. You will then be able to see whether it passed (green tick) or failed (red cross) under the Actions tab for your GitHub repository. This is a quick way to see if there are any issues at first glance. However, it's important to check further. A "passed" workflow doesn't always mean that everything worked perfectly.
 
 For example, you may see warnings. When I was trying to set up test reports for QA-portfolio, the workflows "passed" even when the report was not generated. This shows that it's crucial to look at the results of your workflows beyond just checking the tick/cross. Beyond checking that artifacts are generated, it's also crucial to check the format, which is why I downloaded and read through the test reports even when I had passing workflows.
 
@@ -36,7 +36,7 @@ For example, in my QA-Porfolio repository, I have 3 workflows: UI tests, API tes
 
 You can also reference a workflow within another workflow.
 
-Workflows are triggered by events. 
+Workflows are triggered by events.
 
 Workflows contain jobs, and jobs contain steps.
 
@@ -46,16 +46,15 @@ An event is a specific activity in a repository that triggers a workflow run. Fo
 
 ## Jobs
 
-A job is a sequence of steps in a workflow that is executed on the same runner. Each step is either a shell script that will be executed, or an action that will be run. Steps are executed in order, and are dependent on each other. Since steps are executed on the same runner, you can share data from one step to another. For example, you can have a step that builds your application, followed by a step that tests that the application was built. 
+A job is a sequence of steps in a workflow that is executed on the same runner. Each step is either a shell script that will be executed, or an action that will be run. Steps are executed in order, and are dependent on each other. Since steps are executed on the same runner, you can share data from one step to another. For example, you can have a step that builds your application, followed by a step that tests that the application was built.
 
-Steps run in order by default, but you can also run selected steps concurrently when your workflow benefits from parallel execution, such as starting a long-running service while later steps continue.
+Steps within a job always run sequentially, one after another, on the same runner. GitHub Actions does not support running steps concurrently within a single job. If you need genuine parallel execution (for example, running a long-running service while other work continues), you need separate **jobs**, since jobs run in parallel by default unless you link them with `needs:`.
 
 You can configure a job's dependencies with other jobs. By default, jobs have no dependencies, and run in parallel. When a job takes a dependency on another job, it waits for the dependent job to complete before running. Jobs run in parallel unless you define dependencies using `needs:`.
 
 You can also use a matrix to run the same job multiple times, each with a different combination of variables, like operating systems or language versions. For example, you might configure multiple build jobs for different architectures without any job dependencies and a packaging job that depends on those builds. The build jobs run in parallel, and once they complete successfully, the packaging job runs.
 
 ## Writing workflow YAML files:
-
 
 Give the workflow a name, e.g. "name: UI Tests"
 Specify when you want to run the workflow, e.g. "on: [push, pull_request]"
