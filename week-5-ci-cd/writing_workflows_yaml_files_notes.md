@@ -142,7 +142,7 @@ jobs:
 Multi-job workflows allow you to run multiple jobs inside a single workflow file.
 Each job is isolated, has its own runner, and can run either:
 - in parallel (default)
-- in sequence usnign `needs:`
+- in sequence using `needs:`
 
 This is useful when a workflow has multiple phases or multiple variations of the same task.
 
@@ -184,7 +184,7 @@ Jobs run on separate machines. This means that each job gets its own fresh runne
 - separate logs 
 This is why jobs don't share state unless you explicitly specify dependencies.
 
-Steps run sequentially inside a job, but jobs themselves run in parallel unless you specify dependencies.
+Steps run sequentially inside a job — GitHub Actions does not support running steps concurrently within a job. Jobs themselves, however, run in parallel by default, unless you specify dependencies.
 
 Use `needs:` to control order, for example:
 
@@ -200,7 +200,7 @@ jobs:
 
 This makes `tests` wait for `lint` to finish.
 
-## When multi-job workflowws do not make sense
+## When multi-job workflows do not make sense
 
 Multi‑job workflows are not for combining unrelated tasks.
 
@@ -222,7 +222,7 @@ Multi‑job workflows are for one workflow with multiple phases, not for merging
 
 ## Cross-Platform Workflows 
 
-Running workflows across multiple operating systems (Ubuntu, macOS, Windows) is a great way to make your CI pipeline more robust. It also exposes weird OS-specific behaviour you wouldn't notice otherwise, suhc as Windows being slower or macOS resolving paths differently.
+Running workflows across multiple operating systems (Ubuntu, macOS, Windows) is a great way to make your CI pipeline more robust. It also exposes weird OS-specific behaviour you wouldn't notice otherwise, such as Windows being slower or macOS resolving paths differently.
 
 This is where matrix strategies and shell selection become important.
 
@@ -276,5 +276,6 @@ I had several fix options:
 - skip performance tests on Windows
 - only run API tests on Ubuntu / macOS
 
-This was a real-world CI issue, not a bug in my code.
+I raised the threshold rather than skipping the test on Windows, since I wanted real performance coverage on every OS in the matrix rather than a gap in coverage. A slightly looser threshold felt like a better trade-off than losing visibility into Windows performance entirely.
 
+This was a real-world CI issue, not a bug in my code.
