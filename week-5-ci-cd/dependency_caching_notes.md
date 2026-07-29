@@ -66,7 +66,7 @@ Needed when caching something that isn't just pip packages, e.g. Playwright's do
 
 ## Why this matters for my repos specifically
 
-- Before adding dependency cachig, the matrix jobs (3 OSes) reinstalled everything 3x per run, for setup work that's usually identical to last time.
+- Before adding dependency caching, the matrix jobs (3 OSes) reinstalled everything 3x per run, for setup work that's usually identical to last time.
 - Playwright's browser downloads are a heavier, slower install than plain pip packages, so the biggest potential time-save is caching those specifically in `saucedemo-playwright-tests`.
 - `jsonplaceholder-api-tests` is simpler (no browsers), so plain `cache: 'pip'` covers it.
 - Net effect: faster CI runs, without changing what's actually being tested. This is a "make CI faster" change, not a "change test behaviour" change.
