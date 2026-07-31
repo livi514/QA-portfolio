@@ -50,14 +50,21 @@ Attention to detail is also crucial to maintain a high-quality user experience. 
 
 Overall, my takeaway from this week is that broad coverage is worthless if you're not rigorous enough to actually verify each result properly. Big-picture thinking and attention to detail aren't separate skills, they depend on each other.
 
-## Checking workflows
+## Checking Workflows
 
-Unlike previous weeks, there are no tests to run manually. Instead, here's how to check the automated results. 
+Unlike previous weeks, there are no tests to run manually here — the workflows in `.github/workflows/` run automatically. This section covers how to check their results.
 
-The workflow files live in the github\workflows directory. You can view the results under the "Actions" tab for this repository on GitHub. 
+**Workflow files:** located in `.github/workflows/` at the repo root — `ui_tests.yml`, `api_tests.yml`, and `lint.yml`.
 
-### Things to verify:
-It's important to look beyond just the green tick or red cross displayed, as this can sometimes be misleading.
-- A cross is fairly conclusive, but still requires investigating which step failed and why. Read the actually error/log output for a failing step.
-- Check that artifacts are generated.
-- Download any artifacts generated, and proofread them to ensure correct content and formatting.
+**Viewing results on GitHub:**
+1. Go to the **Actions** tab on the repository
+2. Select a workflow run to see its jobs
+3. Click into a specific job to see its individual steps and logs
+
+**What to actually check, beyond the tick/cross:**
+- A green tick means the checks you wrote passed. It doesn't guarantee everything worked as expected. Click into individual steps to confirm each one actually ran and did what it was supposed to, not just that the job as a whole didn't fail.
+- Download and read through any generated test report artifacts, rather than assuming a pass means the report is complete or correctly formatted.
+- For matrix runs (tests across Ubuntu, Windows, and macOS), check all three OS results individually, as a pass on one doesn't guarantee a pass on the others.
+- If you want to confirm dependency caching is working, expand the "Cache" step in a job's logs. It will explicitly say `Cache restored from key: ...` (hit) or `Cache not found for input keys: ...` (miss). Note the first run after adding caching will always be a miss.
+
+**Triggering a run manually:** each workflow includes `workflow_dispatch`, so you can trigger a run on demand from the Actions tab (select the workflow → "Run workflow") without waiting for a push, PR, or the Monday schedule.
