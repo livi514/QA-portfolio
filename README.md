@@ -31,7 +31,7 @@ Note: this plan may adapt as I go. Some weeks might take longer than planned, or
 QA-portfolio/
 ├── .github/workflows/       — CI: linting + tests (UI and API), matrix across Ubuntu/Windows/macOS
 ├── week-1-playwright-basics/
-├── week-2-playwright-advanced/
+├── week-2-playwright-intermediate/
 ├── week-3-playwright-polish/   — also published standalone as saucedemo-playwright-tests
 ├── week-4-api-testing/         — also published standalone as jsonplaceholder-api-tests
 ├── week-5-ci-cd/                — CI/CD notes (GitHub Actions, workflows, caching, scheduled runs)
