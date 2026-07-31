@@ -11,6 +11,14 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            playwright_cache_path: ~/.cache/ms-playwright
+          - os: windows-latest
+            playwright_cache_path: ~\AppData\Local\ms-playwright
+          - os: macos-latest
+            playwright_cache_path: ~/Library/Caches/ms-playwright
+
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -20,18 +28,24 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+          cache: 'pip'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Install browsers
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.playwright_cache_path }}
+          key: playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+
+      - name: Install Playwright browsers
         run: playwright install --with-deps chromium firefox webkit
 
       - name: Run tests
         shell: bash
         run: |
-          cd week-3-playwright-polish
-          pytest tests \
+          pytest tests/ \
             --html=report.html \
             --self-contained-html
 
@@ -40,4 +54,4 @@ jobs:
         if: always()
         with:
           name: ui-test-report-${{ matrix.os }}
-          path: week-3-playwright-polish/report.html
+          path: report.html
