@@ -66,6 +66,6 @@ For full setup and installation instructions, see the main README.
 
 Run all tests: `pytest`
 
-Run a specific test file: `pytest week-1-playwright-basics/tests/test_login_page.py`
+Run a specific test file: `pytest week-1-playwright-basics/test_login_page.py`
 
 Run tests in headed mode (useful for debugging): `pytest --headed`
