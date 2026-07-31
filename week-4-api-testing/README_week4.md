@@ -74,14 +74,20 @@ Working at the UI layer only shows you the surface of an application. API testin
 
 API tests are also faster and more stable than UI tests since there's no browser overhead or rendering to wait for. The trade-off is that failures are harder to diagnose without a solid understanding of the data model, which makes knowing the API well an essential part of testing it effectively.
 
-## How to run the tests
+## How to Run the Tests
 
-For full setup and installation instructions, see the main README.
+For full setup and installation instructions, see the main [README](../README.md).
 
-Ensure you are running commands from the `week-4-api-testing` folder. 
+Ensure you are running commands from the `week-4-api-testing` folder.
 
 Use `cd week-4-api-testing` to navigate to the folder if necessary.
 
-Run all tests: `pytest`
+Run all tests:
+```
+pytest
+```
 
-Run a specific test file: `pytest tests/test_users.py`
+Run a specific test file:
+```
+pytest tests/test_users.py
+```
