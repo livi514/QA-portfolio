@@ -34,7 +34,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v7
+        uses: actions/cache@v4
         with:
           path: ${{ matrix.playwright_cache_path }}
           key: playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
