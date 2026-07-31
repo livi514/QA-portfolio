@@ -62,14 +62,23 @@ Throughout this week, I went from one big file of random assertions grouped by P
 
 ## How to Run the Tests
 
-For full setup and installation instructions, see the main README.
+For full setup and installation instructions, see the main [README](../README.md).
 
-Ensure you are running commands from the `week-1-playwright-basics` folder. 
+Ensure you are running commands from the `week-1-playwright-basics` folder.
 
 Use `cd week-1-playwright-basics` to navigate to the folder if necessary.
 
-Run all tests: `pytest`
+Run all tests:
+```
+pytest
+```
 
-Run a specific test file: `pytest tests/test_login_page.py`
+Run a specific test file:
+```
+pytest tests/test_login_page.py
+```
 
-Run tests in headed mode (useful for debugging): `pytest --headed`
+Run tests in headed mode (useful for debugging):
+```
+pytest --headed
+```
