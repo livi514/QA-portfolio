@@ -40,6 +40,39 @@ QA-portfolio/
 ```
  
 Alongside this overall README, each week folder contains its own `README_weekN.md` with a full breakdown of that week's goals, what was built, and what was learned.
+
+## Setup and Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/livi514/QA-portfolio.git
+   cd QA-portfolio
+   ```
+
+2. Create and activate a virtual environment:
+   ```
+   python -m venv .venv
+   ```
+   Windows:
+   ```
+   .venv\Scripts\activate
+   ```
+   macOS/Linux:
+   ```
+   source .venv/bin/activate
+   ```
+
+3. Install dependencies (from the repo root):
+   ```
+   pip install -r requirements.txt
+   ```
+
+4. Install Playwright browsers (needed for Weeks 1–3, the UI test suites):
+   ```
+   playwright install
+   ```
+
+Each week's own README then only covers navigating into that week's folder and the specific `pytest` commands relevant to it.
  
 ## CI
  
