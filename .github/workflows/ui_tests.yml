@@ -45,9 +45,17 @@ jobs:
       - name: Run tests
         shell: bash
         run: |
-          pytest tests/ \
+          cd week-3-playwright-polish
+          pytest tests \
             --html=report.html \
             --self-contained-html
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: ui-test-report-${{ matrix.os }}
+          path: week-3-playwright-polish/report.html
 
       - name: Upload test report
         uses: actions/upload-artifact@v7
