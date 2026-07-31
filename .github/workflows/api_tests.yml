@@ -38,4 +38,4 @@ jobs:
         if: always()
         with:
           name: api-test-report-${{ matrix.os }}
-          path: week-4-api-tests/report.html
+          path: week-4-api-testing/report.html
