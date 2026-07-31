@@ -62,3 +62,4 @@ jobs:
         if: always()
         with:
           name: ui-test-report-${{ matrix.os }}
+          path: week-3-playwright-polish/report.html
