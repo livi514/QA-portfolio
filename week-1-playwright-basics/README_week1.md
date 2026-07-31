@@ -35,7 +35,7 @@ I tested the full checkout flow with items in the cart, verifying correct naviga
 
 ### Playwright Fundamentals
 
-Though I have prior experience with Python and pytest, I had never Python with Playwright before, and I haven't explored browser automation before starting this roadmap. Something new to me this week was automating browser actions like clicking buttons, filling forms, and navigating between pages. Previously, I had only done this through manual testing. However, Playwright made this straightforward, and seeing tests replicate real user journeys automatically was a genuinely useful shift in how I think about testing.
+Though I have prior experience with Python and pytest, I had never used Python with Playwright before, and I haven't explored browser automation before starting this roadmap. Something new to me this week was automating browser actions like clicking buttons, filling forms, and navigating between pages. Previously, I had only done this through manual testing. However, Playwright made this straightforward, and seeing tests replicate real user journeys automatically was a genuinely useful shift in how I think about testing.
 
 I also learned about expect(), Playwright's built-in assertion library. Unlike a plain Python assert, which evaluates a condition once and immediately passes or fails, expect() uses auto-retrying. Playwright runs a check in the background repeatedly until the condition passes or a timeout is reached. This makes tests far more resilient to timing issues and page load delays.
 
@@ -66,6 +66,6 @@ For full setup and installation instructions, see the main README.
 
 Run all tests: `pytest`
 
-Run a specific test file: `pytest ui-tests/tests/test_login_page.py`
+Run a specific test file: `pytest week-1-playwright-basics/tests/test_login_page.py`
 
 Run tests in headed mode (useful for debugging): `pytest --headed`
