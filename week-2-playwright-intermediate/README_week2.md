@@ -115,9 +115,9 @@ By centralising setup code in custom fixtures, and centralising locators and UI 
 
 ## 5. How to Run the Tests
 
-For full setup and installation instructions, see the main README.
+For full setup and installation instructions, see the main [README](../README.md).
 
-Ensure you are running commands from the `week-2-playwright-intermediate` folder. 
+Ensure you are running commands from the `week-2-playwright-intermediate` folder.
 
 Use `cd week-2-playwright-intermediate` to navigate to the folder if necessary.
 
