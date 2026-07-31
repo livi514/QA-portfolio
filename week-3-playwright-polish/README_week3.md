@@ -38,7 +38,7 @@ The theme of week 3 was centralisation: configuration in one place, test data in
 
 For full setup and installation instructions, see the main [README](../README.md).
 
-Ensure you are running commands from the `week-3-playwright-polish` folder. 
+Ensure you are running commands from the `week-3-playwright-polish` folder.
 
 Use `cd week-3-playwright-polish` to navigate to the folder if necessary.
 
@@ -57,7 +57,7 @@ Run a specific test file:
 pytest tests/test_login_pom.py
 ```
 
-Run in headed mode (useful for debugging):
+Run tests in headed mode (useful for debugging):
 ```
 pytest --headed
 ```
