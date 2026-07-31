@@ -78,7 +78,9 @@ API tests are also faster and more stable than UI tests since there's no browser
 
 For full setup and installation instructions, see the main README.
 
-Ensure you have activated your virtual environment and navigated to the week-4-api-testing folder before running tests.
+Ensure you are running commands from the `week-4-api-testing` folder. 
+
+Use `cd week-4-api-testing` to navigate to the folder if necessary.
 
 Run all tests: `pytest`
 
