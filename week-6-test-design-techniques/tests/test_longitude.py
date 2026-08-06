@@ -20,7 +20,7 @@ def test_valid_longitude(longitude):
     assert response.status_code == 200
     assert 'longitude' in response.json()
     if longitude == 180.0 or longitude == -180.0:
-        assert (response.json()['longitude'] == pytest.approx(longitude, abs=0.1)) or (response.json()['longitude'] == pytest.approx(-180.0, abs=0.1))
+        assert (response.json()['longitude'] == pytest.approx(180.0, abs=0.1)) or (response.json()['longitude'] == pytest.approx(-180.0, abs=0.1))
     else:
         assert response.json()['longitude'] == pytest.approx(longitude, abs=0.1)
 
