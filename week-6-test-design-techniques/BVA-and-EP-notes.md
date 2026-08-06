@@ -1,4 +1,4 @@
-Equivalence Partitioning (also called Equivalence Class PArtitioning or ECP) is a black-box technique that divides input data into groups of equivalent values. The tester picks one representative per class, assuming the software behaves the same for every member.
+Equivalence Partitioning (also called Equivalence Class Partitioning or ECP) is a black-box technique that divides input data into groups of equivalent values. The tester picks one representative per class, assuming the software behaves the same for every member.
 - Splits the input domain into valid and invalid equivalence classes.
 - Applies at all levels of testing: unit, integratin, system, and acceptance.
 
