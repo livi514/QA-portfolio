@@ -1,6 +1,12 @@
+# Equivalence Class Partitioning (ECP) and Boundary Value Analysis (BVA)
+
+## Equivalence Class Partitioning (ECP)
+
 Equivalence Partitioning (also called Equivalence Class Partitioning or ECP) is a black-box technique that divides input data into groups of equivalent values. The tester picks one representative per class, assuming the software behaves the same for every member.
 - Splits the input domain into valid and invalid equivalence classes.
 - Applies at all levels of testing: unit, integratin, system, and acceptance.
+
+## Boundary Value Analysis (BVA)
 
 Boundary Value Analysis (BVA), also called range checking, validates the extreme ends of each equivalence class. Because defects cluster at range limits, BVA targets five key points:
 1. minimum 
@@ -8,6 +14,8 @@ Boundary Value Analysis (BVA), also called range checking, validates the extreme
 3. a nominal value
 4. just below the maximum 
 5. maximum 
+
+## How ECP and BVA complement each other
 
 BVA complements Equivalence Partitioning: once classes are defined, their boundary values surface off-by-one and edge bugs. 
 
@@ -20,7 +28,7 @@ Best Practices for Equivalence Partitioning and BVA
 
 Follow these practices to keep coverage strong while controlling test counts:
 
-    Map every domain: List valid, invalid, and special-case partitions first.
-    Test both sides of each limit: Include values just inside and outside to catch off-by-one errors.
-    Combine techniques: Pair with decision tables or state-transition testing for complex logic.
-    Automate edge cases: Parameterize boundary values so regression suites run consistently.
+- Map every domain: List valid, invalid, and special-case partitions first.
+- Test both sides of each limit: Include values just inside and outside to catch off-by-one errors.
+- Combine techniques: Pair with decision tables or state-transition testing for complex logic.
+- Automate edge cases: Parameterize boundary values so regression suites run consistently.
