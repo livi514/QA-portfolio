@@ -70,21 +70,25 @@ ECP alone cannot capture this - you need decision tables.
 
 ## Boundary Value Analysis (BVA)
 
-Boundary Value Analysis (BVA), also called range checking, validates the extreme ends of each equivalence class. Because defects cluster at range limits, BVA targets five key points:
-1. minimum 
-2. just above the minimum 
-3. a nominal value
-4. just below the maximum 
-5. maximum 
+Boundary Value Analysis (BVA) is a black-box testing technique that focuses on testing the boundary values (edges) of valid and invalid input ranges. It helps identify errors that commonly occur at the limits of input conditions. It is commonly used with Equivalence Partitioning to improve test coverage.
+
+It tests:
+- Minimum boundary value
+- Just above the minimum value
+- Maximum boundary value
+- Just below the maximum value
+- Invalid values outside the valid range
 
 ### Example usage
 
 A software allows people of ages 20-50 inclusive to fill a form:
+- Just below the minimum: 19
 - Minimum: 20
 - Just above the minimum: 21
 - A nominal value: 35
 - Just below the maximum: 49
 - Maximum: 50
+- Just above the maximum: 51
 
 ## How ECP and BVA complement each other
 
