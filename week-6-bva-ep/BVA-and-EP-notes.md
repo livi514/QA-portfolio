@@ -2,49 +2,42 @@
 
 # Overview
 
-Test cases take test data values as input in order to check the behaviour of the software being tested. However, the range of possible test data values can be endless, and writing test cases for a large number of inputs can be laborious and error-prone. So, how can testers select effective test inputs and write test cases for them, without introducing unnecessary redundancy?
+Test cases require input values in order to check the behaviour of the software being tested. However, the range of possible test data values can be extremely large, and writing test cases for every potential value can be both impractical and error-prone. Testers therefore need systematic techniques for selecting effective test inputs without introducing unnecessary redundancy.
 
-Two techniques designed for choosing effective test data values as Equivalence Class Partitioning (ECP) and Boundary Value Analysis (BVA), which use random values from groups treated the same by the system, and the boundary values for these classes, respectively.
+Two widely-used techniques for choosing effective test data values are Equivalence Class Partitioning (ECP) and Boundary Value Analysis (BVA). ECP selects representative values from groups of inputs that the system treats equivalently, while BVA focuses on the boundary values at the edges of these groups. Both are black-box test design techniques, meaning that they are based only on software requirements and external user behaviour, rather than internal code structure. Testers supply inputs and verify whether the outputs match the expected behaviour defined by the specification.
 
-ECP and BVA are both black-box test design techniques, meaning that they are based only on software requirements and external user behaviour, without looking at the internal code. Testers put in data and check if the output matches what the system promised to do.
-
-ECP and BVA are used to reduce redundant tests while still achieving strong coverage. They are especially useful for numeric ranges, input validation, and APIs with strict parameter rules.
+ECP and BVA are used to reduce redundant tests while maintaining strong coverage. They are especially effective for numeric ranges, input validation, and APIs with strict parameter rules.
 
 ## Equivalence Class Partitioning (ECP)
 
-Equivalence Partitioning (also called Equivalence Class Partitioning or ECP) is a black-box technique that divides input data into groups of values that the system treats the same. 
+Equivalence Class Partitioning divides input data into groups of values (known as equivalence classes) that the system processes in the same way. If two values follow the same logical path through the code and trigger the same validation rules, transformations, or outputs, they are considered equivalent.  The tester selects one representative value from each class. If the system behaves correctly for that representative, the entire class is assumed to behave correctly under the same conditions.
 
-Each group is called an equivalence class.
+### Example
 
-The tester tests a random input value from the defined interval of equivalence data classes, and if the output for that input value is valid, then the whole class interval is considered valid, and vice-versa.
-
-### Example usage:
-
-An application allows the user to enter a password of length 8-12 characters inclusive. This can be divided into 3 separate equivalence classes:
+If an application allows the user to enter a password of length 8-12 characters inclusive, the input domain can be divided into 3 separate equivalence classes:
 - Invalid equivalence class: <8 characters
 - Valid equivalence class: 8-12 characters
 - Invalid equivalence class: >12 characters
 
-### Goals of ECP:
+### Goals of ECP
 
-- Remove redundant tests
-- Cover all meaningful input categories
-- Ensure every logic path is tested at least once
+The purpose of ECP is to remove redundant tests, ensure coverage of all meaningful input categories, and guarantee that every distinct logic path is exercised at least once.
 
-### Properties of a good equivalence class:
+### Properties of a good equivalence class
 
-- **Complete:** covers all possible inputs
-- **Non-Overlapping:** no value belongs to two classes
+A well-defined equivalence class is:
+- **Complete:** it covers all meaningful categories of input defined by the requirements
+- **Non-Overlapping:** no value belongs to more than one class
 - **Representative:** all values in the class follow the same logic path
-- **Behaviourally consistent:** all values produce the same output or error
+- **Behaviourally consistent:** all values in the class produce the same output or error
 
-### How to prove two values belong in the same class
+### Determining whether two values belong in the same class
 
-You check whether the system applies the same validation rules, transformations, or business logic to both.
-If two values trigger different branches, errors, or outputs, they are not equivalent and must be split into separate classes.
+To confirm that two values belong in the same equivalence class, the tester checks whether the system applies identical validation rules, transformations, or business logic to both. If the values trigger different branches or produce different outputs, they are not equivalent and must be separated into distinct classes.
 
 ### Types of equivalence classes
 
+Equivalence classes may be:
 - Valid functional classes
 - Invalid functional classes
 - Format classes (e.g. email with/without '@')
@@ -54,34 +47,27 @@ If two values trigger different branches, errors, or outputs, they are not equiv
 
 ### Why one representative per class is usually enough
 
-All values in the class follow the same logic path, so testing one value exercises the entire behaviour.
-If two values behave differently, the class was grouped incorrectly and must be split.
+All values in the class follow the same logic path, so testing one value exercises the entire behaviour. If two values behave differently, the class was grouped incorrectly and must be refined.
 
 ### When ECP is not enough 
 
-ECP fails when:
-- inputs interact (e.g., start date + end date)
-- logic is multi-step
-- rules depend on combinations of inputs
-
-Example:
-A discount applies only if VIP AND total > £100 AND coupon valid.
-ECP alone cannot capture this - you need decision tables.
+ECP is insufficient when inputs interact, when logic is multi‑step, or when rules depend on combinations of conditions. For example, a discount rule requiring a customer to be VIP and have a cart total above £100 and supply a valid coupon cannot be captured by ECP alone; decision tables or state‑transition testing are required.
 
 ## Boundary Value Analysis (BVA)
 
-Boundary Value Analysis (BVA) is a black-box testing technique that focuses on testing the boundary values (edges) of valid and invalid input ranges. It helps identify errors that commonly occur at the limits of input conditions. It is commonly used with Equivalence Partitioning to improve test coverage.
+Boundary Value Analysis (BVA) focuses on testing the boundary values (edges) of valid and invalid input ranges, where defects are most likely to occur. Errors frequently arise at boundaries due to off‑by‑one mistakes, confusion between inclusive and exclusive limits, floating‑point precision issues, and ambiguous natural‑language requirements.
 
-It tests:
-- Minimum boundary value
-- Just above the minimum value
-- Maximum boundary value
-- Just below the maximum value
-- Invalid values outside the valid range
+BVA typically tests:
+- The minimum boundary value
+- The value just above the minimum
+- A nominal value
+- The value just below the maximum
+- The maximum boundary value
+- Invalid values just outside the valid range
 
-### Example usage
+### Example 
 
-A software allows people of ages 20-50 inclusive to fill a form:
+If a form accepts ages from 20 to 50 inclusive, BVA would test:
 - Just below the minimum: 19
 - Minimum: 20
 - Just above the minimum: 21
@@ -92,18 +78,14 @@ A software allows people of ages 20-50 inclusive to fill a form:
 
 ## How ECP and BVA complement each other
 
-BVA complements Equivalence Partitioning: once classes are defined, their boundary values surface off-by-one and edge bugs. 
+ECP identifies meaningful input categories, while BVA ensures that the boundaries of those categories are thoroughly tested. Using both techniques together allows testers to compress large input domains into manageable sets of test cases while still detecting off‑by‑one errors and edge‑case defects.
 
-Why use equivalence partitioning and BVA?
-1. Compress large test case volumes into manageable chunks.
-2. Provide clear rules for choosing test data, without sacrificing effectiveness.
-3. Suit calculation-intensive apps with many numeric variables.
+This combined approach is particularly effective for calculation‑heavy systems, numeric ranges, and validation logic.
 
-## Best Practices for Equivalence Partitioning and BVA
+## Best Practices for ECP and BVA
 
-Follow these practices to keep coverage strong while controlling test counts:
-
-- Map every domain: List valid, invalid, and special-case partitions first.
-- Test both sides of each limit: Include values just inside and outside to catch off-by-one errors.
-- Combine techniques: Pair with decision tables or state-transition testing for complex logic.
-- Automate edge cases: Parameterize boundary values so regression suites run consistently.
+To apply ECP and BVA effectively:
+- map the input domain by identifying valid, invalid, and special‑case partitions
+- test both sides of each boundary to detect off‑by‑one errors
+- combine ECP/BVA with decision tables or state‑transition testing when logic is complex
+- automate boundary tests by parameterising values so they run consistently in regression suites
