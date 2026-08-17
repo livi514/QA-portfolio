@@ -1,4 +1,5 @@
 import datetime
+
 import pytest
 import requests
 
@@ -62,6 +63,7 @@ current_date = datetime.date.today()
 
 # --- Helpers -------------------------------------------------------------
 
+
 def get_weather_data(start_date, end_date):
     url = (
         f"https://api.open-meteo.com/v1/forecast?"
@@ -97,6 +99,7 @@ def allowed_window():
 
 # --- 1. End date cannot be before start date -----------------------------
 
+
 @pytest.mark.parametrize("delta", [1, 32, 365])
 def test_end_date_before_start_date(delta):
     start_date = current_date
@@ -104,7 +107,9 @@ def test_end_date_before_start_date(delta):
     response = get_weather_data(start_date, end_date)
     assert response.status_code == 400
     assert response.json()["error"] is True
-    assert "End-date must be larger or equals than start-date" in response.json()["reason"]
+    assert (
+        "End-date must be larger or equals than start-date" in response.json()["reason"]
+    )
 
 
 def test_end_date_equal_to_start_date():
@@ -127,12 +132,15 @@ def test_end_date_after_start_date(delta):
 
 # --- 2. Future dates -----------------------------------------------------
 
+
 def test_start_date_in_future():
     start_date = current_date + datetime.timedelta(days=365)
     end_date = current_date
     response = get_weather_data(start_date, end_date)
     assert response.status_code == 400
-    assert "End-date must be larger or equals than start-date" in response.json()["reason"]
+    assert (
+        "End-date must be larger or equals than start-date" in response.json()["reason"]
+    )
 
 
 def test_end_date_in_future():
@@ -158,6 +166,7 @@ def test_start_and_end_today():
 
 
 # --- 3. Sliding window ---------------------------------------------------
+
 
 def test_date_before_allowed_window(allowed_window):
     allowed_start, _ = allowed_window

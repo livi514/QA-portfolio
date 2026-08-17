@@ -15,13 +15,13 @@ import requests
 # 179.9 (just below)
 # 180.0001 (just above)
 
+
 def get_weather_data(longitude):
     url = f"https://api.open-meteo.com/v1/forecast?latitude=0&longitude={longitude}&hourly=temperature_2m"
     return requests.get(url)
 
-@pytest.mark.parametrize("longitude", [
-    -180.0, -179.9, -90.0, 0.0, 90.0, 179.9, 180.0
-])
+
+@pytest.mark.parametrize("longitude", [-180.0, -179.9, -90.0, 0.0, 90.0, 179.9, 180.0])
 def test_valid_longitude(longitude):
     response = get_weather_data(longitude)
     assert response.status_code == 200
@@ -33,10 +33,10 @@ def test_valid_longitude(longitude):
     else:
         assert response.json()["longitude"] == pytest.approx(longitude, abs=0.1)
 
-@pytest.mark.parametrize("longitude", [
-    -180.0001, -181.0, -200.0,
-    180.0001, 181.0, 200.0
-])
+
+@pytest.mark.parametrize(
+    "longitude", [-180.0001, -181.0, -200.0, 180.0001, 181.0, 200.0]
+)
 def test_invalid_longitude(longitude):
     response = get_weather_data(longitude)
 
