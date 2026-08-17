@@ -14,8 +14,9 @@ A structured, self-directed roadmap for building QA automation skills toward int
 - **[Done] Week 2 — Playwright Intermediate + POM:** Page Object Model, fixtures, headless mode
 - **[Done] Week 3 — Playwright Polish:** test configuration, test data files, tidied-up test suite (later published standalone as [saucedemo-playwright-tests](https://github.com/livi514/saucedemo-playwright-tests))
 - **[Done] Week 4 — API Testing:** pytest + requests API suite against JSONPlaceholder, CRUD coverage, negative tests, performance and security checks (later published standalone as [jsonplaceholder-api-tests](https://github.com/livi514/jsonplaceholder-api-tests))
-- **[In progress] Week 5 — CI/CD with GitHub Actions:** automated linting and testing, multi-job and cross-platform workflows, scheduled runs, dependency caching — core setup working, README and final polish still underway
-- **[Not started] Week 6 — Test Design Techniques:** Boundary Value Analysis, Equivalence Partitioning, Decision Tables, State Transition Testing, exploratory heuristics
+- **[Done] Week 5 — CI/CD with GitHub Actions:** automated linting and testing, multi-job and cross-platform workflows, scheduled runs, dependency caching — core setup working, README and final polish still underway
+- **[Done] Week 6 — Test Design Techniques pt1:** Boundary Value Analysis, Equivalence Partitioning
+- **[In Progress] Week 7 — Test Design Techniques pt2:** Decision Tables, State Transition Testing, exploratory heuristics
 - **[Not started] Week 7 — SQL for QA (Part 1):** SELECT, WHERE, ORDER BY, filtering
 - **[Not started] Week 8 — SQL for QA (Part 2):** joins, aggregations, validating test data with SQL
 - **[Not started] Week 9 — Accessibility Testing:** WCAG, Axe DevTools, keyboard navigation, colour contrast
@@ -35,6 +36,7 @@ QA-portfolio/
 ├── week-3-playwright-polish/   — also published standalone as saucedemo-playwright-tests
 ├── week-4-api-testing/         — also published standalone as jsonplaceholder-api-tests
 ├── week-5-ci-cd/                — CI/CD notes (GitHub Actions, workflows, caching, scheduled runs)
+├── week-6-bva-ep/                — BVA and EP notes, and practical application using the Open-Meteo API          
 ├── requirements.txt
 └── setup.cfg
 ```
