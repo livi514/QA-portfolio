@@ -2,7 +2,11 @@
 
 # Overview
 
-Equivalence Class Partitioning (ECP) and Boundary Value Analysis (BVA) are black-box test design techniques, meaning that they are based only on software requirements and external user behaviour, without looking at the internal code. Testers put in data and check if the output matches what the system promised to do.
+Test cases take test data values as input in order to check the behaviour of the software being tested. However, the range of possible test data values can be endless, and writing test cases for a large number of inputs can be laborious and error-prone. So, how can testers select effective test inputs and write test cases for them, without introducing unnecessary redundancy?
+
+Two techniques designed for choosing effective test data values as Equivalence Class Partitioning (ECP) and Boundary Value Analysis (BVA), which use random values from groups treated the same by the system, and the boundary values for these classes, respectively.
+
+ECP and BVA are both black-box test design techniques, meaning that they are based only on software requirements and external user behaviour, without looking at the internal code. Testers put in data and check if the output matches what the system promised to do.
 
 ECP and BVA are used to reduce redundant tests while still achieving strong coverage. They are especially useful for numeric ranges, input validation, and APIs with strict parameter rules.
 
@@ -12,7 +16,14 @@ Equivalence Partitioning (also called Equivalence Class Partitioning or ECP) is 
 
 Each group is called an equivalence class.
 
-The tester picks one representative per class, assuming the software behaves the same for every member.
+The tester tests a random input value from the defined interval of equivalence data classes, and if the output for that input value is valid, then the whole class interval is considered valid, and vice-versa.
+
+### Example usage:
+
+An application allows the user to enter a password of length 8-12 characters inclusive. This can be divided into 3 separate equivalence classes:
+- Invalid equivalence class: <8 characters
+- Valid equivalence class: 8-12 characters
+- Invalid equivalence class: >12 characters
 
 ### Goals of ECP:
 
@@ -66,6 +77,15 @@ Boundary Value Analysis (BVA), also called range checking, validates the extreme
 4. just below the maximum 
 5. maximum 
 
+### Example usage
+
+A software allows people of ages 20-50 inclusive to fill a form:
+- Minimum: 20
+- Just above the minimum: 21
+- A nominal value: 35
+- Just below the maximum: 49
+- Maximum: 50
+
 ## How ECP and BVA complement each other
 
 BVA complements Equivalence Partitioning: once classes are defined, their boundary values surface off-by-one and edge bugs. 
@@ -75,7 +95,7 @@ Why use equivalence partitioning and BVA?
 2. Provide clear rules for choosing test data, without sacrificing effectiveness.
 3. Suit calculation-intensive apps with many numeric variables.
 
-Best Practices for Equivalence Partitioning and BVA
+## Best Practices for Equivalence Partitioning and BVA
 
 Follow these practices to keep coverage strong while controlling test counts:
 
