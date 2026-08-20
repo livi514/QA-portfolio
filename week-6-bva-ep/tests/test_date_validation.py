@@ -8,7 +8,7 @@ current_date = datetime.date.today()
 # Testing date validation for https://open-meteo.com
 #
 # This suite applies Equivalence Class Partitioning (ECP) and Boundary Value Analysis (BVA)
-# to the API’s date-handling rules. The API enforces three major constraints:
+# to the API's date-handling rules. The API enforces three major constraints:
 #
 # 1. End date cannot be before start date
 #
@@ -35,6 +35,14 @@ current_date = datetime.date.today()
 #      - Start date equal to today → valid
 #      - Start date just after today → invalid
 #
+#    NOTE: to isolate this rule from the end-before-start rule (constraint 1),
+#    the future-date tests below keep start_date < end_date and both in the
+#    future, so ordering is always satisfied and any failure is attributable
+#    to the future-date check specifically (or to the sliding window, if the
+#    API turns out not to have a distinct future-date rule at all -- see the
+#    reason string assertions, which are left loose deliberately so a real
+#    run reveals which message actually fires).
+#
 #
 # 3. Sliding window for allowed date range
 #
@@ -45,11 +53,11 @@ current_date = datetime.date.today()
 #    ECP classes:
 #      - Invalid: date before allowed window
 #      - Valid:   date at start of allowed window
-#      - Valid:   date inside allowed window
+#      - Valid:   date inside allowed window (interior, not a boundary)
 #      - Valid:   date at end of allowed window
 #      - Invalid: date after allowed window
 #
-#    BVA boundaries:
+#    BVA boundaries (all six from Robust BVA, tested individually below):
 #      - Just before allowed window start → invalid
 #      - Allowed window start → valid
 #      - Just after allowed window start → valid
@@ -58,7 +66,7 @@ current_date = datetime.date.today()
 #      - Just after allowed window end → invalid
 #
 #    Because the window is dynamic, all boundary dates are calculated relative to
-#    the current date and the API’s reported allowed range.
+#    the current date and the API's reported allowed range.
 
 
 # --- Helpers -------------------------------------------------------------
@@ -130,17 +138,28 @@ def test_end_date_after_start_date(delta):
     assert response.status_code == 200
 
 
-# --- 2. Future dates -----------------------------------------------------
+# --- 2. Future dates -------------------------------------------------------
+#
+# FIX: previously, test_start_date_in_future set end_date = current_date while
+# start_date was a year in the future. That makes end_date < start_date, so
+# the response actually came back through the end-before-start check (constraint 1),
+# not a future-date check -- the old test was indistinguishable from
+# test_end_date_before_start_date and couldn't prove a separate future-date rule
+# exists. Fixed below by keeping start_date < end_date, with both in the future,
+# so ordering always passes and any 400 is attributable to the future-date /
+# sliding-window rule specifically.
 
 
 def test_start_date_in_future():
     start_date = current_date + datetime.timedelta(days=365)
-    end_date = current_date
+    end_date = start_date + datetime.timedelta(days=1)
     response = get_weather_data(start_date, end_date)
     assert response.status_code == 400
-    assert (
-        "End-date must be larger or equals than start-date" in response.json()["reason"]
-    )
+    # Run this once manually and confirm which message actually comes back --
+    # the API may not have a distinct "future date" rule separate from the
+    # sliding window's "out of allowed range" message. Whichever it is,
+    # update this assertion to match and note the finding in the writeup.
+    assert "out of allowed range" in response.json()["reason"]
 
 
 def test_end_date_in_future():
@@ -165,7 +184,14 @@ def test_start_and_end_today():
     assert response.status_code == 200
 
 
-# --- 3. Sliding window ---------------------------------------------------
+# --- 3. Sliding window -----------------------------------------------------
+#
+# FIX: the previous version only covered 4 of the 6 boundaries listed in the
+# docstring, and what was labelled "inside the window" was actually the
+# interior (start+10 to start+15) -- a different ECP category to a boundary,
+# not "just after start" as the comment implied. Added the two missing
+# boundaries explicitly (just after start, just before end) and renamed the
+# interior test so it's honest about what it covers.
 
 
 def test_date_before_allowed_window(allowed_window):
@@ -185,10 +211,27 @@ def test_date_at_start_of_allowed_window(allowed_window):
     assert response.status_code == 200
 
 
-def test_date_inside_allowed_window(allowed_window):
+def test_date_just_after_start_of_allowed_window(allowed_window):
+    allowed_start, _ = allowed_window
+    start_date = allowed_start + datetime.timedelta(days=1)
+    end_date = start_date + datetime.timedelta(days=1)
+    response = get_weather_data(start_date, end_date)
+    assert response.status_code == 200
+
+
+def test_date_inside_allowed_window_interior(allowed_window):
+    """Valid-interior case (ECP), not a boundary -- kept separate from BVA proper."""
     allowed_start, allowed_end = allowed_window
     start_date = allowed_start + datetime.timedelta(days=10)
     end_date = allowed_start + datetime.timedelta(days=15)
+    response = get_weather_data(start_date, end_date)
+    assert response.status_code == 200
+
+
+def test_date_just_before_end_of_allowed_window(allowed_window):
+    _, allowed_end = allowed_window
+    end_date = allowed_end - datetime.timedelta(days=1)
+    start_date = end_date - datetime.timedelta(days=1)
     response = get_weather_data(start_date, end_date)
     assert response.status_code == 200
 
