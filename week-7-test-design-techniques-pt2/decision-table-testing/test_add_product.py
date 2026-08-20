@@ -36,7 +36,6 @@
 # 3. Write Python tests using those values.
 
 import datetime
-import pytest
 from playwright.sync_api import sync_playwright
 
 URL = "https://commitquality.com/add-product"
