@@ -1,7 +1,6 @@
 import datetime
 
 import pytest
-
 from conftest import get_weather_data
 
 current_date = datetime.date.today()
@@ -145,6 +144,7 @@ def test_end_date_after_start_date(delta):
 
 # --- 2. Future dates -------------------------------------------------------
 
+
 def test_start_date_in_future():
     start_date = current_date + datetime.timedelta(days=365)
     end_date = start_date + datetime.timedelta(days=1)
@@ -180,6 +180,7 @@ def test_start_and_end_today():
 
 
 # --- 3. Sliding window ----------------------------------------------------
+
 
 def test_date_before_allowed_window(allowed_window):
     allowed_start, _ = allowed_window

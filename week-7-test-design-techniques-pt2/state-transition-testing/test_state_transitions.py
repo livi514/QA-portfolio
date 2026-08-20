@@ -1,12 +1,13 @@
-from playwright.sync_api import sync_playwright, expect
+from playwright.sync_api import expect, sync_playwright
+
 
 def login_helper(p):
     browser = p.chromium.launch(headless=False)
     page = browser.new_page()
 
     page.goto("https://parabank.parasoft.com/parabank/index.htm")
-    page.fill('input[name="username"]', 'john')
-    page.fill('input[name="password"]', 'demo')
+    page.fill('input[name="username"]', "john")
+    page.fill('input[name="password"]', "demo")
     page.click('input[value="Log In"]')
 
     return page, browser
@@ -38,4 +39,3 @@ def test_loan_submission_moves_to_submitted():
         expect(page.locator("text=Status")).to_be_visible()
 
         browser.close()
-
