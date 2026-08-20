@@ -1,5 +1,6 @@
 import pytest
-import requests
+
+from conftest import get_weather_data
 
 # Latitude tests for https://open-meteo.com
 #
@@ -21,15 +22,15 @@ import requests
 # invalid-boundary test rather than a false negative from silent rounding.
 
 
-def get_weather_data(latitude):
-    url = f"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude=0&hourly=temperature_2m"
-    return requests.get(url)
+# get_weather_data now comes from conftest.py, shared with test_dates.py and
+# test_longitude.py. latitude is passed by keyword; longitude stays at the
+# conftest default (0).
 
 
 # Valid latitude values (ECP + BVA)
 @pytest.mark.parametrize("latitude", [-90.0, -89.9, -45.0, 0.0, 45.0, 89.9, 90.0])
 def test_valid_latitude(latitude):
-    response = get_weather_data(latitude)
+    response = get_weather_data(latitude=latitude)
     assert response.status_code == 200
     assert "latitude" in response.json()
     # API returns floats with slight rounding differences
@@ -46,7 +47,7 @@ def test_valid_latitude(latitude):
 # unhandled case you'd already solved elsewhere. Mirrors the longitude fix.
 @pytest.mark.parametrize("latitude", [-90.0001, -91.0, -100.0, 90.0001, 91.0, 100.0])
 def test_invalid_latitude(latitude):
-    response = get_weather_data(latitude)
+    response = get_weather_data(latitude=latitude)
 
     # API may return 400 or 503 depending on internal routing
     assert response.status_code in (400, 503)

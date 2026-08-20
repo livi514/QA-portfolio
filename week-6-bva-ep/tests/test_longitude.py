@@ -1,5 +1,6 @@
 import pytest
-import requests
+
+from conftest import get_weather_data
 
 # Longitude tests for https://open-meteo.com
 #
@@ -16,14 +17,14 @@ import requests
 # 180.0001 (just above)
 
 
-def get_weather_data(longitude):
-    url = f"https://api.open-meteo.com/v1/forecast?latitude=0&longitude={longitude}&hourly=temperature_2m"
-    return requests.get(url)
+# get_weather_data now comes from conftest.py, shared with test_dates.py and
+# test_latitude.py. longitude is passed by keyword; latitude stays at the
+# conftest default (0).
 
 
 @pytest.mark.parametrize("longitude", [-180.0, -179.9, -90.0, 0.0, 90.0, 179.9, 180.0])
 def test_valid_longitude(longitude):
-    response = get_weather_data(longitude)
+    response = get_weather_data(longitude=longitude)
     assert response.status_code == 200
     assert "longitude" in response.json()
 
@@ -38,7 +39,7 @@ def test_valid_longitude(longitude):
     "longitude", [-180.0001, -181.0, -200.0, 180.0001, 181.0, 200.0]
 )
 def test_invalid_longitude(longitude):
-    response = get_weather_data(longitude)
+    response = get_weather_data(longitude=longitude)
 
     # API may return 400 or 503 depending on internal routing
     assert response.status_code in (400, 503)

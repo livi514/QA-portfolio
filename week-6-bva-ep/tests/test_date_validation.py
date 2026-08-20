@@ -1,7 +1,8 @@
 import datetime
 
 import pytest
-import requests
+
+from conftest import get_weather_data
 
 current_date = datetime.date.today()
 
@@ -70,14 +71,11 @@ current_date = datetime.date.today()
 
 
 # --- Helpers -------------------------------------------------------------
-
-
-def get_weather_data(start_date, end_date):
-    url = (
-        f"https://api.open-meteo.com/v1/forecast?"
-        f"latitude=0&longitude=0&start_date={start_date}&end_date={end_date}&hourly=temperature_2m"
-    )
-    return requests.get(url)
+#
+# get_weather_data now comes from conftest.py (shared across test_dates.py,
+# test_latitude.py, test_longitude.py). It takes latitude/longitude/start_date/
+# end_date as optional kwargs -- this file only ever passes start_date/end_date,
+# leaving latitude/longitude at their conftest defaults (0, 0).
 
 
 def extract_allowed_window():
@@ -88,10 +86,17 @@ def extract_allowed_window():
     bad_start = current_date + datetime.timedelta(days=400)
     bad_end = current_date + datetime.timedelta(days=401)
 
-    resp = requests.get(
-        f"https://api.open-meteo.com/v1/forecast?latitude=0&longitude=0&start_date={bad_start}&end_date={bad_end}&hourly=temperature_2m"
-    ).json()
+    resp = get_weather_data(start_date=bad_start, end_date=bad_end).json()
 
+    # Guard against the API returning a response with no "reason" key (already
+    # observed as a possibility for invalid longitude -- 503 with no error body).
+    # Without this, a shape change here fails as a confusing KeyError instead of
+    # a readable assertion, and takes every sliding-window test down with it
+    # since this fixture is module-scoped.
+    assert "reason" in resp, (
+        f"Expected 'reason' in response when triggering an out-of-range date, "
+        f"got: {resp}"
+    )
     reason = resp["reason"]
     window = reason.split("from ")[1]
     start_str, end_str = window.split(" to ")
@@ -112,7 +117,7 @@ def allowed_window():
 def test_end_date_before_start_date(delta):
     start_date = current_date
     end_date = current_date - datetime.timedelta(days=delta)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 400
     assert response.json()["error"] is True
     assert (
@@ -123,7 +128,7 @@ def test_end_date_before_start_date(delta):
 def test_end_date_equal_to_start_date():
     start_date = current_date
     end_date = current_date
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 200
     times = response.json()["hourly"]["time"]
     assert times[0].startswith(str(start_date))
@@ -134,26 +139,16 @@ def test_end_date_equal_to_start_date():
 def test_end_date_after_start_date(delta):
     start_date = current_date - datetime.timedelta(days=delta)
     end_date = start_date + datetime.timedelta(days=1)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 200
 
 
 # --- 2. Future dates -------------------------------------------------------
-#
-# FIX: previously, test_start_date_in_future set end_date = current_date while
-# start_date was a year in the future. That makes end_date < start_date, so
-# the response actually came back through the end-before-start check (constraint 1),
-# not a future-date check -- the old test was indistinguishable from
-# test_end_date_before_start_date and couldn't prove a separate future-date rule
-# exists. Fixed below by keeping start_date < end_date, with both in the future,
-# so ordering always passes and any 400 is attributable to the future-date /
-# sliding-window rule specifically.
-
 
 def test_start_date_in_future():
     start_date = current_date + datetime.timedelta(days=365)
     end_date = start_date + datetime.timedelta(days=1)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 400
     # Run this once manually and confirm which message actually comes back --
     # the API may not have a distinct "future date" rule separate from the
@@ -165,7 +160,7 @@ def test_start_date_in_future():
 def test_end_date_in_future():
     start_date = current_date - datetime.timedelta(days=1)
     end_date = current_date + datetime.timedelta(days=365)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 400
     assert "out of allowed range" in response.json()["reason"]
 
@@ -173,32 +168,24 @@ def test_end_date_in_future():
 def test_start_and_end_in_past():
     start_date = current_date - datetime.timedelta(days=2)
     end_date = current_date - datetime.timedelta(days=1)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 200
 
 
 def test_start_and_end_today():
     start_date = current_date
     end_date = current_date
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 200
 
 
-# --- 3. Sliding window -----------------------------------------------------
-#
-# FIX: the previous version only covered 4 of the 6 boundaries listed in the
-# docstring, and what was labelled "inside the window" was actually the
-# interior (start+10 to start+15) -- a different ECP category to a boundary,
-# not "just after start" as the comment implied. Added the two missing
-# boundaries explicitly (just after start, just before end) and renamed the
-# interior test so it's honest about what it covers.
-
+# --- 3. Sliding window ----------------------------------------------------
 
 def test_date_before_allowed_window(allowed_window):
     allowed_start, _ = allowed_window
     start_date = allowed_start - datetime.timedelta(days=1)
     end_date = allowed_start
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 400
     assert "out of allowed range" in response.json()["reason"]
 
@@ -207,7 +194,7 @@ def test_date_at_start_of_allowed_window(allowed_window):
     allowed_start, _ = allowed_window
     start_date = allowed_start
     end_date = allowed_start + datetime.timedelta(days=1)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 200
 
 
@@ -215,7 +202,7 @@ def test_date_just_after_start_of_allowed_window(allowed_window):
     allowed_start, _ = allowed_window
     start_date = allowed_start + datetime.timedelta(days=1)
     end_date = start_date + datetime.timedelta(days=1)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 200
 
 
@@ -224,7 +211,7 @@ def test_date_inside_allowed_window_interior(allowed_window):
     allowed_start, allowed_end = allowed_window
     start_date = allowed_start + datetime.timedelta(days=10)
     end_date = allowed_start + datetime.timedelta(days=15)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 200
 
 
@@ -232,7 +219,7 @@ def test_date_just_before_end_of_allowed_window(allowed_window):
     _, allowed_end = allowed_window
     end_date = allowed_end - datetime.timedelta(days=1)
     start_date = end_date - datetime.timedelta(days=1)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 200
 
 
@@ -240,7 +227,7 @@ def test_date_at_end_of_allowed_window(allowed_window):
     _, allowed_end = allowed_window
     start_date = allowed_end - datetime.timedelta(days=1)
     end_date = allowed_end
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 200
 
 
@@ -248,7 +235,7 @@ def test_date_after_allowed_window(allowed_window):
     _, allowed_end = allowed_window
     start_date = allowed_end + datetime.timedelta(days=1)
     end_date = allowed_end + datetime.timedelta(days=2)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 400
     assert "out of allowed range" in response.json()["reason"]
 
@@ -257,6 +244,6 @@ def test_both_dates_outside_window(allowed_window):
     allowed_start, allowed_end = allowed_window
     start_date = allowed_start - datetime.timedelta(days=5)
     end_date = allowed_end + datetime.timedelta(days=5)
-    response = get_weather_data(start_date, end_date)
+    response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 400
     assert "out of allowed range" in response.json()["reason"]
