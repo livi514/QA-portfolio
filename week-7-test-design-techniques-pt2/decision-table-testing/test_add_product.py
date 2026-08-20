@@ -76,13 +76,17 @@ def submit(name, price, date):
         # Submit form
         page.click("button[type='submit']")
 
-        # Wait for validation message to appear
-        page.wait_for_selector("#message", timeout=5000)
-
-        message = page.inner_text("#message")
+        # Try to wait for an error message
+        try:
+            page.wait_for_selector(".error-message", timeout=3000)
+            message = page.inner_text(".error-message")
+        except:
+            # No error message → valid input
+            message = ""
 
         browser.close()
         return message
+
 
 # Rule-based test cases
 
@@ -93,7 +97,7 @@ def test_invalid_name():
         price="10.00",
         date=years_ago(50)
     )
-    assert result == "Name must be at least 2 characters"
+    assert result == "Name must be at least 2 characters."
 
 
 def test_empty_price():
@@ -125,16 +129,24 @@ def test_empty_date():
     )
     assert result == "Date must not be empty."
 
+# Broke this down into two tests: today and future, in case system behaviour changes.
 
-def test_future_or_today_date():
-    """R5: Date is today or future → Invalid"""
-    result = submit(
-        name="Valid Product",
-        price="10.00",
-        date=today()  # treated as future by the system
-    )
+def test_today_date():
+    """R5a: Date is today → Invalid (confirmed via testing, not documented)"""
+    result = submit(name="Valid Product", price="10.00", date=today())
     assert result == "Date must not be in the future."
 
+def test_future_date():
+    """R5b: Date is clearly in the future → Invalid"""
+    result = submit(name="Valid Product", price="10.00", date=today() + datetime.timedelta(days=30))
+    assert result == "Date must not be in the future."
+
+# Boundary test
+def test_exactly_100_years_ago():
+    """Boundary: exactly 100 years ago — table doesn't specify inclusive/exclusive"""
+    result = submit(name="Valid Product", price="10.00", date=years_ago(100))
+    # Run this and see what the real system does, then assert accordingly —
+    # this determines whether your table's "Past 100 years" class boundary is correct
 
 def test_over_100_years_ago_date():
     """R6: Date older than 100 years → Invalid"""
