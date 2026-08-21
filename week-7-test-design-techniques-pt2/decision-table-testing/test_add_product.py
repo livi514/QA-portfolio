@@ -42,12 +42,28 @@ URL = "https://commitquality.com/add-product"
 
 
 def years_ago(years: int) -> datetime.datetime:
+    """
+    Coarse helper: shifts the year but keeps today's month/day. Fine for
+    cases like years_ago(50) where you just need "comfortably inside the
+    valid range" -- but NOT precise enough for testing the exact 100-year
+    boundary, since it always lands on a year-aligned date. See
+    exact_100_year_boundary() below for day-precision boundary testing.
+    """
     now = datetime.datetime.now()
     return now.replace(year=now.year - years)
 
 
 def today() -> datetime.datetime:
     return datetime.datetime.now()
+
+
+def exactly_100_years_ago() -> datetime.datetime:
+    """
+    Same as years_ago(100), but named explicitly since it's used as the
+    zero-point for day-precision boundary math below.
+    """
+    now = datetime.datetime.now()
+    return now.replace(year=now.year - 100)
 
 
 # Browser fixture
@@ -222,21 +238,86 @@ def test_exactly_100_years_ago_date(page):
     the assertion and update the decision table doc to state the boundary
     explicitly either way.
     """
-    errors = submit(page, name="Valid Product", price="10.00", date=years_ago(100))
+    errors = submit(
+        page, name="Valid Product", price="10.00", date=exactly_100_years_ago()
+    )
     print(f"\nExactly-100-years-ago errors: {errors}")
+
+
+# --- Day-precision boundary tests -----------------------------------------
+#
+# years_ago(n) uses datetime.replace(year=...), which only ever moves the
+# year and keeps today's month/day fixed. That means years_ago(100) and
+# years_ago(101) both land exactly on a year anniversary of today -- neither
+# one can tell you whether the real system checks the boundary at day-level
+# precision or just compares year numbers.
+#
+# Concretely: if today is 21/08/2026, years_ago(100) is 21/08/1926 and
+# years_ago(101) is 21/08/1925. But 20/08/1926 -- one day older than the
+# true 100-year boundary -- is *also* over 100 years ago (100 years and
+# 1 day), and a naive year-only check (e.g. today.year - date.year > 100)
+# would wrongly treat it as exactly 100, not over. Neither existing test
+# would ever catch that, since neither ever produces a date one day off
+# the true boundary.
+#
+# These two tests isolate that specifically, using real date arithmetic
+# (timedelta on the exact-100-years date) rather than the coarser
+# year-jump helper, so a day-precision bug like the one above would
+# actually fail one of these.
+
+
+def test_just_over_100_years_ago_date(page):
+    """
+    Date is 100 years and 1 day ago -> should be Invalid.
+
+    This is the case a year-only comparison would get wrong: naive logic
+    comparing just today.year - date.year would see exactly 100 and treat
+    it as the (valid) boundary, missing that it's actually 1 day past it.
+    """
+    date = exactly_100_years_ago() - datetime.timedelta(days=1)
+    errors = submit(page, name="Valid Product", price="10.00", date=date)
+    assert any("100 years" in e or "old" in e.lower() for e in errors), f"Got: {errors}"
+
+
+def test_just_under_100_years_ago_date(page):
+    """
+    Date is 1 day short of 100 years ago (99 years, 364/365 days) -> should
+    be Valid. Companion to test_just_over_100_years_ago_date -- confirms
+    the boundary doesn't reject dates that are genuinely still within range.
+    """
+    date = exactly_100_years_ago() + datetime.timedelta(days=1)
+    errors = submit(page, name="Valid Product", price="10.00", date=date)
+    assert not any(
+        "100 years" in e or "old" in e.lower() for e in errors
+    ), f"Got: {errors}"
 
 
 def test_valid_past_100_years_date(page):
     """
     R7: Date within past 100 years → Valid.
 
-    NOT YET CONFIRMED what real success looks like. This only proves no
-    error text appeared -- it does NOT yet prove the product was actually
-    added (could be a silent no-op, a redirect not being followed, etc.).
-    Once you've checked the live site's real success behaviour (redirect?
-    confirmation message? product visible on /products?), extend this with
-    a positive assertion rather than relying solely on an empty error list.
+    Confirmed real success behaviour: the form redirects to the product
+    list page, where the newly added product appears. Uses a unique,
+    timestamped product name rather than the generic "Valid Product" used
+    elsewhere in this file, since the site persists submissions -- a fixed
+    name would make it ambiguous whether a given list entry came from this
+    test run or a previous one.
     """
-    errors = submit(page, name="Valid Product", price="10.00", date=years_ago(50))
+    unique_name = f"Valid Product {datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+    errors = submit(page, name=unique_name, price="10.00", date=years_ago(50))
     assert errors == [], f"Expected no validation errors, got: {errors}"
-    # TODO: add positive confirmation of success once real behaviour is known.
+
+    # submit()'s internal 500ms wait covers inline validation rendering, but
+    # may not be enough for a full page redirect to complete -- wait
+    # explicitly here before checking URL/list state.
+    page.wait_for_load_state("networkidle")
+
+    # Confirm the redirect away from the add-product form.
+    assert "/add-product" not in page.url, f"Expected redirect, still on: {page.url}"
+
+    # Confirm the new product is actually visible in the resulting list --
+    # this is the real proof of success, not just the absence of errors.
+    assert page.get_by_text(unique_name).is_visible(), (
+        f"Expected '{unique_name}' to appear in the product list after submission, "
+        f"but it wasn't found on {page.url}"
+    )

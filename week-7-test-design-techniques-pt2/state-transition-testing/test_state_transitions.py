@@ -1,5 +1,6 @@
-from playwright.sync_api import expect, sync_playwright
 import pytest
+from playwright.sync_api import expect, sync_playwright
+
 
 def login_helper(p):
     browser = p.chromium.launch(headless=False)
@@ -11,6 +12,8 @@ def login_helper(p):
     page.click('input[value="Log In"]')
 
     return page, browser
+
+
 def test_loan_submission_moves_to_processed_and_outcome():
     """
     This test follows the conceptual state machine in the diagram:
@@ -48,7 +51,9 @@ def test_loan_submission_moves_to_processed_and_outcome():
         # Check for crash first (real system behaviour)
         if page.locator("text=Error!").is_visible():
             # Diagram: This is NOT a valid state. It's a system failure.
-            assert False, "System crashed instead of reaching 'Loan Request Processed' state."
+            assert (
+                False
+            ), "System crashed instead of reaching 'Loan Request Processed' state."
 
         # --- STATE: Loan Request Processed ---
         # Diagram: This should always appear after submission.
@@ -75,4 +80,3 @@ def test_loan_submission_moves_to_processed_and_outcome():
             expect(page.locator("text=Loan Account")).not_to_be_visible()
 
         browser.close()
-
