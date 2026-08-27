@@ -1,4 +1,4 @@
-# Exploratory Testing Heuristics — Practical Exercise 1
+# Exploratory Testing Heuristics — SFDPOT
 
 **Chosen heuristic:** SFDPOT (Structure, Function, Data, Platform, Operations, Time)
 **Chosen demo site:** https://www.saucedemo.com/
