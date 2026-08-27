@@ -63,7 +63,9 @@ def get_account_ids(page):
     return {id_links.nth(i).inner_text() for i in range(id_links.count())}
 
 
-def submit_loan_request(page, amount: str, downpayment: str, from_account_id: str = None):
+def submit_loan_request(
+    page, amount: str, downpayment: str, from_account_id: str = None
+):
     """
     Shared helper: navigates to the loan form, fills it, and submits.
     Returns the page in whatever state it lands on afterward (Processed,
@@ -170,9 +172,9 @@ def test_loan_outcome_matches_account_state(page):
             f"before={ids_before}, after={ids_after}"
         )
     elif status_text == "Denied":
-        assert new_ids == set(), (
-            f"Denied but a new account was created anyway: {new_ids}"
-        )
+        assert (
+            new_ids == set()
+        ), f"Denied but a new account was created anyway: {new_ids}"
     else:
         pytest.fail(f"Unexpected loan status: {status_text!r}")
 
