@@ -289,7 +289,6 @@ This is a positive result: the "Update" pathway for checkout data works as expec
 
 The First Name, Last Name, and Postal Code entered by the user are never shown again after the page on which they're entered. Confirmed absent from both the payment overview screen (Step 16, which shows only item and price information) and the final "Checkout: Complete!" confirmation screen (Step 17). The user has no way to review the shipping details they submitted before or after confirming the order. Worth flagging as a UX gap even though it isn't a functional defect.
 
-
 ---------------------
 
 **CRUD finding:** After the final cart item is deleted, SauceDemo still allows
