@@ -42,7 +42,7 @@ I also learned that documentation is only a starting point. Real APIs may behave
 
 ## How to Run the Tests
 
-or full setup and installation instructions, see the main [README](../README.md).
+For full setup and installation instructions, see the main [README](../README.md).
 
 Ensure you are running commands from the `week-6-bva-ep` folder.
 
