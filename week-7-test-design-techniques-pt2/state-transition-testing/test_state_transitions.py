@@ -1,8 +1,8 @@
 # See state-transition-table.md for the full state transition table these
 # tests are based on. Only rows marked "Direct" in that table are exercised
-# here -- "Structural" rows (e.g. "no deny-after-approve transition exists",
-# or "duplicate submission" once reclassified after checking the real UI)
-# aren't tested because there's no UI action that could trigger them.
+# here. "Structural" rows (for example, the absence of a deny-after-approve
+# transition or the duplicate-submission case after real UI review) are not
+# tested because there is no UI action that could trigger them.
 
 import pytest
 from playwright.sync_api import expect, sync_playwright
@@ -16,11 +16,11 @@ LOGIN_URL = "https://parabank.parasoft.com/parabank/index.htm"
 @pytest.fixture
 def page():
     """
-    Function-scoped (not module-scoped like the CommitQuality suite) because
-    loan requests mutate account state -- each test should start from a
-    fresh login rather than share state/history with other tests in the
-    file. Costs more browser launches, but avoids one test's submitted loan
-    bleeding into another test's assertions about "no loan account exists."
+    Function-scoped rather than module-scoped, because loan requests mutate
+    account state. Each test should start from a fresh login instead of
+    sharing state or history with another test in the file. This means more
+    browser launches, but it avoids one test's submitted loan bleeding into
+    another test's assertion about whether a new loan account exists.
     """
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -39,26 +39,26 @@ def page():
 
 def get_account_ids(page):
     """
-    Returns the set of account IDs currently listed in Accounts Overview.
+    Return the set of account IDs currently listed in Accounts Overview.
 
-    Added after review: there is no "Loan Account" label anywhere on the
-    real Accounts Overview page - confirmed via a real test run, where
-    accounts are listed only by numeric ID in a shared table alongside
-    every other account type (checking/savings/loan all look identical).
-    So "did a loan account get created" can only be verified structurally,
-    by diffing the account list before and after submission, not by
-    searching for text that doesn't exist on the page.
+    Added after review: there is no "Loan Account" label anywhere on the real
+    Accounts Overview page. This was confirmed via a real test run, where
+    accounts are listed only by numeric ID in a shared table alongside every
+    other account type (checking, savings, and loan all look identical).
+    Therefore, determining whether a loan account was created can only be done
+    structurally by comparing the account list before and after submission,
+    rather than searching for text that does not exist on the page.
     """
     page.click("a[href*='overview']")
     expect(page.get_by_role("heading", name="Accounts Overview")).to_be_visible()
 
-    # Wait for the AJAX-populated table body to actually contain rows,
-    # rather than reading it the instant the (initially empty) <tbody>
-    # exists in the DOM.
+    # Wait for the AJAX-populated table body to actually contain rows rather
+    # than reading it immediately, because the table can initially be empty
+    # when the page first renders.
     page.wait_for_selector("#accountTable tbody tr", timeout=10000)
 
-    # Account IDs appear as link text in the first column of the table,
-    # e.g. "13344", "16341" - linking to activity.htm?id=<id>.
+    # Account IDs appear as link text in the first column of the table, for
+    # example "13344" or "16341", linking to activity.htm?id=<id>.
     id_links = page.locator("#accountTable a[href*='activity.htm?id=']")
     return {id_links.nth(i).inner_text() for i in range(id_links.count())}
 
@@ -67,17 +67,18 @@ def submit_loan_request(
     page, amount: str, downpayment: str, from_account_id: str = None
 ):
     """
-    Shared helper: navigates to the loan form, fills it, and submits.
-    Returns the page in whatever state it lands on afterward (Processed,
-    an outcome screen, or an Error page) - callers are responsible for
-    asserting what they expect to see next.
+    Navigate to the loan form, fill it in, and submit it.
+
+    Returns the page in whatever state it lands on thereafter (Processed,
+    an outcome screen, or an Error page). The caller is responsible for
+    asserting which outcome is expected next.
     """
     page.click('a[href*="requestloan"]')
     expect(page.get_by_role("heading", name="Apply for a Loan")).to_be_visible()
 
-    # ParaBank has no labels or IDs on the amount/downpayment fields, so we
-    # select by index. Order-dependent, would silently break if ParaBank
-    # reorders the form.
+    # ParaBank has no labels or IDs on the amount and downpayment fields, so
+    # we select by index. This is order-dependent and would silently break if
+    # ParaBank reorders the form.
     amount_input = page.get_by_role("textbox").nth(0)
     downpayment_input = page.get_by_role("textbox").nth(1)
 
@@ -98,18 +99,18 @@ def submit_loan_request(
 
 def test_loan_request_reaches_processed_state(page):
     """
-    LoanForm -> Loan Request Processed (table row 1).
+    Loan Form -> Loan Request Processed (table row 1).
 
-    Only confirms the intermediate "Processed" state is reached at all -
-    doesn't assert on the outcome (Approved/Denied), which the two tests
-    below cover separately with outcome-forcing inputs.
+    This confirms only that the intermediate "Processed" state is reached.
+    It does not assert on the outcome (Approved/Denied), which is covered by
+    the tests below.
     """
     submit_loan_request(page, amount="1000", downpayment="100")
 
     if page.get_by_text("Error!").is_visible():
         pytest.fail(
-            "System crashed instead of reaching 'Loan Request Processed' - "
-            "see test_denial_path_does_not_crash for the dedicated crash test."
+            "System crashed instead of reaching 'Loan Request Processed'. "
+            "See test_denial_path_does_not_crash for the dedicated crash test."
         )
 
     expect(page.get_by_text("Loan Request Processed")).to_be_visible()
@@ -117,32 +118,30 @@ def test_loan_request_reaches_processed_state(page):
 
 def test_loan_outcome_matches_account_state(page):
     """
-    Processed -> Approved OR Denied, with the correct downstream effect
-    either way (table rows: evaluates valid -> Approved -> creates account;
-    evaluates invalid -> Denied -> no account, routes to Terminal State).
+    Processed -> Approved OR Denied, with the correct downstream effect in
+    either case.
 
-    REPLACES the earlier pair of tests (test_loan_request_approved_creates_account
-    / test_loan_request_denied_no_account_created), which tried to force a
-    specific outcome with fixed input values. That approach didn't hold up:
-    the exact same input (1000/1000) produced Denied on one run and Approved
-    on the next, and pinning the funding account (rather than relying on
-    dropdown index) didn't reliably fix it either -- suggesting the real
-    ParaBank demo's approval logic depends on something not fully pinned
-    down here (live balance, server-side randomness, or something else
-    entirely). Rather than keep chasing input values for a system whose
-    decision function isn't actually known, this test reads whatever
-    outcome the system returns and asserts the invariant that should hold
-    regardless of which branch fires: Approved must create exactly one new
-    account, Denied must create none. This is what the diagram guarantees
-    either way, and it's the part actually under test control.
+    This replaces the earlier pair of tests that attempted to force a specific
+    outcome with fixed input values. That approach did not hold up: the exact
+    same input (1000/1000) produced Denied on one run and Approved on the
+    next, and pinning the funding account did not reliably fix it either.
+    This suggests the real ParaBank approval logic depends on something not
+    fully understood here, such as live balance data, server-side logic, or
+    another input not controlled in this test.
 
-    One consequence: a single run of this test only proves the invariant
-    for whichever outcome shows up that time -- it does NOT guarantee both
-    Approved and Denied get exercised across a given run. Running the suite
-    repeatedly over time should surface both branches eventually, but if
-    reliably exercising both branches every run matters, that would need
-    either a way to control the real decision input (still unknown) or
-    running this test multiple times per suite run with different accounts.
+    Rather than keep chasing the exact inputs for a system whose decision
+    function is not fully known, this test reads whatever outcome the system
+    returns and asserts the invariant that should hold regardless of which
+    branch fires: Approved must create exactly one new account, and Denied
+    must create none. This is the behaviour guaranteed by the diagram and the
+    underlying state model.
+
+    One consequence is that a single run of this test proves the invariant for
+    whichever outcome appears that time only. It does not guarantee that both
+    Approved and Denied are exercised in a single run. Re-running the suite
+    over time should surface both branches eventually, but if reliably
+    exercising both outcomes in one run matters, that would require either a
+    way to control the decision input or multiple runs with different inputs.
     """
     ids_before = get_account_ids(page)
     stable_account = min(ids_before, key=int)
@@ -153,22 +152,22 @@ def test_loan_outcome_matches_account_state(page):
 
     if page.get_by_text("Error!").is_visible():
         pytest.skip(
-            "System crashed instead of reaching an outcome -- known "
-            "deviation, see test_denial_path_does_not_crash."
+            "System crashed instead of reaching an outcome; see "
+            "test_denial_path_does_not_crash for the known deviation."
         )
 
     expect(page.get_by_text("Loan Request Processed")).to_be_visible()
 
-    # Scoped to #loanStatus rather than a bare text search - get_by_text
-    # on "Approved"/"Denied" alone previously hit a strict-mode violation,
-    # matching both the status cell AND a "Congratulations..." message.
+    # Scope to #loanStatus rather than using a bare text search. A plain
+    # get_by_text("Approved"/"Denied") previously hit a strict-mode violation,
+    # matching both the status cell and a success message.
     status_text = page.locator("#loanStatus").inner_text()
     ids_after = get_account_ids(page)
     new_ids = ids_after - ids_before
 
     if status_text == "Approved":
         assert len(new_ids) == 1, (
-            f"Approved but expected exactly one new account, "
+            f"Approved but expected exactly one new account; "
             f"before={ids_before}, after={ids_after}"
         )
     elif status_text == "Denied":
@@ -181,22 +180,23 @@ def test_loan_outcome_matches_account_state(page):
 
 def test_denial_path_does_not_crash(page):
     """
-    Not a row in the state table -- the diagram only models intended
-    behaviour, and this system crash was discovered through testing, not
-    documented anywhere. Kept as its own named test (rather than a
-    defensive check buried inside another test) so this finding is visible
-    as its own pass/fail result.
+    This is not a row in the state table. The diagram models intended
+    behaviour only, and this system crash was discovered during testing rather
+    than documented in advance.
 
-    Marked xfail because this is a known, currently-unfixed deviation --
-    remove the marker once the real system stops crashing on this path.
-    Uses the same 1000/1000 input as test_loan_outcome_matches_account_state.
-    Whether this input reliably triggers the crash (vs. reaching a normal
-    Approved/Denied outcome) hasn't been confirmed either -- the system's
-    behaviour with these inputs has already proven inconsistent across
-    runs for the outcome itself, so the crash may be similarly intermittent
-    rather than guaranteed. If this test starts passing/failing
-    unpredictably rather than consistently xfail-ing, that inconsistency
-    is itself worth noting rather than treating as test flakiness to fix.
+    We keep it as its own named test so the finding is visible as an explicit
+    result rather than being buried inside a different test's assertion.
+
+    Marked xfail because this is a known, currently unfixed deviation. Remove
+    the marker once the real system stops crashing on this path.
+
+    It uses the same 1000/1000 input as test_loan_outcome_matches_account_state.
+    Whether this input reliably triggers the crash or reaches a normal
+    Approved/Denied outcome has not been confirmed. The system's behaviour with
+    the same inputs has already proved inconsistent across runs, so the crash
+    may be similarly intermittent rather than guaranteed. If this test begins
+    passing or failing unpredictably rather than consistently xfail-ing, that
+    inconsistency is itself worth noting rather than treating as test flakiness.
     """
     ids_before = get_account_ids(page)
     stable_account = min(ids_before, key=int)
