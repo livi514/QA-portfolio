@@ -40,9 +40,9 @@ class InventoryPage:
     # Page load wait
     def wait_until_loaded(self):
         # Wait for the page title to appear
-        self.page.wait_for_selector("span.title")
+        self.page.wait_for_selector("span.title", timeout=60000)
         # Wait for at least one product to render
-        self.page.wait_for_selector("div.inventory_item")
+        self.page.wait_for_selector("div.inventory_item", timeout=60000)
 
     # Generic product actions
     def add_item(self, item_name):

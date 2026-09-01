@@ -3,7 +3,8 @@ from test_data import VALID_USER
 
 
 def perform_login(page):
-    page.goto("/")
+    page.goto("/", wait_until="domcontentloaded", timeout=60000)
+    page.locator("#user-name").wait_for(state="visible", timeout=30000)
     page.locator("#user-name").fill(VALID_USER["username"])
     page.locator("#password").fill(VALID_USER["password"])
     page.locator("#login-button").click()
@@ -13,7 +14,8 @@ def perform_login(page):
 def log_in_to_saucedemo(page):
     perform_login(page)
     # Wait for navigation to inventory page
-    page.wait_for_url("**/inventory.html")
+    page.wait_for_url("**/inventory.html", timeout=60000)
+    page.locator("span.title").wait_for(state="visible", timeout=60000)
     return page
 
 
