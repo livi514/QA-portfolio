@@ -22,6 +22,16 @@ Exploratory testing is a hands-on testing approach that combines test design and
 
 Heuristics are mental shortcuts or "rules of thumb" that guide the testing process. They provide a framework for discovering and testing new areas of the application systematically, helping testers know where to look and what to test without prescribing exact steps.
 
+## Key Architecture Finding: SauceDemo's checkout is entirely client-side
+
+Before getting into individual heuristics and how I applied them to SauceDemo, one discovery affects how several of the scenarios below should be interpreted.
+
+While investigating checkout resilience using the Interrupt/Starve heuristic, inspecting the Network tab with the Fetch/XHR filter active (log cleared, full checkout flow run through) showed 0 of 93 total requests were Fetch/XHR type. The 93 requests were all CSS, JS, fonts, and images loaded on initial page load, not anything triggered by checkout actions themselves.
+
+This confirms that SauceDemo's checkout makes no network requests at all. The actual data store for cart state is a `cart-contents` key in `localStorage`, holding an array of product indices. This was confirmed directly through DevTools -> Application -> Local Storage. Adding an item appends to the array. Completing checkout removes the key entirely, matching the pre-cart baseline.
+
+This matters for interpreting results below: there is no server-side order system to inspect. 
+
 ## Exploratory Testing Heuristics
 
 ### CRUD (Create, Read, Update, Delete)
@@ -41,6 +51,7 @@ Tests the four fundamental data operations on entities, verifying consistency ac
 - **Update (Not supported):** SauceDemo cart doesn't support quantity editing or product modification. No quantity selector exists in UI.
 - **Delete (Remove from cart):** Remove Sauce Labs Backpack from cart page. Verify: item disappears immediately, cart badge updates from "1" to hidden, button on inventory page changes back to "Add to cart", checkout totals recalculate.
 - **Additional finding (bug discovered):** checkout can be completed with an empty cart, reaching a $0.00 order with no validation or warning at any step.
+- **Architecture note:** this session's working model of "the cart as a collection of cart-item records" turned out to closely match the real implementation. See the localStorage `cart-contents` array finding above, confirmed independently during Interrupt/Starve testing.
 
 ---
 
@@ -63,7 +74,7 @@ A systematic heuristic for exploring all dimensions of an application.
 - **Data:** Whitespace is not trimmed; `' OR 1=1--` is rejected like any other invalid input; long strings (1000+ chars) scroll horizontally without breaking layout; special characters accepted at input level
 - **Platform:** Consistent across Firefox, Chrome, Edge, Opera on Windows and Chrome on Android; mobile layout adapts cleanly to single column
 - **Operations:** Typing, pasting, and autofill all work; Enter key submits from either field; no field-level validation (errors only on submit); leading/trailing whitespace causes rejection
-- **Time:** Typing speed has no effect; arbitrary delays between credential entry and login work fine; `performance_glitch_user` experiences intentional login delay, which is expected behavior
+- **Time:** Typing speed has no effect; arbitrary delays between credential entry and login work fine; `performance_glitch_user` experiences intentional login delay, which is expected behaviour
 
 ---
 
@@ -71,12 +82,13 @@ A systematic heuristic for exploring all dimensions of an application.
 
 Focuses on spotting inconsistencies and misalignments with expectations.
 
-- **History:** Does behavior differ from previous versions? Are there regressions?
+- **History:** Does behaviour differ from previous versions? Are there regressions?
 - **Image:** Does the product match its brand and reputation promises?
 - **Claims:** Do features work as documented? Does marketing match reality?
 - **Comparable Products:** How does it compare to competitor products? Missing features? Unexpected behavior?
 - **User Expectations:** What do users expect based on similar apps? Where are the surprises?
 - **Product:** Does the actual product meet the stated requirements?
+- **Purpose:** Does the feature actually achieve what it's meant to achieve?
 - **Statutes:** Does it comply with relevant laws, standards, and regulations?
 
 **Use case:** Validate that the product meets user and business expectations.
@@ -123,7 +135,7 @@ Tests boundary limits by operating with zero, one, or many items in a collection
 **Practical example: SauceDemo checkout**
 - **Zero items:** [✗] User can proceed through entire checkout flow with empty cart, reaching a $0.00 order confirmation. **Bug found:** no validation at any step prevents this. System should either disable checkout when cart is empty, show a warning, or block at final step.
 - **One item:** [✓] Normal flow with Sauce Labs Backpack ($29.99 + $2.40 tax = $32.39). No issues.
-- **Many items:** [✓] All 6 items checkout successfully ($129.94 + $10.40 tax = $140.34). Cart state is correctly reflected across inventory page, cart page, and checkout summary. Note: SauceDemo does not support adding multiple quantities of the same item—each product can only exist once in the cart.
+- **Many items:** [✓] All 6 items checkout successfully ($129.94 + $10.40 tax = $140.34). Cart state is correctly reflected across inventory page, cart page, and checkout summary. Note: SauceDemo does not support adding multiple quantities of the same item — each product can only exist once in the cart.
 
 ---
 
@@ -137,7 +149,8 @@ Targets behaviors the software claims it will never or always do, then violates 
 
 **Use case:** Uncover broken guarantees and defensive programming gaps.
 
-**Practical example: SauceDemo checkout**
+**Practical example: SauceDemo checkout** *(This reuses the empty-cart and cart persistence findings from Zero/One/Many and Interrupt/Starve avove, viewed here through the lens of implicit system guarantees rathet than as new discoveries.)*
+
 - **Claim (implicit):** "Checkout should always require at least one item" [✗] Bug found: Checkout succeeds with zero items, creating a $0.00 order
 - **Claim (implicit):** "Cart state is always preserved during checkout" [✓] Confirmed — cart items persist even if user navigates away or reloads pages
 - **Claim (implicit):** "Checkout details should always be cleared if the user navigates back" [✓] Confirmed—first/last name and zip are cleared when user presses Back, forcing re-entry (acceptable UX tradeoff)
@@ -156,7 +169,8 @@ Varies the sequence, timing, or position of operations in a workflow to find sta
 
 **Use case:** Find state-machine violations, race conditions, and workflow sequencing bugs.
 
-**Practical example: SauceDemo checkout interruptions**
+**Practical example: SauceDemo checkout interruptions** *(Largely the same underlying scenarios as Interrupt/Starve below, reframed around position in the workflow rather than the type of disruption.)*
+
 - **Beginning (Before Continue):** [✓] User enters checkout details, then navigates away before clicking "Continue". Cart is preserved when they return. Checkout details are cleared. Recovery: smooth, user just re-enters info.
 - **Middle (At Overview):** [✓] User reloads the checkout overview page while reviewing items. Cart items, quantities, prices, and totals are all preserved. No errors.
 - **End (After pressing Finish):** [✓] User completes checkout and sees "Thank you for your order!" Attempting to re-submit by double-clicking Finish rapidly doesn't create duplicate orders. System handles rapid input gracefully. 
