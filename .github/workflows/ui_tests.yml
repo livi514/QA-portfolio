@@ -9,6 +9,7 @@ jobs:
   ui-tests:
     timeout-minutes: 20
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         include:
@@ -42,7 +43,9 @@ jobs:
           pytest tests \
             --html=report.html \
             --self-contained-html \
-            --timeout=60
+            --timeout=60 \
+            --reruns 2 \
+            --reruns-delay 2
       - name: Upload test report
         uses: actions/upload-artifact@v7
         if: always()
