@@ -30,8 +30,7 @@ Decision table testing is less useful when:
 A decision table generally contains the following elements:
 - **Conditions:** Conditions are based on business rules, for example "Credit Score Category" with the rules "High" and "Low" in a Loan Approval System.
 - **Condition alternatives:** Condition alternatives are the specific values assigned to each condition within a rule, such as Yes/No, True/False, or range values.
-- **Actions:** Actions are the system's expected responses when a particular combination of conditions is mFor the ParaBank example, the table in [state-transition-table.md](state-transition-table.md) is fairly close to this idea, but it also includes extra notes such as whether a transition is direct or structural. That is useful in practice because some transitions are not directly testable via a UI action.
-et. They describe what the system does, not what it evaluates, for example "Approve loan" or "Reject loan".
+- **Actions:** Actions are the system's expected responses when a particular combination of conditions is met. They describe what the system does, not what it evaluates, for example "Approve loan" or "Reject loan".
 - **Rules:** Rules are the columns of the decision table. Each rule defines one unique combination of condition values and the corresponding action.
 - **Action entries:** Action entries indicate which actions are triggered for each rule.
 
