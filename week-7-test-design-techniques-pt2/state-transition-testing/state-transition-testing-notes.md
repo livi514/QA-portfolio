@@ -4,7 +4,7 @@
 
 State transition testing is a black-box test design technique that checks how a system behaves as it moves between the states it can occupy. The tester identifies every state the system can be in, every event that can trigger a transition, every valid transition between states, and every action the system performs as the transition occurs. Test cases are derived from this model to cover both transitions that should be accepted and transitions that should be rejected.
 
-This technique is suitable for systems where behaviour depends on previous conditions or state, not just on the current input alone. A system that always returns the same result for the same input does not need state transition testing. A system where the same input produces different results depending on the system’s current state does.
+This technique is suitable for systems where behaviour depends on previous conditions or state, not just on the current input alone. A system that always returns the same result for the same input does not need state transition testing. A system where the same input produces different results depending on the system's current state does.
 
 Typical examples include:
 - Loan approval workflows
@@ -55,7 +55,7 @@ Each system includes a start state and one or more end states. The start state i
 
 ## State Transition Diagrams
 
-A state transition diagram is a visual map of the system’s states and the paths between them. States are usually represented as labelled shapes, and transitions are shown as arrows labelled with the event that triggers the move and any action that happens along the way.
+A state transition diagram is a visual map of the system's states and the paths between them. States are usually represented as labelled shapes, and transitions are shown as arrows labelled with the event that triggers the move and any action that happens along the way.
 
 For the ParaBank loan request flow, the diagram shows the journey from the application form through processing, outcome, and final state. The key point is that the system behaves differently depending on whether the request is approved or denied.
 
@@ -92,7 +92,7 @@ The reason this matters is that a state transition table should make all possibl
 ### Why invalid cells matter
 The invalid or undefined cells are just as important as the valid ones. Many defects appear when a system allows a transition that should be blocked or when it crashes instead of moving to the correct outcome.
 
-In the ParaBank flow, a good example is the known issue where an invalid request can lead to an “Error!” page instead of a clean denial path. That is exactly the kind of behaviour a state transition table makes visible and testable.
+In the ParaBank flow, a good example is the known issue where an invalid request can lead to an "Error!" page instead of a clean denial path. That is exactly the kind of behaviour a state transition table makes visible and testable.
 
 ## Practical example from the ParaBank flow
 
@@ -105,6 +105,7 @@ The table in [state-transition-table.md](state-transition-table.md) includes exa
 | Loan Request Processed | System evaluates invalid request | Denied | Yes | Direct |
 | Approved | System creates loan account | Loan Account Created | Yes | Direct |
 | Denied | Workflow ends | Terminal State | Yes | Direct |
+| Approved | System denies | Approved (no change) | No | Structural — no UI control exists to deny an already-approved request; the absence of this control is itself the thing being verified, not a UI action to script |
 
 This is useful because it separates:
 - Direct transitions that can be triggered through the page
@@ -134,10 +135,10 @@ The test called `test_loan_outcome_matches_account_state` checks the branch afte
 - If the loan is approved, exactly one new account should be created
 - If the loan is denied, no new account should be created
 
-This is a strong state transition example because the same “processed” state can lead to different valid outcomes depending on the underlying rules or system response.
+This is a strong state transition example because the same "processed" state can lead to different valid outcomes depending on the underlying rules or system response.
 
 ### Example 3: Defect discovery through state transitions
-The test `test_denial_path_does_not_crash` is valuable because it captures a real defect discovered during testing. Instead of moving to a clean denial path, the system sometimes shows an “Error!” page. This is a state transition problem because the system does not reach the expected state.
+The test `test_denial_path_does_not_crash` is valuable because it captures a real defect discovered during testing. Instead of moving to a clean denial path, the system sometimes shows an "Error!" page. This is a state transition problem because the system does not reach the expected state.
 
 This shows that state transition testing is not only about happy paths; it is also about detecting unexpected transitions and invalid states.
 
@@ -178,4 +179,4 @@ State transition testing is a strong technique for systems whose behaviour depen
 
 In my practical work, the ParaBank loan application flow is a clear example of this. The state model shows how the process moves from form input to processed request, then to either approval or denial, and finally to a terminal state or account creation. The table in [state-transition-table.md](state-transition-table.md) and the tests in [test_state_transitions.py](state-transition-testing/test_state_transitions.py) show how those transitions can be used to design, review, and automate coverage.
 
-The key takeaway is this: state transition testing is not only about happy paths. It is about proving that the system behaves correctly as it moves through every meaningful state while also identifying transitions that should not exist, should be blocked, or currently fail unexpectedly. 
+The key takeaway is this: state transition testing is not only about happy paths. It is about proving that the system behaves correctly as it moves through every meaningful state while also identifying transitions that should not exist, should be blocked, or currently fail unexpectedly.
