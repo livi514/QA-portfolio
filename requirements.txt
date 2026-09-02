@@ -24,4 +24,4 @@ pytest-html
 # Linting / Formatting
 black
 flake8
-isort
+isortpytest-timeout==2.4.0
