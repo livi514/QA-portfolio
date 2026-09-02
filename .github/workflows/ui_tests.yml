@@ -8,6 +8,7 @@ on:
 
 jobs:
   ui-tests:
+    timeout: 20
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -48,7 +49,8 @@ jobs:
           cd week-3-playwright-polish
           pytest tests \
             --html=report.html \
-            --self-contained-html
+            --self-contained-html \
+            -- timeout=60
 
       - name: Upload test report
         uses: actions/upload-artifact@v7
