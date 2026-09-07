@@ -6,17 +6,17 @@ Week 5 of my QA Summer Roadmap focuses on CI/CD with GitHub Actions, which was a
 
 My initial goal was to create YAML workflows to run UI and API tests automatically, generate test reports for each workflow, and add the relevant status badges to my READMEs.
 
-By the end of the week, though, I'd gone well beyond these goals, also covering multi-job and cross-platform workflows, scheduled runs, and dependency caching. I now have workflows set up across three repositories: QA-Portfolio (this repository), as well as saucedemo-playwright-tests and jsonplaceholder-api-tests, covering linting and test automation across three operating systems.
+By the end of the week, though, I'd gone well beyond these goals, also covering multi-job and cross-platform workflows, scheduled runs, and dependency caching. I now have workflows set up across three repositories: QA-portfolio (this repository), as well as saucedemo-playwright-tests and jsonplaceholder-api-tests, covering linting and test automation across three operating systems.
 
 ## What I did
 
-I started with basic test workflows for all three repos (QA-portfolio, saucedemo-playwright-tests, and jsonplaceholder-api-tests). This introduced me to the process of setting up a YAML file and how to check the status of my workflows on GitHub.
+I started with basic test workflows for all three repositories (QA-portfolio, saucedemo-playwright-tests, and jsonplaceholder-api-tests). This introduced me to the process of setting up YAML files and checking the status of my workflows on GitHub.
 
 I then wanted to practice setting up workflows further, by also adding a linting workflow to each repository.
 
 Upon reviewing some CI/CD and GitHub Actions theory and trying to identify ways to expand my practical work further, I came across multi-job and cross-platform workflows. Initially, my workflows had only been running on Ubuntu, so I expanded them to run across all three available operating systems.
 
-I also considered how I could use multi-job workflows more deliberately. I decided to combine the lint and test workflows in saucedemo-playwright-tests and jsonplaceholder-api-tests into a single two-job workflow with a lint→test dependency. This means a set of linters runs first, and the tests only run if linting passes.
+I also considered how I could use multi-job workflows more deliberately. I decided to combine the lint and test workflows in saucedemo-playwright-tests and jsonplaceholder-api-tests into a single two-job workflow with a lint → test dependency. This means a set of linters runs first, and the tests only run if linting passes.
 
 However, I kept the three workflows in QA-portfolio separate, since they cover distinct responsibilities. Unlike in the other two repos, they also apply to different directories: linting covers the whole repository, while the UI tests only apply to `week-3-playwright-polish` and the API tests only apply to `week-4-api-testing`.
 
@@ -44,7 +44,7 @@ This week taught me two skills that feel almost like opposites (zoom in vs. zoom
 
 On one hand, you need the ability to cover all possibilities and look at the big picture. You need to understand how all components of the system work together, as well as being able to cover the different behaviours and environments that users might have. An example of this from this week was using the cross-platform testing, which allowed me to test operating systems beyond the one on my local machine. 
 
-On the other hand, you need to have a keen attention to detail, and be able to investigate beyond just what you see on the surface. For example, when I was initially trying to generate test reports, my workflows were shown as "passing" despite the reports not being generated properly. This undermined my trust in my own processes and showed how a "passing" status could mislead the development team. 
+On the other hand, you need to have a keen attention to detail, and be able to investigate beyond just what you see on the surface. The false-pass report issue mentioned above is a good example of this: it undermined my trust in my own processes, and showed how a "passing" status could mislead the development team.
 
 Attention to detail is also crucial to maintain a high-quality user experience. This includes security, for example, in week 4, JSONPlaceholder was missing crucial security headers such as Strict-Transport-Security. Strict-Transport-Security (HSTS) tells the browser to always use HTTPS with the site. Without it, the site could fall back to HTTP, which is unencrypted. A user's connection could be intercepted before upgrading to HTTPS, especially on something like public WiFi, potentially exposing sensitive information, such as login credentials.
 

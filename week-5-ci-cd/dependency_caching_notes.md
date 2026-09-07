@@ -4,8 +4,8 @@
 
 Every workflow run starts on a **completely fresh runner**, meaning a separate filesystem, nothing installed, nothing left over from last time (this is the same reason each job needs its own `checkout` + `setup-python` steps, even within one workflow).
 
-That means every single run has to redo the same expensive setup work from scratch:
-- `pip install -r requirements.txt` — re-downloads and re-installs every package, every time
+That means every single run has to repeat the same setup work:
+- `pip install -r requirements.txt` — resolves and installs every package, while downloading packages that are not already in the pip cache
 - `playwright install` — re-downloads entire browser binaries (chromium, firefox, webkit), every time
 
 Multiply this by:
@@ -19,7 +19,7 @@ Most of that install work is pure repetition. Caching exists to stop repeating i
 
 Caching lets a workflow **save specific files/folders after a run, and restore them at the start of a later run**, instead of regenerating them from scratch every time.
 
-For dependencies specifically: instead of re-downloading and reinstalling every package, GitHub Actions can restore a previously-saved copy of those installed packages, *if* it can confirm nothing has changed that would make the old copy invalid.
+For dependencies specifically: GitHub Actions can restore previously downloaded package archives from the pip cache, *if* it can confirm nothing has changed that would make the cached downloads invalid. The `pip install` command still runs to install those packages into the current runner's environment.
 
 ## How it decides whether to use the cache: the cache key
 
@@ -52,11 +52,12 @@ This one line handles the pip-caching logic automatically — keys it off `requi
 
 **2. `actions/cache` directly (more control)**
 
-Needed when caching something that isn't just pip packages, e.g. Playwright's downloaded browser binaries, which live in a different location than pip packages and are arguably the *slowest* part of UI test setup, not the pip install itself.
+Needed when caching something that isn't just pip downloads, e.g. Playwright's downloaded browser binaries, which live in a different location and are arguably the *slowest* part of UI test setup, not the pip install itself.
 
 ```yaml
 - uses: actions/cache@v4
   with:
+    # Linux path; use the corresponding Playwright cache path on Windows or macOS.
     path: ~/.cache/ms-playwright
     key: playwright-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
 ```

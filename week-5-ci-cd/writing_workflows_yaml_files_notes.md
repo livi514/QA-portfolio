@@ -1,4 +1,4 @@
-# Writing Workflows / YAML Files  
+# Writing Workflows / YAML Files
 
 When writing a GitHub Actions workflow, the basic structure always follows the same pattern:
 
@@ -17,14 +17,15 @@ You can also use more advanced triggers later, like:
 - `on: workflow_dispatch` (manual trigger)
 - `on: issues:` (issue automation)
 - `on: release:` (deployment pipelines)
-(Note to self: I've only used push/pull_request so far. I want to experiment with scheduled workflows and manual triggers.)
+(In this repository, the workflows also use scheduled runs and manual `workflow_dispatch` triggers.)
 
 3. **Define the jobs and steps**  
 
 ## Jobs and Steps
 
 A workflow can have multiple jobs, and each job can have multiple steps.
-So far, I've only used single-job workflows, but multi-job workflows are useful for:
+
+Multi-job workflows are useful for:
 - running tests in parallel (e.g. API + UI tests)
 - building on one job, then deploying in another
 - running a matrix of environments, then combining results
@@ -126,9 +127,10 @@ jobs:
         run: playwright install --with-deps chromium firefox webkit
 
       - name: Run tests
-        run: pytest week-3-playwright-polish/tests \
-             --html=week-3-playwright-polish/report.html \
-             --self-contained-html
+        run: |
+          pytest week-3-playwright-polish/tests \
+            --html=week-3-playwright-polish/report.html \
+            --self-contained-html
 
       - name: Upload test report
         uses: actions/upload-artifact@v4

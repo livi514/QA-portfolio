@@ -32,7 +32,7 @@ Workflows are defined in the .github/workflows directory in a repository. A repo
 - Deploying your application every time a new release is created
 - Adding a label whenever a new issue is opened
 
-For example, in my QA-Porfolio repository, I have 3 workflows: UI tests, API tests, and linting.
+For example, in my QA-portfolio repository, I have three workflows: UI tests, API tests, and linting.
 
 You can also reference a workflow within another workflow.
 
@@ -97,7 +97,7 @@ You can write your own actions, or you can find actions to use in your workflows
 
 ## Runners
 
-A runner is a server that runs your workflows when they're triggered. Each runner can run a single job at a time. GitHub provides Ubuntu Linux, Microsoft Windows, and macOS runners to run your workflows. Each workflow run executed in a fresh, newly-provisioned virtual machine.
+A runner is a server that runs your workflows when they're triggered. Each runner can run a single job at a time. GitHub provides Ubuntu Linux, Microsoft Windows, and macOS runners to run your workflows. Each workflow run on a GitHub-hosted runner executes in a fresh, newly provisioned virtual machine. Self-hosted runners may be persistent and are managed separately.
 
 GitHub also offers larger runners, which are available in larger configurations.
 

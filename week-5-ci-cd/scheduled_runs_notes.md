@@ -19,12 +19,16 @@ Examples:
 - `0 6 * * 1` → every Monday at 06:00
 - `0 */6 * * *` → every 6 hours
 
-Combining with existing triggers.
+Combining scheduled runs with existing triggers.
 
-Scheduled runs are additive, meaning that they don't replace push/pull_request, they just add another way the workflow can start:
+Scheduled runs are additive, meaning that they don't replace `push` or `pull_request`; they add another way the workflow can start. Because `schedule` requires a cron expression, it must use mapping syntax:
 
 ```
-on: [push, pull_request, schedule]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1'
 ```
 
 ## Things to remember
@@ -40,7 +44,7 @@ Normally, my workflows only run when I push or open a PR. But some things can br
 - saucedemo-playwright-tests and jsonplaceholder-api-tests both hit live external targets (saucedemo.com, JSONPlaceholder's API). If either changes something (markup, response structure, headers), I'd currently only find out next time I happen to push, which could be weeks later.
 - A scheduled run catches this proactively instead of me discovering it's broken by accident.
 - This mirrors a real QA/ops concept: regression detection independent of my own release cycle (like nightly builds or scheduled smoke tests against a staging environment in a real job).
-- For QA-portfolio, a scheduled run gives one combined health-check signal instead of me needing to remember to check three repos separately.
+- For QA-portfolio, a scheduled run gives a regular health-check signal for the workflows in that repository. The other two repositories need their own scheduled runs.
 
 ## Cadence: why weekly, not daily
 
