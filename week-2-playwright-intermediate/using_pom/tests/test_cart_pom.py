@@ -34,7 +34,7 @@ def test_remove_item_from_cart(add_backpack_to_cart):
     assert cart.get_item_count() == 0
 
 
-def test_removing_item_doesnt_affect_others(add_backpack_and_bike_light_to_cart):
+def test_removing_item_does_not_affect_others(add_backpack_and_bike_light_to_cart):
     # This test verifies that removing one item from the cart does not affect other items in the cart.
 
     # check number of items in the cart
