@@ -8,7 +8,7 @@ pytest supports several configuration file formats:
 
 ### `pytest.ini`
 
-Takes precedence over other files (except `pyproject.toml`), even when empty. Only handles pytest configuration, nothing else.
+Takes precedence over the other supported pytest configuration files, even when empty. Only handles pytest configuration, nothing else.
 
 ```ini
 # pytest.ini
@@ -66,10 +66,9 @@ pytest uses `rootdir` for two main purposes:
 ```toml
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--browser chromium --browser firefox --browser webkit -2 auto --base-url https://www.saucedemo.com"
+addopts = "--browser chromium --browser firefox --browser webkit -n 2 --base-url https://www.saucedemo.com"
 markers = [
     "smoke: quick baseline checks",
-    "regression: full test suite",
 ]
 ```
 
@@ -77,7 +76,7 @@ markers = [
 
 **`addopts`**  - additional command line options applied automatically on every run:
 - `--browser chromium/firefox/webkit` runs tests across all three browsers
-- `-n auto` enables parallel execution using all available CPU cores (requires `pytest-xdist`)
+- `-n 2` enables parallel execution with two workers (requires `pytest-xdist`)
 - `--base-url` sets the base URL so tests can use relative paths like `page.goto("/")` instead of hardcoding the full URL everywhere
 
 **`markers`** declares custom markers to avoid pytest warnings and documents their purpose.
@@ -88,7 +87,7 @@ Markers allow you to tag tests so you can run specific subsets on demand.
 
 ### My marker: `smoke`
 
-Smoke tests are quick baseline checks that verify the site is up and rendering correctly before running the full suite. They cover things like page load, element visibility, and correct titles — nothing that requires complex user interactions.
+Smoke tests are a focused baseline subset that verifies the site is up and key elements render correctly before running the full suite. In this project, the subset runs across the configured browsers and includes basic cart and inventory checks as well as page-load and visibility checks.
 
 ```toml
 markers = [
