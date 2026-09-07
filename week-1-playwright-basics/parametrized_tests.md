@@ -31,7 +31,7 @@ The syntax breakdown:
 
 If one of the three add_one cases failed, what would the output look like?
 - Each case is reported separately, even though there's only one function.
-- So, if (5,6) was wrong but the other two were fine, your output would show something like:
+- So, if `(5, 6)` was wrong but the other two were fine, your output would show something like:
 test_add_one[1-2] PASSED
 test_add_one[5-6] FAILED
 test_add_one[10-11] PASSED
