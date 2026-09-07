@@ -1,9 +1,9 @@
-# Week 1 - Playwright Fundamentals 
+# Week 1 - Playwright Fundamentals
 
 ## What is Playwright?
-- Playwright Test is an end-to-end test framework for modern web apps.
+- Playwright for Python, used with pytest, supports end-to-end testing for modern web apps.
 - It bundles test runner, assertions, parallelization, and rich tooling.
-- Playwright supports Chromium, WebKit, and Firefox on Windows, Linux, and macOS, locally or in CI, headless or header, with native mobile emulation for Chrome (Android) and Mobile Safari.
+- Playwright supports Chromium, WebKit, and Firefox on Windows, Linux, and macOS, locally or in CI, headless or headed, with mobile emulation for Chrome (Android) and Mobile Safari.
 - Playwright supports programming languages like JavaScript, TypeScript, .NET, Python, C#, and Java, though its main API was originally written in Node.js.
 - It was developed by Microsoft.
 
@@ -15,7 +15,7 @@
 - Test scenarios can span multiple tabs, multiple origins, and multiple users. You can create scenarios with different contexts for different users and run them against your server, all in one test.
 - **Trusted events**: Hover elements, interact with dynamic controls, produce trusted events. Playwright uses real browser input pipelines indistinguishable from the real user.
 - **Test frames, pierce Shadow DOM**: Playwright selectors pierce shadow DOM and allow entering frames seamlessly.
-- **Full isolation** Browser contexts - Playwright creates a browser context for each test. Browser context is equivalent to a brand new browser profile. This delivers full test isolation with zero overhead. Creating a new browser context onlhy takes a handful of milliseconds.
+- **Full isolation** Browser contexts - Playwright creates a browser context for each test. Browser context is equivalent to a brand new browser profile. This delivers test isolation with minimal overhead. Creating a new browser context only takes a handful of milliseconds.
 - **Log in once**: Save the authentication state of the context and reuse it in all the tests. This bypasses repetitive log-in operations in each test, yet delivers full isolation of independent tests.
 - **Codegen**: Generate tests by recording your actions. Save them into any language.
 - **Playwright inspector**: inspect page, generate selectors, step through the test execution, see click points, explore execution logs.
@@ -47,7 +47,7 @@ page.goto("https://playwright.dev/")
 Playwright will wait for the page to reach the load state prior to moving forward.
 
 The method will throw an error if:
-- there's an SSL eror (e.g. in the case of self-signed certificates)
+- there's an SSL error (e.g. in the case of self-signed certificates)
 - target URL is invalid
 - the timeout is exceeded during navigation
 - the remote server does not respond or is unreachable 
@@ -62,7 +62,7 @@ The goto method either throws an error or returns a main resource response. The 
 
 Selectors are used to create Playwright locators that help testers find any element on the page. There are a few popular types of selectors in Playwright:
 - **Text selectors**: use text content selectors to find elements based on their visible text content.
-- **CSS selectors**: target elements based on their attributes, clases, IDs, and other properties.
+- **CSS selectors**: target elements based on their attributes, classes, IDs, and other properties.
 - **XPath selectors**: navigate the XML structure of web pages, and select elements based on their relationships within the document.
 
 #### Locators
@@ -109,9 +109,9 @@ Most popular async assertions:
 - **expect(page).to_have_title()**: page has title
 - **expect(page).to_have_url()**: page has url
 
-### Test isolation 
+### Test isolation
 
-The Playwright Pytest plugin is based on the concept of text fixtures such as the built in page fixture, which is passed into your test.
+The Playwright pytest plugin is based on the concept of test fixtures, such as the built-in `page` fixture, which is passed into your test.
 Pages are isolated between tests due to the Browser Context, which is equivalent to a brand new browser profile, where every test gets a fresh environment, even when multiple tests run in a single browser.
 
 ### Using fixtures
@@ -179,11 +179,11 @@ pytest --browser webkit --browser firefox
 
 To run a single test file, pass in the name of the test file that you want to run.
 
-pytest test_login.py
+pytest tests/test_login_page.py
 
 To run a set of test files, pass in the names of the test files that you want to run.
 
-pytest tests/test_todo_page.py tests/test_landing_page.py
+pytest tests/test_login_page.py tests/test_inventory_page.py
 
 To run a specific test, pass in the function name of the test you want to run.
 
