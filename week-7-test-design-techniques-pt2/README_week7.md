@@ -41,3 +41,28 @@ Aside from exploring test design techniques this week, I also had to fix an issu
 ## Key takeaways from this week:
 
 This week taught me that testing can’t be limited to one technique, and that looking at a system through a new angle can help you discover unexpected bugs. It also reinforced that even automated tests rely on good design. Automation without good design is just running bad tests faster.
+
+## How to Run the Tests
+
+For full setup and installation instructions, see the main [README](../README.md).
+
+Ensure you are running commands from the `week-7-test-design-techniques-pt2` folder.
+
+Use `cd week-7-test-design-techniques-pt2` to navigate to the folder if necessary.
+
+Run all tests:
+```
+pytest
+```
+
+Run a specific test file:
+```
+pytest decision-table-testing/test_add_product.py
+```
+
+Run the state-transition tests:
+```
+pytest state-transition-testing/test_state_transitions.py
+```
+
+These tests use the live CommitQuality and ParaBank demo sites, so they require an internet connection and may be affected by changes or outages on those sites.
