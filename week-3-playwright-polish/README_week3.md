@@ -12,7 +12,7 @@ I started with test configuration, setting up a `pyproject.toml` file to central
 
 I also created a test data file (`test_data.py`) to centralise credentials, form inputs, and expected error messages. If any of these values change, there's now one place to update them rather than hunting through every test file.
 
-Finally, I created a public repository for the saucedemo test suite, which brings together everything from weeks 1, 2, and 3. Getting it ready to share involved commenting every test with docstrings and Arrange → Act → Assert structure, writing a README and CONTRIBUTING.md, and setting up linting with pre-commit hooks.
+Finally, I created a public repository for the SauceDemo test suite, which brings together everything from weeks 1, 2, and 3. Getting it ready to share involved commenting every test with docstrings and Arrange → Act → Assert structure, writing a README and CONTRIBUTING.md, and setting up linting with pre-commit hooks.
 
 ## What I learned
 
@@ -20,7 +20,7 @@ Finally, I created a public repository for the saucedemo test suite, which bring
 
 A `pyproject.toml` file lets you centralise pytest settings so they apply automatically on every run. The key options I configured were `testpaths`, `addopts` (browsers, parallel workers, base URL), and custom markers.
 
-Using a base URL means tests use relative paths like `page.goto("/")` instead of hardcoding the full URL everywhere, so switching environments only requires changing one value.
+Using a base URL means tests can use relative paths like `page.goto("/")` instead of hardcoding the full URL in each test, so switching environments only requires changing one value.
 
 ### Test data files
 
