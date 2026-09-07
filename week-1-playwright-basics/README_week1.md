@@ -31,7 +31,7 @@ I tested the cart page across a range of scenarios: an empty cart state, adding 
 
 I tested the full checkout flow with items in the cart, verifying correct navigation through each step and that the displayed order total equals the displayed subtotal plus tax. I also discovered that SauceDemo permits checkout with an empty cart: this was documented as observed behaviour rather than assumed to be intentional.
 
-## What I Learned This Week 
+## What I Learned
 
 ### Playwright Fundamentals
 
@@ -46,9 +46,9 @@ I explored different ways to locate elements on a page and learned that not all 
 I practised a wide range of assertions this week, including visibility checks, text content, URL changes, page title, element count, HTML attributes, and enabled/disabled state. I also learned the difference between to_be_visible() and to_have_count(0). Both can express "this element isn't here", but the latter is more precise when you're verifying an empty state rather than just absence from view.
 
 ### Test Structure
-I followed the Arrange → Act → Assert pattern throughout: setting up the page state, performing the user action, then verifying the outcome. This gave my tests a consistent, predictable shape that makes them easier to read and debug. I also learned about pytest.mark.parametrize, which allowed me to run the same test logic with multiple inputs. This was particularly useful for testing the four sorting options on Saucedemo's inventory page without duplicating code.
+I followed the Arrange → Act → Assert pattern throughout: setting up the page state, performing the user action, then verifying the outcome. This gave my tests a consistent, predictable shape that makes them easier to read and debug. I also learned about pytest.mark.parametrize, which allowed me to run the same test logic with multiple inputs. This was particularly useful for testing the four sorting options on SauceDemo's inventory page without duplicating code.
 
-## Key Takeaways from this week 
+## Key Takeaways
 
 Not all of my takeaways are directly related to learning Playwright. In fact, the most important things I learned this week, are more about mindset than any specific tool.
 
@@ -69,16 +69,16 @@ Ensure you are running commands from the `week-1-playwright-basics` folder.
 Use `cd week-1-playwright-basics` to navigate to the folder if necessary.
 
 Run all tests:
-```
+```bash
 pytest
 ```
 
 Run a specific test file:
-```
+```bash
 pytest tests/test_login_page.py
 ```
 
 Run tests in headed mode (useful for debugging):
-```
+```bash
 pytest --headed
 ```

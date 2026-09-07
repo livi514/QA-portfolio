@@ -1,4 +1,4 @@
-# QA Summer Roadmap – Week 6
+# QA Summer Roadmap - Week 6
 
 ## Introduction
 
@@ -6,7 +6,7 @@ Week 6 of my QA Summer Roadmap focuses on two core black‑box test design techn
 
 My aim was to review the theory behind ECP and BVA, then apply both techniques to the Open‑Meteo API (https://open-meteo.com/). By the end of the week, I had a clearer understanding of how to map input domains, identify meaningful partitions, and choose boundary values deliberately.
 
-## What I tested
+## What I Did
 
 I started by reviewing the rules for three Open‑Meteo parameters: latitude, longitude, and date ranges. For each parameter, I identified the valid and invalid equivalence classes based on the documented constraints. Once the classes were defined, I selected representative values from each class and wrote tests around them.
 
@@ -16,7 +16,7 @@ By combining ECP and BVA, I was able to create a small set of tests covering the
 
 One thing that surfaced was a gap in my own assumptions rather than a bug in the API: I hadn't initially considered that longitude values of `180` and `-180` refer to the same meridian, so I was surprised when `180` came back normalised to `-180`. Logically, it's the correct behaviour; I just hadn't accounted for it when writing my initial expectations.
 
-## What I learned
+## What I Learned
 
 ### Choosing Test Data Systematically
 
@@ -34,7 +34,7 @@ Working with the Open‑Meteo API showed me that real systems can behave in ways
 
 Date ranges were a good example of this. Testing the start date and end date independently isn’t enough, because the two values need to make sense together. BVA helped me identify cases where the end date was before the start date or where one date fell outside the allowed window.
 
-## Key takeaways from this week
+## Key Takeaways
 
 This week highlighted the value of being systematic when choosing test inputs. ECP helped me reduce unnecessary tests by grouping inputs into meaningful categories, while BVA ensured that the edges of those categories were properly tested. Together, they made my test design more intentional and less reliant on guesswork.
 
@@ -49,11 +49,11 @@ Ensure you are running commands from the `week-6-bva-ep` folder.
 Use `cd week-6-bva-ep` to navigate to the folder if necessary.
 
 Run all tests:
-```
+```bash
 pytest
 ```
 
 Run a specific test file:
-```
+```bash
 pytest tests/test_latitude.py
 ```

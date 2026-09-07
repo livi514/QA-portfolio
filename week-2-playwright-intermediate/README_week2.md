@@ -1,14 +1,14 @@
 # QA Summer Roadmap - Week 2
 
-## 1. Introduction
+## Introduction
 
-Week 2 of my QA Roadmap focused on expanding my knowledge of Playwright for Python, and improving the clarity and conciseness of my code. I achieved this using two key concepts in test automation: fixtures, to centralise setup code within a `conftest.py` file, and the Page Object Model, to centralise selectors and UI interactions in page classes. Restructuring my tests to use these features helped me to focus them on what is being tested, rather than how to set up the environment or click through the UI.
+Week 2 of my QA Summer Roadmap focused on expanding my knowledge of Playwright for Python, and improving the clarity and conciseness of my code. I achieved this using two key concepts in test automation: fixtures, to centralise setup code within a `conftest.py` file, and the Page Object Model, to centralise selectors and UI interactions in page classes. Restructuring my tests to use these features helped me to focus them on what is being tested, rather than how to set up the environment or click through the UI.
 
-## 2. What I Tested
+## What I Did
 
-This week, rather than adding new tests, I focused on restructuring the saucedemo.com test suite from week 1, converting it to use fixtures and POM.
+This week, rather than adding new tests, I focused on restructuring the SauceDemo test suite from Week 1, converting it to use fixtures and POM.
 
-## 3. What I Learned This Week
+## What I Learned
 
 ### Fixtures
 
@@ -24,7 +24,7 @@ For example, I created this custom fixture to manage setting up a logged-in envi
 
 ```python
 def perform_login(page):
-    page.goto("/")
+    page.goto("https://www.saucedemo.com/")
     page.locator("#user-name").fill("standard_user")
     page.locator("#password").fill("secret_sauce")
     page.locator("#login-button").click()
@@ -82,7 +82,7 @@ After defining the page classes, I converted my tests to use POM. For example:
 **Before:**
 ```python
 def test_invalid_credentials(page):
-    page.goto("/")
+    page.goto("https://www.saucedemo.com/")
     page.locator("#user-name").fill("invalid_user")
     page.locator("#password").fill("invalid_password")
     page.locator("#login-button").click()
@@ -101,7 +101,7 @@ def test_invalid_credentials(page):
     )
 ```
 
-## 4. Key Takeaways From This Week
+## Key Takeaways
 
 The biggest shift this week was writing tests that read like specifications rather than click-through instructions.
 
@@ -113,7 +113,7 @@ Using custom fixtures and POM makes tests more readable and concise, focusing th
 
 By centralising setup code in custom fixtures, and centralising locators and UI interactions in page classes, you create a single source of truth. Any updates needed to account for changes in the environment setup or UI interactions now only need to be made in one place, so changes propagate efficiently across the entire suite.
 
-## 5. How to Run the Tests
+## How to Run the Tests
 
 For full setup and installation instructions, see the main [README](../README.md).
 
@@ -122,16 +122,16 @@ Ensure you are running commands from the `week-2-playwright-intermediate` folder
 Use `cd week-2-playwright-intermediate` to navigate to the folder if necessary.
 
 Run all tests:
-```
+```bash
 pytest
 ```
 
 Run a specific test file:
-```
+```bash
 pytest using_pom/tests/test_login_pom.py
 ```
 
 Run tests in headed mode (useful for debugging):
-```
+```bash
 pytest --headed
 ```

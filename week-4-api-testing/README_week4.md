@@ -4,11 +4,11 @@
 
 Week 4 of my QA Summer Roadmap focuses on API testing. I used pytest and the `requests` library in Python to build a test suite against the JSONPlaceholder mock API (https://jsonplaceholder.typicode.com/).
 
-This was a significant shift from the UI testing I did in weeks 1-3. UI tests are all about interacting with the browser: clicking buttons, filling forms, and checking what's visible. API tests skip all of that and talk directly to the backend using HTTP requests, giving you a much clearer picture of how the system behaves underneath the UI.
+This was a significant shift from the UI testing I did in Weeks 1-3. UI tests are all about interacting with the browser: clicking buttons, filling forms, and checking what's visible. API tests skip all of that and talk directly to the backend using HTTP requests, giving you a much clearer picture of how the system behaves underneath the UI.
 
 My initial goals were to build a small automated API test suite validating status codes and JSON structure. I had worked with APIs before, but never through a testing or QA lens. By the end of the week I had gone well beyond those goals, covering CRUD operations, negative tests, performance checks, and security header validation.
 
-## What I tested
+## What I Did
 
 I started with full CRUD coverage for /users and /posts, validating not just status codes, but the actual JSON structure (names, emails, nested address fields, and many more). This made the tests feel much closer to what you'd write against a real production API.
 
@@ -18,7 +18,7 @@ Then I added negative tests. Mock APIs don't always behave realistically. For ex
 
 Finally, I added simple response-time checks to verify that key endpoints respond within 1.5 seconds, and security-header checks to document the presence or absence of headers such as X-Content-Type-Options and Strict-Transport-Security. Most security headers are absent, which is expected for a mock API, but the exercise gave me a clearer picture of what a secure API should include.
 
-## What I learned 
+## What I Learned
 
 ### Recapping key API concepts 
 
@@ -58,7 +58,7 @@ One completely new concept to me this week was testing security headers. These a
 
 JSONPlaceholder only returns X-Content-Type-Options, while the others are absent. This was expected for a mock API, but understanding what each header does and why it matters gave me a clearer picture of what to look for when testing a real production API.
 
-## Key takeaways from this week 
+## Key Takeaways
 
 ### What a poorly-behaved API looks like 
 
@@ -83,11 +83,11 @@ Ensure you are running commands from the `week-4-api-testing` folder.
 Use `cd week-4-api-testing` to navigate to the folder if necessary.
 
 Run all tests:
-```
+```bash
 pytest
 ```
 
 Run a specific test file:
-```
+```bash
 pytest tests/test_users.py
 ```

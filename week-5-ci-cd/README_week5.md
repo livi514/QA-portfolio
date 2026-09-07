@@ -8,7 +8,7 @@ My initial goal was to create YAML workflows to run UI and API tests automatical
 
 By the end of the week, though, I'd gone well beyond these goals, also covering multi-job and cross-platform workflows, scheduled runs, and dependency caching. I now have workflows set up across three repositories: QA-portfolio (this repository), as well as saucedemo-playwright-tests and jsonplaceholder-api-tests, covering linting and test automation across three operating systems.
 
-## What I did
+## What I Did
 
 I started with basic test workflows for all three repositories (QA-portfolio, saucedemo-playwright-tests, and jsonplaceholder-api-tests). This introduced me to the process of setting up YAML files and checking the status of my workflows on GitHub.
 
@@ -24,7 +24,7 @@ After this, I identified another issue. At that point, my workflows only ran on 
 
 Finally, I added dependency caching. This was something I explored out of curiosity, and I was glad to find it addressed a problem I'd already noticed: long execution times in my matrix runs.
 
-## What I learned
+## What I Learned
 
 ### Testing Beyond My Machine
 
@@ -38,7 +38,7 @@ One thing that I really appreciated about GitHub Actions was the visual clarity 
 
 One thing this week made clear was how easily external changes could slip past me. My tests depend on resources outside my control, and without scheduled runs, discovering that something had changed came down to luck: I'd only catch it if I happened to run the tests around the same time something broke. Scheduling replaces this luck with regularity, removing my reliance on memory to manually check things outside of pushes or pull requests.
 
-## Key takeaways from this week 
+## Key Takeaways
 
 This week taught me two skills that feel almost like opposites (zoom in vs. zoom out), but actually complement each other. QA Engineers have a duty to users, to provide them with a high-quality product, and both these skills are crucial when it comes to achieving this.
 
@@ -46,7 +46,7 @@ On one hand, you need the ability to cover all possibilities and look at the big
 
 On the other hand, you need to have a keen attention to detail, and be able to investigate beyond just what you see on the surface. The false-pass report issue mentioned above is a good example of this: it undermined my trust in my own processes, and showed how a "passing" status could mislead the development team.
 
-Attention to detail is also crucial to maintain a high-quality user experience. This includes security, for example, in week 4, JSONPlaceholder was missing crucial security headers such as Strict-Transport-Security. Strict-Transport-Security (HSTS) tells the browser to always use HTTPS with the site. Without it, the site could fall back to HTTP, which is unencrypted. A user's connection could be intercepted before upgrading to HTTPS, especially on something like public WiFi, potentially exposing sensitive information, such as login credentials.
+Attention to detail is also crucial to maintain a high-quality user experience. This includes security, for example, in Week 4, JSONPlaceholder was missing crucial security headers such as Strict-Transport-Security. Strict-Transport-Security (HSTS) tells the browser to always use HTTPS with the site. Without it, the site could fall back to HTTP, which is unencrypted. A user's connection could be intercepted before upgrading to HTTPS, especially on something like public WiFi, potentially exposing sensitive information, such as login credentials.
 
 Overall, my takeaway from this week is that broad coverage is worthless if you're not rigorous enough to actually verify each result properly. Big-picture thinking and attention to detail aren't separate skills, they depend on each other.
 
