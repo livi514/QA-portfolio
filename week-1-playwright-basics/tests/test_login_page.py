@@ -89,11 +89,12 @@ def test_login_button_text(page):
 
 
 def test_response_code(page):
-    # The page should load correcly with the response code 200 OK.
+    # The page should load correctly with the response code 200 OK.
 
     # navigate to the login page
     response = page.goto("https://www.saucedemo.com/")
     # test response status code
+    assert response is not None
     assert response.status == 200
 
 
