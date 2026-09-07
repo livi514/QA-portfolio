@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-Week 2 of my QA Roadmap focused on expanding my knowledge of Playwright for Python, and improving the clarity and conciseness of my code. I achieved this using two key concepts in test automation: fixtures, to centralise set up code within a `conftest.py` file, and the Page Object Model, to centralise selectors and UI interactions in page classes. Restructuring my tests to use these features helped me to focus them on what is being tested, rather than how to set up the environment or click through the UI.
+Week 2 of my QA Roadmap focused on expanding my knowledge of Playwright for Python, and improving the clarity and conciseness of my code. I achieved this using two key concepts in test automation: fixtures, to centralise setup code within a `conftest.py` file, and the Page Object Model, to centralise selectors and UI interactions in page classes. Restructuring my tests to use these features helped me to focus them on what is being tested, rather than how to set up the environment or click through the UI.
 
 ## 2. What I Tested
 
@@ -50,7 +50,7 @@ Fixtures can also chain from each other. For example, `add_backpack_to_cart` tak
 
 POM is a design pattern used in UI automation to make tests cleaner, more readable, and easier to maintain. POM centralises selectors and interactions into dedicated page classes so tests can focus on what is being tested, rather than how to click through the UI.
 
-I created a page class for each saucedemo.com page (login, inventory, cart, checkout) as well as for the menu, in order to centralise logout logic. Each page class consists of three components: a constructor, action methods, and state accessors.
+I created a page class for each SauceDemo page (login, inventory, cart, checkout) as well as for the menu, in order to centralise logout logic. Each page class consists of three components: a constructor, action methods, and state accessors.
 
 For example, this is the constructor in the `LoginPage` class:
 
