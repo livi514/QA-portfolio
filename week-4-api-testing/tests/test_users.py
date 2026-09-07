@@ -72,7 +72,7 @@ def test_get_non_existent_user():
 
 def test_create_user():
     """
-    Test that a new user can be created. and that the response echoes back the correct data.
+    Test that a new user can be created and that the response echoes back the correct data.
     Note: JSONPlaceholder doesn't actually persist the created user, so a follow-up GET /users/11 would return 404.
     The POST response simulates what would be returned if the API were real.
     """

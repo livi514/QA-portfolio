@@ -16,7 +16,7 @@ BASE_URL = "https://jsonplaceholder.typicode.com"
 )
 def test_response_time(endpoint):
     """
-    Test that the response time of crucial endpoints does not exceed 1.5.
+    Test that the response time of crucial endpoints stays below 1.5 seconds.
     1.5 seconds is a reasonable threshold for a public API under normal conditions.
     On a real project this threshold would be defined in performance requirements
     """

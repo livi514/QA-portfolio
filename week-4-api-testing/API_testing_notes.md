@@ -60,10 +60,10 @@ For learning purposes, public APIs are a great starting point. I used **JSONPlac
 
 ### Sending requests: the `requests` library
 
-Python's `requests` library is the standard choice for making HTTP calls in tests. Install it with:
+Python's `requests` library is the standard choice for making HTTP calls in tests. Install the API-test dependencies with:
 
 ```
-pip install requests
+pip install pytest pytest-xdist requests
 ```
 
 A basic request looks like this:
@@ -101,10 +101,13 @@ For a small API test suite, a flat structure works well:
 week-4-api-testing/
 ├── tests/
 │   ├── test_users.py
-│   └── test_posts.py
-├── test_data.py       # expected values and request payloads
+│   ├── test_posts.py
+│   ├── test_performance.py
+│   └── test_security.py
 ├── pyproject.toml     # pytest configuration
-└── README.md
+├── README_week4.md
+├── API_testing_notes.md
+└── HTTP_request_methods_notes.md
 ```
 
 Unlike UI testing, you typically don't need page objects or complex fixture chains. API tests are simpler by nature, so the structure can be simpler too.
@@ -188,7 +191,7 @@ response.headers       # response headers (e.g. Content-Type)
 response.text          # raw response body as a string
 ```
 
-`response.json()` is the most important one — it converts the JSON response body into a Python dictionary you can assert against:
+`response.json()` is the most important one — it parses the JSON response body into a corresponding Python value, such as a dictionary or list, that you can assert against:
 
 ```python
 user = response.json()
@@ -216,4 +219,4 @@ I've already been using pytest for UI tests: the same framework works for API te
 - Always validate status code, response structure, and response values.
 - Write negative tests to verify that the API handles invalid input gracefully.
 - Use descriptive assertion messages, so that failures are easy to diagnose.
-- Kep test data separate from test logic.
+- Keep test data separate from test logic.

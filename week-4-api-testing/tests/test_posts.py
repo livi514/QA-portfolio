@@ -74,6 +74,14 @@ def test_get_posts_by_user_id():
         assert isinstance(post["title"], str)
         assert isinstance(post["body"], str)
 
+    nested_response = requests.get(f"{BASE_URL}/users/1/posts")
+    assert nested_response.status_code == 200
+    nested_posts = nested_response.json()
+    assert {post["id"] for post in posts} == {post["id"] for post in nested_posts}
+    assert {post["userId"] for post in posts} == {
+        post["userId"] for post in nested_posts
+    }
+
 
 def test_get_posts_by_user_invalid_id():
     """Negative test: querying posts for a non-existent userId.
@@ -302,17 +310,14 @@ def test_patching_post_id_to_nonexistent_post_id():
 
 
 def test_patching_user_id_to_existing_user_id():
-    """Test PATCHing a post's userId to an existing userId.
-    Note: the request body uses 'userID' (capital D) — JSONPlaceholder ignores
-    unrecognised fields, so the userId remains unchanged at 1.
-    This documents the API's behaviour when an incorrect field name is used."""
+    """Test PATCHing a post's userId to an existing userId."""
     url = f"{BASE_URL}/posts/5"
-    data = {"userID": 2}  # note: incorrect field name — should be 'userId'
+    data = {"userId": 2}
     response = requests.patch(url, json=data)
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert "application/json" in response.headers["Content-Type"]
     post = response.json()
-    assert int(post["userId"]) == 1  # userId unchanged due to incorrect field name
+    assert int(post["userId"]) == 2
     assert post["id"] == 5
     assert post["title"] == "nesciunt quas odio"
     assert (
@@ -322,17 +327,18 @@ def test_patching_user_id_to_existing_user_id():
 
 
 def test_patching_user_id_to_nonexistent_user_id():
-    """Test PATCHing a post's userId to a non-existent userId.
-    Note: same as above — 'userID' (capital D) is not a recognised field,
-    so the userId remains unchanged. On a real API with correct field names,
-    patching to a non-existent userId should return 400 or 404."""
+    """Document JSONPlaceholder accepting a PATCH to a non-existent userId.
+
+    A real API might reject this with 400 or 404 because the referenced user
+    does not exist.
+    """
     url = f"{BASE_URL}/posts/5"
-    data = {"userID": 999}  # note: incorrect field name — should be 'userId'
+    data = {"userId": 999}
     response = requests.patch(url, json=data)
     assert response.status_code == 200, f"Expected 200 but got {response.status_code}"
     assert "application/json" in response.headers["Content-Type"]
     post = response.json()
-    assert int(post["userId"]) == 1  # userId unchanged due to incorrect field name
+    assert int(post["userId"]) == 999
     assert post["id"] == 5
     assert post["title"] == "nesciunt quas odio"
     assert (

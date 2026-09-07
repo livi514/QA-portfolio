@@ -41,10 +41,10 @@ Two important properties of HTTP methods:
 | GET | Yes | Yes |
 | POST | No | No |
 | PUT | No | Yes |
-| PATCH | No | No |
+| PATCH | No | Depends on the operation |
 | DELETE | No | Yes |
 
-PUT is idempotent because replacing a resource with the same data 100 times leaves the server in the same state. POST is not idempotent because each call could create a new resource.
+PUT is idempotent because replacing a resource with the same data 100 times leaves the server in the same state. PATCH may or may not be idempotent depending on the operation. POST is not idempotent because each call could create a new resource.
 
 ## Other methods
 

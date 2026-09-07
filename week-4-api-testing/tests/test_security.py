@@ -6,7 +6,7 @@ BASE_URL = "https://jsonplaceholder.typicode.com"
 def test_api_uses_https():
     """Test that the API uses the HTTPS protocol, rather than HTTP."""
     response = requests.get(f"{BASE_URL}/users")
-    assert BASE_URL.startswith("https://"), "API should be served over HTTPS"
+    assert response.url.startswith("https://"), "API response should use HTTPS"
     assert response.status_code == 200
 
 

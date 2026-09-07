@@ -2,7 +2,7 @@
 
 ## Introduction 
 
-Week 4 of my QA Summer Roadmap focuses on API testing. I used the pytest and request libraries in Python to build a test suite against the JSONPlaceholder mock API (https://jsonplaceholder.typicode.com/).
+Week 4 of my QA Summer Roadmap focuses on API testing. I used pytest and the `requests` library in Python to build a test suite against the JSONPlaceholder mock API (https://jsonplaceholder.typicode.com/).
 
 This was a significant shift from the UI testing I did in weeks 1-3. UI tests are all about interacting with the browser: clicking buttons, filling forms, and checking what's visible. API tests skip all of that and talk directly to the backend using HTTP requests, giving you a much clearer picture of how the system behaves underneath the UI.
 
@@ -12,11 +12,11 @@ My initial goals were to build a small automated API test suite validating statu
 
 I started with full CRUD coverage for /users and /posts, validating not just status codes, but the actual JSON structure (names, emails, nested address fields, and many more). This made the tests feel much closer to what you'd write against a real production API.
 
-I also tested the relationship between users and posts, using both nested URLs (/users/1/posts) and query parameters (/posts?userId=1) to retrieve the same data through different URL patterns, and verifying that both approaches returned consistent results.
+I also tested the relationship between users and posts, using both nested URLs (/users/1/posts) and query parameters (/posts?userId=1) to retrieve the same data through different URL patterns, and verifying that both approaches returned the same post IDs and user IDs.
 
 Then I added negative tests. Mock APIs don't always behave realistically. For example, JSONPlaceholder returns 200 for deleting a non-existent resource, 201 for POSTs with missing or invalid fields, and 500 for PUT to a non-existent resource. I documented these quirks throughout the test suite and used skipped tests to record scenarios that couldn't be meaningfully tested against this API.
 
-Finally, I added simple performance checks to verify that key endpoints respond within one second, and security tests to check for headers like X-Content-Type-Options and Strict-Transport-Security. Most security headers are absent, which is expected for a mock API, but the exercise gave me a clear picture of what a secure API should include.
+Finally, I added simple response-time checks to verify that key endpoints respond within 1.5 seconds, and security-header checks to document the presence or absence of headers such as X-Content-Type-Options and Strict-Transport-Security. Most security headers are absent, which is expected for a mock API, but the exercise gave me a clearer picture of what a secure API should include.
 
 ## What I learned 
 
@@ -24,7 +24,7 @@ Finally, I added simple performance checks to verify that key endpoints respond 
 
 Since I had worked with APIs before, I was already familiar with concepts like CRUD operations and HTTP response codes. This week was a good opportunity to revisit those from a testing perspective. One concept I clarified was the difference between PUT and PATCH — PUT requires the full resource in the request body, while PATCH only requires the fields being changed. Sending a partial body to PUT is wrong by design.
 
-I also revisited safe and idempotent methods. DELETE is idempotent — deleting the same resource 100 times leaves the server in the same state — but it is not safe, because it changes server state. JSONPlaceholder's behaviour of returning 200 for DELETE /users/999 (a non-existent resource) is interesting: on a real API, a second delete would return 404, which would technically break status code idempotency even though the end state is identical. This is a good example of how mock APIs don't always reflect how a real API behaves.
+I also revisited safe and idempotent methods. DELETE is idempotent — deleting the same resource 100 times should leave the server in the same state — but it is not safe, because it changes server state. JSONPlaceholder's behaviour of returning 200 for DELETE /users/999 (a non-existent resource) is interesting: another API might return 404, while the intended end state could still be identical. Idempotency concerns the intended effect, not whether every request returns the same status code. This is a good example of how mock APIs don't always reflect how a real API behaves.
 
 ### The three layers of API validation 
 
