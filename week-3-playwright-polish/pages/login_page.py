@@ -11,7 +11,7 @@ class LoginPage:
 
     # Navigation
     def navigate(self):
-        self.page.goto("/")
+        self.page.goto("/", wait_until="domcontentloaded", timeout=60000)
 
     # Field-level actions
     def fill_username(self, username):
@@ -25,6 +25,7 @@ class LoginPage:
 
     # Combined action
     def login(self, username, password):
+        self.username_input.wait_for(state="visible", timeout=30000)
         self.fill_username(username)
         self.fill_password(password)
         self.click_login()
