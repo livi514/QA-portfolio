@@ -70,7 +70,7 @@ def test_response_code(page):
 
 
 def test_url_after_login(log_in_to_saucedemo):
-    # This test checks that the URL is correct after a successful login using the log_in_to_saucedemo fixture, which uses the LoginPage POM to perform the login action.
+    # This test checks the URL after the login fixture completes successfully.
     expect(log_in_to_saucedemo).to_have_url("/inventory.html")
 
 
