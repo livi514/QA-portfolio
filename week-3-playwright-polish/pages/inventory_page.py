@@ -35,7 +35,7 @@ class InventoryPage:
 
     # Navigation
     def navigate(self):
-        self.page.goto("https://www.saucedemo.com/inventory.html")
+        self.page.goto("/inventory.html")
 
     # Page load wait
     def wait_until_loaded(self):
