@@ -49,7 +49,7 @@ A page class contains three components:
 - Return UI state for tests to assert  
 - Examples: `cart_count()`, `error_message()`, `is_loaded()`
 
-**Important:** Page objects do **not** contain assertions or test logic.
+**Important:** Page objects should avoid test-specific assertions and business logic. This project includes a small number of reusable visibility helpers that use Playwright expectations; scenario-specific assertions remain in the tests.
 
 ## 5. What Belongs in POM
 - Selectors for that page  
@@ -114,8 +114,6 @@ For example, in `test_cart_page_with_fixtures.py`, there was significant repetit
 Using POM, I created a `CartPage` class consisting of a constructor, action methods, and state accessors.
 
 The constructor receives the Playwright `page` object and defines all locators as attributes, including locators for cart items, inventory item names and prices, "Remove" buttons, the "Continue Shopping" button, and the "Checkout" button.
-
-I then defined action methods for repeated interactions: `remove_backpack()`, `remove_bike_light()`, `continue_shopping()`, and `checkout()`. Finally, I defined accessors for retrieving item count (`get_item_count()`), item names (`get_item_names()`), item prices (`get_item_prices()`), and the page title (`get_title_text()`).
 
 Converting the tests to use `CartPage` shifted the focus from *how* to locate and click elements to *what* is actually being tested. For example:
 
