@@ -1,3 +1,5 @@
+import pytest
+
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
 from pages.inventory_page import InventoryPage
@@ -41,7 +43,7 @@ def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
     # This test verifies that the checkout process works correctly when items are in the cart.
 
     cart = CartPage(add_backpack_and_bike_light_to_cart)
-    # check number of items in the cart
+    # check the number of items in the cart
     assert cart.get_item_count() == 2
     # click on the 'Checkout' button
     cart.checkout_button.click()
