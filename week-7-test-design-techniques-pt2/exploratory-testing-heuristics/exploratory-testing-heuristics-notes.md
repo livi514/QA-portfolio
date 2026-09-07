@@ -78,7 +78,7 @@ A systematic heuristic for exploring all dimensions of an application.
 
 ---
 
-### HICCUPS (History, Image, Claims, Comparable Products, User Expectations, Product, Statutes)
+### HICCUPS (History, Image, Claims, Comparable Products, User Expectations, Product, Purpose, Statutes)
 
 Focuses on spotting inconsistencies and misalignments with expectations.
 
@@ -149,7 +149,7 @@ Targets behaviors the software claims it will never or always do, then violates 
 
 **Use case:** Uncover broken guarantees and defensive programming gaps.
 
-**Practical example: SauceDemo checkout** *(This reuses the empty-cart and cart persistence findings from Zero/One/Many and Interrupt/Starve avove, viewed here through the lens of implicit system guarantees rathet than as new discoveries.)*
+**Practical example: SauceDemo checkout** *(This reuses the empty-cart and cart persistence findings from Zero/One/Many and Interrupt/Starve above, viewed here through the lens of implicit system guarantees rather than as new discoveries.)*
 
 - **Claim (implicit):** "Checkout should always require at least one item" [✗] Bug found: Checkout succeeds with zero items, creating a $0.00 order
 - **Claim (implicit):** "Cart state is always preserved during checkout" [✓] Confirmed — cart items persist even if user navigates away or reloads pages
@@ -194,7 +194,8 @@ Forces the system to handle resource shortages and sudden operational breaks.
 - **Browser Back button during checkout:** [✓] User enters customer info, then presses Back. Cart items preserved, but checkout fields are cleared (minor friction, but acceptable). User can restart checkout without losing cart.
 - **Navigate away before submission:** [✓] User exits checkout before pressing "Continue." Cart items preserved when they return to cart. Checkout fields are cleared on re-entry.
 - **Open in another tab:** [✓] User starts checkout in Tab A, opens the site in Tab B. Returning to Tab A, both cart and checkout info are preserved and user can continue. (Browser session data is shared across tabs)
-- **Double-click submission buttons:** [✓] User double-clicks "Continue" or "Finish" rapidly. No duplicate submissions or repeated processing observed. System handles the rapid input gracefully. 
+- **Double-click submission buttons:** [✓] User double-clicks "Continue" or "Finish" rapidly. The `cart-contents` localStorage key behaves identically whether reached via single or double click. This was confirmed directly by inspecting the key's value before and after each, across several repeated attempts. No stale, duplicated, or partial entries observed. (Scoped to local cart-state integrity — see architecture note above for why this doesn't extend to claims about "duplicate orders," since no order-level system exists here to check.)
+- Network requests confirmed absent: attempted to block the checkout request via DevTools Request Blocking; confirmed via the Network tab (Fetch/XHR filter, cleared log, full checkout run through) that 0 of 93 total requests were Fetch/XHR type. Checkout is entirely client-side. See architecture finding above.
 
 ---
 
@@ -202,7 +203,8 @@ Forces the system to handle resource shortages and sudden operational breaks.
 
 | Heuristic | Best for | Typical bugs found |
 |-----------|----------|-------------------|
-| SFDPOT | Comprehensive exploration | Missing features, undocumented behaviors |
+| CRUD | Data consistency across surfaces | Stale displays, missing refresh logic, cascade failures |
+| SFDPOT | Comprehensive exploration | Missing features, undocumented behaviours |
 | HICCUPS | Expectation alignment | Feature gaps, regression, spec mismatches |
 | Goldilocks | Input validation | Field overflow, format errors, bounds failures |
 | Zero, One, Many | Scaling & loops | Off-by-one bugs, performance drop, crashes |
@@ -217,18 +219,18 @@ Forces the system to handle resource shortages and sudden operational breaks.
 All heuristics in these notes are grounded in real exploratory testing work on SauceDemo and documented with practical examples.
 
 ### CRUD Testing
-- [CRUD operations on SauceDemo cart](CRUD/saucedemo-crud.md) — Full lifecycle: Create (add items), Read (display consistency), Delete (remove items), including discovery of empty-cart checkout bug
+- [CRUD operations on SauceDemo cart](CRUD/saucedemo-crud.md) — Full lifecycle: Create (add items), Read (display consistency), Delete (remove items), including discovery of empty-cart checkout bug.
 
 ### SFDPOT Testing
-- [SFDPOT analysis of SauceDemo login](SFDPOT/SFDPOT-saucedemo-login.md) — Systematic exploration across all 6 dimensions with findings on structure, function, data handling, platform consistency, operations, and timing behavior
-- [Bug report: Login error message overflow](SFDPOT/saucedemo-login-bug-report.md) — Detailed reproduction steps and screenshots
+- [SFDPOT analysis of SauceDemo login](SFDPOT/SFDPOT-saucedemo-login.md) — Systematic exploration across all 6 dimensions with findings on structure, function, data handling, platform consistency, operations, and timing behaviour.
+- [Bug report: Login error message overflow](SFDPOT/saucedemo-login-bug-report.md) — Detailed reproduction steps for the login error-message overflow bug.
 
 ### Zero, One, Many Testing
-- [Zero/One/Many checkout scenarios](zero-one-many/saucedemo-zero-one-many.md) — Three test scenarios demonstrating boundary limits with 0 items, 1 item, and all 6 available items
-- [Bug report: Empty cart checkout](zero-one-many/bug-report-empty-cart-checkout.md) — Critical finding: checkout succeeds with $0.00 order and no validation
+- [Zero/One/Many checkout scenarios](zero-one-many/saucedemo-zero-one-many.md) — Three test scenarios demonstrating boundary limits with 0 items, 1 item, and all 6 available items.
+- [Bug report: Empty cart checkout](zero-one-many/bug-report-empty-cart-checkout.md) — Critical finding: checkout succeeds with $0.00 order and no validation.
 
 ### Interrupt/Starve Testing
-- [Interrupt/Starve checkout resilience](interrupt%20+%20starve/saucedemo-interrupt-starve.md) — Five scenarios testing reload, back button, tab switching, and rapid submissions
+- [Interrupt/Starve checkout resilience](interrupt%20+%20starve/saucedemo-interrupt-starve.md) — Five scenarios testing reload, back button, tab switching, and rapid submissions.
 
 ---
 

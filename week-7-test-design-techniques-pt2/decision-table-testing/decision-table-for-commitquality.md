@@ -75,4 +75,4 @@ This table represents all meaningful behaviours of the form.
 
 ## 4. Converting Decision Table Rules Into Test Cases
 
-See add-product-tests.py
+See [test_add_product.py](test_add_product.py).

@@ -1,35 +1,5 @@
 # See decision-table-for-commitquality.md for the decision table that these tests are based on.
 
-# --- What changed and why -------------------------------------------------
-#
-# The original submit() assumed a single #message element holding the
-# validation text. The diagnostic script (diagnose_commitquality.py) proved
-# that selector doesn't exist anywhere on the page -- which is why every
-# single test timed out identically, including the valid-data case.
-#
-# The real structure, confirmed from one diagnostic run (empty name, valid
-# price, valid date):
-#   - Each invalid field gets its own inline <div class="error-message">
-#     next to that field's input. This div has NO data-testid of its own.
-#   - There's also a page-level <div class="error-message"
-#     data-testid="fillin-all-fields-validation">Please fill in all
-#     fields</div>
-#   - And a page-level <div class="error" data-testid="all-fields-validation">
-#     Errors must be resolved before submitting</div>
-#   - The form has novalidate="" -- no native HTML5 blocking, confirmed.
-#
-# IMPORTANT: the diagnostic only exercised ONE rule (invalid name, valid
-# price, valid date). The selectors/behaviour for the other 6 rules --
-# price too long, empty price, empty date, today, future, over-100-years --
-# have NOT been confirmed against the live DOM. Rather than guess new
-# selectors per rule (the same mistake that caused the original failure),
-# submit() below collects ALL visible error text on the page generically,
-# and each test asserts its expected message is present in that collection.
-# This should work regardless of which specific div structure each rule
-# uses, but the exact expected message text below is still only confirmed
-# for R1 (invalid name) -- the rest need a real run to verify, flagged
-# individually below.
-
 import datetime
 
 import pytest
@@ -47,7 +17,7 @@ def years_ago(years: int) -> datetime.datetime:
     cases like years_ago(50) where you just need "comfortably inside the
     valid range" -- but NOT precise enough for testing the exact 100-year
     boundary, since it always lands on a year-aligned date. See
-    exact_100_year_boundary() below for day-precision boundary testing.
+    exactly_100_years_ago() below for day-precision boundary testing.
     """
     now = datetime.datetime.now()
     return now.replace(year=now.year - years)
@@ -89,11 +59,11 @@ def submit(page, name, price, date):
     submitting" messages) -- there's no single element that captures
     "the" validation outcome the way the original #message assumption did.
 
-    On a fully valid submission, this should return an empty list -- but
-    that's unconfirmed; see test_valid_past_100_years_date for the TODO
-    to verify what real success actually looks like (redirect, confirmation
-    message, product appearing elsewhere, etc.), since an empty error list
-    only proves nothing failed, not that anything succeeded.
+    On a fully valid submission, this returns an empty list -- confirmed
+    directly for R7 (see test_valid_past_100_years_date), which also checks
+    the redirect and product-list appearance as the real proof of success,
+    since an empty error list only proves nothing failed, not that anything
+    succeeded.
     """
     page.goto(URL, wait_until="networkidle")
 
@@ -142,26 +112,25 @@ def test_empty_price(page):
     """
     R2: Price empty → Invalid.
 
-    NOT YET CONFIRMED against the live DOM -- the diagnostic run only
-    exercised an invalid name with a valid price. Run this and check the
-    real error text before trusting this assertion; update it to match.
+    Confirmed against the live DOM: message is
+    "Price must not be empty and within 10 digits".
     """
     errors = submit(page, name="Valid Product", price="", date=years_ago(50))
-    # TODO: confirm real message text -- placeholder based on the original
-    # (unverified) assumption.
-    assert any("price" in e.lower() for e in errors), f"Got: {errors}"
+    assert "Price must not be empty and within 10 digits" in errors, f"Got: {errors}"
 
 
 def test_price_too_long(page):
     """
     R3: Price > 10 digits → Invalid.
 
-    NOT YET CONFIRMED -- see test_empty_price note above.
+    Confirmed against the live DOM: same message as the empty-price case
+    ("Price must not be empty and within 10 digits"), since both are
+    handled by the same validation rule.
     """
     errors = submit(
         page, name="Valid Product", price="12345678901", date=years_ago(50)  # 11 digits
     )
-    assert any("price" in e.lower() for e in errors), f"Got: {errors}"
+    assert "Price must not be empty and within 10 digits" in errors, f"Got: {errors}"
 
 
 def test_price_at_10_digit_boundary(page):
@@ -169,44 +138,43 @@ def test_price_at_10_digit_boundary(page):
     Boundary (not in the collapsed table): confirms the table's <=10-digit
     Valid class actually holds at exactly 10 digits.
 
-    NOT YET CONFIRMED what a fully valid submission looks like -- see
-    test_valid_past_100_years_date TODO. This currently just asserts no
-    price-related error appears.
+    Confirmed no price-related error appears at exactly 10 digits.
     """
     errors = submit(
         page, name="Valid Product", price="1234567890", date=years_ago(50)  # 10 digits
     )
-    assert not any("price" in e.lower() for e in errors), f"Got: {errors}"
+    assert "Price must not be empty and within 10 digits" not in errors, f"Got: {errors}"
 
 
 def test_empty_date(page):
     """
     R4: Date empty → Invalid.
 
-    NOT YET CONFIRMED -- see test_empty_price note above.
+    Confirmed against the live DOM: message is "Date must not be empty."
     """
     errors = submit(page, name="Valid Product", price="10.00", date="")
-    assert any("date" in e.lower() for e in errors), f"Got: {errors}"
+    assert "Date must not be empty." in errors, f"Got: {errors}"
 
 
 def test_today_date(page):
     """
     R5a: Date is today → Invalid.
 
-    NOT YET CONFIRMED -- see test_empty_price note above. Kept as its own
-    test (rather than folded into test_future_date) because the original
-    suite's comment flagged today's date as producing non-obvious system
-    behaviour worth locking down individually.
+    Confirmed against the live DOM: message is
+    "Date must not be in the future." -- same message as a genuinely
+    future date, i.e. today is treated as invalid under the future-date
+    rule rather than getting its own distinct message.
     """
     errors = submit(page, name="Valid Product", price="10.00", date=today())
-    assert any("future" in e.lower() for e in errors), f"Got: {errors}"
+    assert "Date must not be in the future." in errors, f"Got: {errors}"
 
 
 def test_future_date(page):
     """
     R5b: Date is clearly in the future (not just today) → Invalid.
 
-    NOT YET CONFIRMED -- see test_empty_price note above.
+    Confirmed against the live DOM: message is
+    "Date must not be in the future."
     """
     errors = submit(
         page,
@@ -214,34 +182,33 @@ def test_future_date(page):
         price="10.00",
         date=today() + datetime.timedelta(days=30),
     )
-    assert any("future" in e.lower() for e in errors), f"Got: {errors}"
+    assert "Date must not be in the future." in errors, f"Got: {errors}"
 
 
 def test_over_100_years_ago_date(page):
     """
     R6: Date older than 100 years → Invalid.
 
-    NOT YET CONFIRMED -- see test_empty_price note above.
+    Confirmed against the live DOM: message is
+    "Date must not be older than 100 years."
     """
     errors = submit(page, name="Valid Product", price="10.00", date=years_ago(101))
-    assert any("100 years" in e or "old" in e.lower() for e in errors), f"Got: {errors}"
+    assert "Date must not be older than 100 years." in errors, f"Got: {errors}"
 
 
 def test_exactly_100_years_ago_date(page):
     """
     Boundary (not in the collapsed table): whether exactly 100 years ago is
-    Valid or Invalid per the real system -- the table doesn't specify
-    inclusive/exclusive.
+    Valid or Invalid per the real system.
 
-    NOT YET CONFIRMED. Deliberately unopinionated -- no assertion on outcome
-    yet, just observes. Run with -s to see the printed result, then decide
-    the assertion and update the decision table doc to state the boundary
-    explicitly either way.
+    Confirmed against the live DOM: exactly 100 years ago produces no
+    error, so the boundary is inclusive -- exactly 100 years counts as
+    still within the valid range, not over it.
     """
     errors = submit(
         page, name="Valid Product", price="10.00", date=exactly_100_years_ago()
     )
-    print(f"\nExactly-100-years-ago errors: {errors}")
+    assert "Date must not be older than 100 years." not in errors, f"Got: {errors}"
 
 
 # --- Day-precision boundary tests -----------------------------------------
@@ -262,34 +229,39 @@ def test_exactly_100_years_ago_date(page):
 #
 # These two tests isolate that specifically, using real date arithmetic
 # (timedelta on the exact-100-years date) rather than the coarser
-# year-jump helper, so a day-precision bug like the one above would
-# actually fail one of these.
+# year-jump helper, so a day-precision bug like the one in years_ago()
+# would actually fail one of these. Both are now confirmed against the
+# live DOM: the boundary is inclusive and checked to day precision.
 
 
 def test_just_over_100_years_ago_date(page):
     """
-    Date is 100 years and 1 day ago -> should be Invalid.
+    Date is 100 years and 1 day ago (i.e. "yesterday, 100 years ago")
+    -> Invalid.
 
-    This is the case a year-only comparison would get wrong: naive logic
-    comparing just today.year - date.year would see exactly 100 and treat
-    it as the (valid) boundary, missing that it's actually 1 day past it.
+    Confirmed against the live DOM: message is
+    "Date must not be older than 100 years." This is the case a
+    year-only comparison would get wrong: naive logic comparing just
+    today.year - date.year would see exactly 100 and treat it as the
+    (valid) boundary, missing that it's actually 1 day past it.
     """
     date = exactly_100_years_ago() - datetime.timedelta(days=1)
     errors = submit(page, name="Valid Product", price="10.00", date=date)
-    assert any("100 years" in e or "old" in e.lower() for e in errors), f"Got: {errors}"
+    assert "Date must not be older than 100 years." in errors, f"Got: {errors}"
 
 
 def test_just_under_100_years_ago_date(page):
     """
-    Date is 1 day short of 100 years ago (99 years, 364/365 days) -> should
-    be Valid. Companion to test_just_over_100_years_ago_date -- confirms
-    the boundary doesn't reject dates that are genuinely still within range.
+    Date is 1 day short of 100 years ago (i.e. "tomorrow, 100 years ago")
+    -> Valid.
+
+    Confirmed against the live DOM: no error is produced. Companion to
+    test_just_over_100_years_ago_date -- confirms the boundary doesn't
+    reject dates that are genuinely still within range.
     """
     date = exactly_100_years_ago() + datetime.timedelta(days=1)
     errors = submit(page, name="Valid Product", price="10.00", date=date)
-    assert not any(
-        "100 years" in e or "old" in e.lower() for e in errors
-    ), f"Got: {errors}"
+    assert "Date must not be older than 100 years." not in errors, f"Got: {errors}"
 
 
 def test_valid_past_100_years_date(page):

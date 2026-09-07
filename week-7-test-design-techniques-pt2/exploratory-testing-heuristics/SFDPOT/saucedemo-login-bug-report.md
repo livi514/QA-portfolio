@@ -16,7 +16,7 @@ Confirmed via DevTools inspection: the container is set to a fixed `height: 45px
   specific to any one zoom setting).
 - **Platforms confirmed:**
   - Desktop (Windows 11): see `error-overflow-screenshot.png`
-  - Chrome on Android (mobile): see `error-overflow-screenshot-mobile.jpg`
+  - Chrome on Android (mobile): see `error-overflow-screenshot-mobile.png`
 
   Confirmed on both the two-column desktop layout and the single-column
   mobile layout, so this is not a platform- or layout-specific rendering

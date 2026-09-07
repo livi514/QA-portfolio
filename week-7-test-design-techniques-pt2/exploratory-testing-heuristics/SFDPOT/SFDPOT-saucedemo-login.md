@@ -29,7 +29,7 @@
 - No obvious built-in support for colour-blind users or dyslexia-friendly fonts. Unclear whether the page would support third-party overrides (browser extensions, OS-level accessibility tools) without conflict.
 - Screen reader compatibility not yet tested.
 
-> **Note on accessibility scope:** accessibility testing (keyboard navigation, screen reader behaviour, colour contrast) is intentionally out of scope for this exercise — it's covered as its own dedicated topic in Week 8 of the roadmap, using WCAG 2.2 and Axe DevTools. This was a deliberate scoping decision, not an oversight. See the Week 8 accessibility testing notes for that follow-up once complete.
+> **Note on accessibility scope:** accessibility testing (keyboard navigation, screen reader behaviour, colour contrast) is intentionally out of scope for this exercise.
 
 ---
 
@@ -122,10 +122,3 @@
 - Typing speed has no effect on validation. The system does not validate fields as the user types, only on submission.
 - Rapidly-typed and pasted input are both handled without issue.
 - Arbitrary delays between entering credentials and pressing Login are handled correctly, with no timeout observed during testing.
-
----
-
-## Next steps
-
-1. Write up the error-message overflow bug as a standalone report (repro steps, screenshot, affected platforms, severity).
-2. Accessibility testing (keyboard navigation, screen reader behaviour, colour contrast) scoped separately as Week 8: Accessibility Testing, using WCAG 2.2 and Axe DevTools. Not covered in this exercise; see week 8's notes once complete.

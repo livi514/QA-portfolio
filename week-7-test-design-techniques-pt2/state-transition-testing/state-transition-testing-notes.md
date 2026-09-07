@@ -111,13 +111,13 @@ This is useful because it separates:
 - Direct transitions that can be triggered through the page
 - Structural transitions that the UI does not allow and therefore should not be treated as normal manual test actions
 
-This distinction is reflected in the Playwright tests in [test_state_transitions.py](state-transition-testing/test_state_transitions.py):
+This distinction is reflected in the Playwright tests in [test_state_transitions.py](test_state_transitions.py):
 - Direct transitions are exercised through real UI steps
 - Structural transitions are not forced via fake UI actions because they are not available in the product
 
 ## Practical example from the automated tests
 
-The automated tests in [test_state_transitions.py](state-transition-testing/test_state_transitions.py) are a practical example of how state transition testing works in real life.
+The automated tests in [test_state_transitions.py](test_state_transitions.py) are a practical example of how state transition testing works in real life.
 
 ### Example 1: Loan form to processed state
 This test covers the transition:
@@ -142,7 +142,7 @@ The test `test_denial_path_does_not_crash` is valuable because it captures a rea
 
 This shows that state transition testing is not only about happy paths; it is also about detecting unexpected transitions and invalid states.
 
-## When to build both a diagram and a table
+## When to build a diagram or a table
 
 The best approach is usually to build both.
 
@@ -177,6 +177,6 @@ When creating a state model, ask:
 
 State transition testing is a strong technique for systems whose behaviour depends on the current state of the system, not just on the input being used. It is especially useful where the same action can lead to different outcomes depending on the state the system is in.
 
-In my practical work, the ParaBank loan application flow is a clear example of this. The state model shows how the process moves from form input to processed request, then to either approval or denial, and finally to a terminal state or account creation. The table in [state-transition-table.md](state-transition-table.md) and the tests in [test_state_transitions.py](state-transition-testing/test_state_transitions.py) show how those transitions can be used to design, review, and automate coverage.
+In my practical work, the ParaBank loan application flow is a clear example of this. The state model shows how the process moves from form input to processed request, then to either approval or denial, and finally to a terminal state or account creation. The table in [state-transition-table.md](state-transition-table.md) and the tests in [test_state_transitions.py](test_state_transitions.py) show how those transitions can be used to design, review, and automate coverage.
 
 The key takeaway is this: state transition testing is not only about happy paths. It is about proving that the system behaves correctly as it moves through every meaningful state while also identifying transitions that should not exist, should be blocked, or currently fail unexpectedly.

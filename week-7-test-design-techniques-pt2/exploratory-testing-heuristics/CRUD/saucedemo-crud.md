@@ -86,7 +86,7 @@ This matches the inventory-page listing.
 
 **Action:** Enter the first name "Standard", the last name "User", and the postal code "12345", then click the cancel button.
 
-**Result:** Taken back to the cart page, which shows the items "Sauce Labs Bike Light" and "Sauce Labs Bolt T-Shirt". The cart state is preserved through a cancelled checkout attempt. (Whether the enterd checkout details persist anywhere was not tested in this session - see Session 2 for the follow-up.)
+**Result:** Taken back to the cart page, which shows the items "Sauce Labs Bike Light" and "Sauce Labs Bolt T-Shirt". The cart state is preserved through a cancelled checkout attempt. (Whether the entered checkout details persist anywhere was not tested in this session - see Session 2 for the follow-up.)
 
 ### Step 10 - Removing Sauce Labs Bike Light *(Delete - via cart page)*
 
@@ -130,7 +130,7 @@ This matches the inventory-page listing.
 
 **Result:** First checkout page shown, with no warning that the cart is empty.
 
-### Step 17 - Entering details and clicking "Continue" *(Read - empty cart crried into checkout)*
+### Step 17 - Entering details and clicking "Continue" *(Read - empty cart carried into checkout)*
 
 **Action:** Enter the first name "Standard", the last name "User", and the postal code "12345", then click the "Continue" button.
 
@@ -204,7 +204,7 @@ This matches Session 1's result for the same item, confirming consistent data ac
 
 **Action:** Click the "Sauce Labs Backpack" text.
 
-**Result:** Taken to the cart page, which shows the "Sauce Labs Backpack", with the same details as before.
+**Result:** Taken to the product page for the "Sauce Labs Backpack", which shows the same details as before.
 
 ### Step 7 - Removing the Backpack from its product page *(Delete - via product page)*
 

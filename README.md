@@ -17,9 +17,9 @@ A structured, self-directed roadmap for building QA automation skills toward int
 - **[Done] Week 5 — CI/CD with GitHub Actions:** automated linting and testing, multi-job and cross-platform workflows, scheduled runs, dependency caching — core setup working, README and final polish still underway
 - **[Done] Week 6 — Test Design Techniques pt1:** Boundary Value Analysis, Equivalence Partitioning
 - **[In Progress] Week 7 — Test Design Techniques pt2:** Decision Tables, State Transition Testing, exploratory heuristics
-- **[Not started] Week 8 — SQL for QA (Part 1):** SELECT, WHERE, ORDER BY, filtering
-- **[Not started] Week 9 — SQL for QA (Part 2):** joins, aggregations, validating test data with SQL
-- **[Not started] Week 10 — Accessibility Testing:** WCAG, Axe DevTools, keyboard navigation, colour contrast
+- **[Not started] Week 8 — Accessibility Testing:** WCAG, Axe DevTools, keyboard navigation, colour contrast
+- **[Not started] Week 9 — SQL for QA (Part 1):** SELECT, WHERE, ORDER BY, filtering
+- **[Not started] Week 10 — SQL for QA (Part 2):** joins, aggregations, validating test data with SQL
 - **[Not started] Week 11 — QA Documentation:** test plans, test cases, bug reports, exploratory testing summaries
 - **[Not started] Week 12 — Finalise QA Portfolio Repo:** proofreading and finalising this repository
 - **[Not started] Week 13 — LinkedIn + CV Polish:** updating profile and CV with new skills
