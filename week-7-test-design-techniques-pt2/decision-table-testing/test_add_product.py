@@ -143,7 +143,9 @@ def test_price_at_10_digit_boundary(page):
     errors = submit(
         page, name="Valid Product", price="1234567890", date=years_ago(50)  # 10 digits
     )
-    assert "Price must not be empty and within 10 digits" not in errors, f"Got: {errors}"
+    assert (
+        "Price must not be empty and within 10 digits" not in errors
+    ), f"Got: {errors}"
 
 
 def test_empty_date(page):
