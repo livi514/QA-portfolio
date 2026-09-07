@@ -141,7 +141,7 @@ Use **two separate contexts**, one per user. Pages within the same context share
 
 **Scenario 4: A teammate writes a test using the `browser` fixture directly to create a page instead of using the `page` fixture. The test works fine, but you flag it in code review. What's your concern?**
 
-The teammate is creating new pages within the same context, rather than creating a fresh context for each test. While the test works now, this lacks proper isolation, the state of one test could affect another, causing unpredictable failures in the future. The `page` fixture handles this correctly by automatically reusing the shared browser but creating a fresh context per test, which is where isolation comes from. There's no reason to reach for `browser` directly unless you specifically need to control context configuration.
+The teammate is bypassing the `page` fixture's automatic fresh-context setup. A page created with `browser.new_page()` gets its own browser context, but using the `browser` fixture directly makes the context lifecycle explicit and easier to mishandle. The `page` fixture is the simpler default because it reuses the shared browser while creating a fresh context and page for each test. Reach for `browser` directly only when you specifically need to control context creation or configuration.
 
 ---
 
@@ -170,7 +170,7 @@ Just like the login page tests described above, **this file uses only function-s
 This is because each test requires a clean starting state.
 
 The difference from the login file is what the clean state looks like:
-- **Login file**: needs a clean, unathenticated page.
+- **Login file**: needs a clean, unauthenticated page.
 - **Inventory page**: needs a clean, authenticated page with an empty cart.
 
 In order to set up the clean, authenticated page with an empty cart, all of the tests in this file use the log_in_to_saucedemo fixture.
@@ -180,7 +180,7 @@ Limiting the cart tests to function-scope ensures that the state doesn't leak be
 While the sorting tests are read-only so they wouldn't interfere, keeping them function-scoped is still best practice, for the following reasons:
 - **Consistency:** if all tests in the file are function-scoped, the behaviour is predictable and uniform. A developer reading the file doesn't need to think about which tests share state and which don't.
 - **Future-proofing:** if someone later modifies a sorting test to also add an item to the cart (e.g. to test sorting after adding items), a session-scoped fixture would suddenly cause that test to bleed into others. Function scope prevents this problem before it starts.
-- **The broader principle:** read-only doesn't necessarily mean side-effect free. A sorting test selects a drop-down option, which changes the page state. If that state were shared, the next test would start with the dropdown already set to a non-default value, which could subtly affect results. Any state that depends on the default state order (for example, checking the name of the first product on the page), could fail unexpectedly. Function scope prevents this by resettng the page between tests.
+- **The broader principle:** read-only doesn't necessarily mean side-effect free. A sorting test selects a drop-down option, which changes the page state. If that state were shared, the next test would start with the dropdown already set to a non-default value, which could subtly affect results. Any state that depends on the default state order (for example, checking the name of the first product on the page), could fail unexpectedly. Function scope prevents this by resetting the page between tests.
 
 ### test_cart_page_with_fixtures.py
 
