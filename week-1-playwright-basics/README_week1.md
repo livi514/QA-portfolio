@@ -8,7 +8,7 @@ This week was all about understanding how Playwright works, how UI tests should 
 
 Before starting the week, my goals were simple: install Playwright, read the intro docs, learn key features such as locators and assertions, write a few tests on a demo site, and summarise what I've learned in a README. 
 
-However, this week became much more than just writing a few unit tests using a new tool. In fact, it reshaped how I think about QA.
+However, this week became much more than just writing a few end-to-end UI tests using a new tool. In fact, it reshaped how I think about QA.
 
 ## What I Tested
 
@@ -29,7 +29,7 @@ I tested the cart page across a range of scenarios: an empty cart state, adding 
 
 ### Checkout (test_checkout_page.py)
 
-I tested the full checkout flow with items in the cart, verifying correct navigation through each step and that the order total correctly reflects the sum of item costs and tax. I also discovered that saucedemo permits checkout with an empty cart: this was documented as observed behaviour rather than assumed to be intentional.
+I tested the full checkout flow with items in the cart, verifying correct navigation through each step and that the displayed order total equals the displayed subtotal plus tax. I also discovered that SauceDemo permits checkout with an empty cart: this was documented as observed behaviour rather than assumed to be intentional.
 
 ## What I Learned This Week 
 
@@ -40,7 +40,7 @@ Though I have prior experience with Python and pytest, I had never used Python w
 I also learned about expect(), Playwright's built-in assertion library. Unlike a plain Python assert, which evaluates a condition once and immediately passes or fails, expect() uses auto-retrying. Playwright runs a check in the background repeatedly until the condition passes or a timeout is reached. This makes tests far more resilient to timing issues and page load delays.
 
 ### Locator Strategies
-I explored different ways to locate elements on a page and learned that not all locators are equally reliable. ID selectors (#id) are simple and readable, but [data-test="..."] attribute selectors are the most stable choice for UI testing , as they're specifically intended for test automation and are less likely to change when the UI is restyled or restructured. I also used CSS class selectors for targeting repeated elements like lists of products.
+I explored different ways to locate elements on a page and learned that not all locators are equally reliable. ID selectors (`#id`) are simple and readable, but `[data-test="..."]` attribute selectors are the most stable choice for UI testing, as they're specifically intended for test automation and are less likely to change when the UI is restyled or restructured. I also used CSS class selectors for targeting repeated elements like lists of products.
 
 ### Assertions
 I practised a wide range of assertions this week, including visibility checks, text content, URL changes, page title, element count, HTML attributes, and enabled/disabled state. I also learned the difference between to_be_visible() and to_have_count(0). Both can express "this element isn't here", but the latter is more precise when you're verifying an empty state rather than just absence from view.
@@ -58,7 +58,7 @@ Before writing a test, you need to think about whether the logic has already bee
 
 ### The importance of organising tests based on the functionality they are testing
 
-Throughout this week, I went from one big file of random assertions grouped by Playwright feature, to separate files per page/feature that was being tested. While grouping my tests by assertions initially helped me to understand the concepts I was learning, re-organising them based on the feature being tested made them better align with how QA is done in the workplace, and helped me to identify any features or functionality that was yet to be tested. By the end of the week, I had tested key functionality such as ensuring the right elements were displayed, checking that buttons navigated to the correct page, checking state persistence, and checking access control.
+Throughout this week, I went from one big file of random assertions grouped by Playwright feature to separate files for each page or feature being tested. While grouping my tests by assertions initially helped me to understand the concepts I was learning, reorganising them based on the feature being tested aligned them better with how QA is done in the workplace and helped me identify features or functionality that had not yet been tested. By the end of the week, I had tested key functionality such as ensuring the right elements were displayed, checking that buttons navigated to the correct page, and checking state persistence. Access-control testing was outside this week's coverage.
 
 ## How to Run the Tests
 
