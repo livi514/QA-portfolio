@@ -21,7 +21,7 @@ If an application allows the user to enter a password of length 8-12 characters 
 
 ### Goals of ECP
 
-The purpose of ECP is to remove redundant tests, ensure coverage of all meaningful input categories, and guarantee that every distinct logic path is exercised at least once.
+The purpose of ECP is to remove redundant tests and ensure coverage of the meaningful input categories identified in the requirements. It does not guarantee complete logic-path coverage on its own.
 
 ### Properties of a good equivalence class
 

@@ -1,6 +1,8 @@
 import datetime
+import re
 
 import pytest
+
 from conftest import get_weather_data
 
 current_date = datetime.date.today()
@@ -71,7 +73,7 @@ current_date = datetime.date.today()
 
 # --- Helpers -------------------------------------------------------------
 #
-# get_weather_data now comes from conftest.py (shared across test_dates.py,
+# get_weather_data now comes from conftest.py (shared across test_date_validation.py,
 # test_latitude.py, test_longitude.py). It takes latitude/longitude/start_date/
 # end_date as optional kwargs -- this file only ever passes start_date/end_date,
 # leaving latitude/longitude at their conftest defaults (0, 0).
@@ -97,8 +99,9 @@ def extract_allowed_window():
         f"got: {resp}"
     )
     reason = resp["reason"]
-    window = reason.split("from ")[1]
-    start_str, end_str = window.split(" to ")
+    match = re.search(r"from (\d{4}-\d{2}-\d{2}) to (\d{4}-\d{2}-\d{2})", reason)
+    assert match, f"Could not extract the allowed date window from: {reason!r}"
+    start_str, end_str = match.groups()
     allowed_start = datetime.date.fromisoformat(start_str)
     allowed_end = datetime.date.fromisoformat(end_str)
     return allowed_start, allowed_end
@@ -150,10 +153,8 @@ def test_start_date_in_future():
     end_date = start_date + datetime.timedelta(days=1)
     response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 400
-    # Run this once manually and confirm which message actually comes back --
-    # the API may not have a distinct "future date" rule separate from the
-    # sliding window's "out of allowed range" message. Whichever it is,
-    # update this assertion to match and note the finding in the writeup.
+    # Open-Meteo reports this as an out-of-range date because the future date
+    # is outside the API's sliding window.
     assert "out of allowed range" in response.json()["reason"]
 
 

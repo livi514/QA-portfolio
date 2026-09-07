@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Week 6 of my QA Summer Roadmap focuses on two core black‑box test design techniques: **Equivalence Class Partitioning (ECP)** and **Boundary Value Analysis (BVA)**. Whilst I had briefly covered these concepts in my studies, I wanted to review my knowledge, as well as applying my knowledge to a practical system. This week's goal was to develop a more systematic approach to selecting test inputs, especially for validation‑heavy APIs.
+Week 6 of my QA Summer Roadmap focuses on two core black‑box test design techniques: **Equivalence Class Partitioning (ECP)** and **Boundary Value Analysis (BVA)**. Whilst I had briefly covered these concepts in my studies, I wanted to review my knowledge, as well as applying it to a practical system. This week's goal was to develop a more systematic approach to selecting test inputs, especially for validation‑heavy APIs.
 
 My aim was to review the theory behind ECP and BVA, then apply both techniques to the Open‑Meteo API (https://open-meteo.com/). By the end of the week, I had a clearer understanding of how to map input domains, identify meaningful partitions, and choose boundary values deliberately.
 
@@ -12,9 +12,9 @@ I started by reviewing the rules for three Open‑Meteo parameters: latitude, lo
 
 After that, I applied BVA to test the edges of each range. For latitude and longitude, this meant checking values like `-90`, `-89.9`, `90`, `90.1`, `-180`, and `180`. For dates, the process was more involved because the API uses a sliding window of allowed dates. I wrote fixtures to calculate the current minimum and maximum allowed dates dynamically so the tests would remain valid over time.
 
-While implementing these tests, I noticed a few behaviours that weren’t mentioned in the documentation. For example, longitude values of `180` were normalised internally to `-180`, and invalid longitude values sometimes returned `400` and sometimes `503`. I updated my tests to account for these inconsistencies.
+By combining ECP and BVA, I was able to create a small set of tests covering the key documented input partitions and boundaries. Instead of testing dozens of random values, I focused on representative and boundary values that were more likely to reveal issues.
 
-By combining ECP and BVA, I was able to create a small set of tests that still covered the full input domain. Instead of testing dozens of random values, I focused on representative and boundary values that were more likely to reveal issues.
+One thing that surfaced was a gap in my own assumptions rather than a bug in the API: I hadn't initially considered that longitude values of `180` and `-180` refer to the same meridian, so I was surprised when `180` came back normalised to `-180`. Logically, it's the correct behaviour; I just hadn't accounted for it when writing my initial expectations.
 
 ## What I learned
 
@@ -28,7 +28,7 @@ BVA highlighted how important edge cases are. Many validation issues only appear
 
 ### Real‑World Behaviour Doesn’t Always Match Documentation
 
-Working with the Open‑Meteo API showed me that real systems often have quirks or inconsistencies. Some invalid inputs returned different error codes, and certain values were normalised internally. This reinforced the importance of testing both valid and invalid boundaries rather than assuming the system behaves exactly as described.
+Working with the Open‑Meteo API showed me that real systems can behave in ways that aren't obvious from the documentation alone, even when the behaviour is technically correct. The longitude normalisation was a good example: nothing was wrong with the system, but it exposed an assumption I hadn't tested for. This reinforced the importance of testing boundaries directly rather than assuming I already understood how they'd behave.
 
 ### Interdependent Inputs Need Combined Testing
 
@@ -56,3 +56,4 @@ pytest
 Run a specific test file:
 ```
 pytest tests/test_latitude.py
+```

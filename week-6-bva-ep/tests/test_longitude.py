@@ -1,4 +1,5 @@
 import pytest
+
 from conftest import get_weather_data
 
 # Longitude tests for https://open-meteo.com
@@ -16,7 +17,7 @@ from conftest import get_weather_data
 # 180.0001 (just above)
 
 
-# get_weather_data now comes from conftest.py, shared with test_dates.py and
+# get_weather_data now comes from conftest.py, shared with test_date_validation.py and
 # test_latitude.py. longitude is passed by keyword; latitude stays at the
 # conftest default (0).
 
@@ -40,9 +41,10 @@ def test_valid_longitude(longitude):
 def test_invalid_longitude(longitude):
     response = get_weather_data(longitude=longitude)
 
-    # API may return 400 or 503 depending on internal routing
-    assert response.status_code in (400, 503)
+    # A 503 indicates temporary service unavailability, not a validation result.
+    if response.status_code == 503:
+        pytest.skip("Open-Meteo temporarily unavailable for invalid longitude")
 
-    # Error field may not exist on 503 responses
+    assert response.status_code == 400
     reason = response.json().get("reason", "")
     assert "Longitude must be in range" in reason

@@ -8,7 +8,7 @@ def get_weather_data(latitude=0, longitude=0, start_date=None, end_date=None):
     Shared request helper for the Week 6 BVA/ECP suite.
 
     Centralising this means the base URL and query construction only live
-    in one place -- previously test_dates.py, test_latitude.py, and
+    in one place -- previously test_date_validation.py, test_latitude.py, and
     test_longitude.py each had their own near-identical copy, each hardcoding
     the same base URL.
 
