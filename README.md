@@ -1,8 +1,6 @@
-# QA Summer Roadmap — QA Portfolio
+# QA Summer Roadmap
  
-**Work in progress**. 
-
-This repository documents a self-directed 12-week QA automation roadmap, built week by week. Some sections are complete and polished; others are still in progress, and might shift slightly as I go. See [Progress](#progress) below for exactly where things stand.
+This repository documents completed work from a self-directed QA automation roadmap, built week by week. See [Progress](#progress) for the topics covered.
  
 ## What this is
  
@@ -14,17 +12,9 @@ A structured, self-directed roadmap for building QA automation skills toward int
 - **[Done] Week 2 — Playwright Intermediate + POM:** Page Object Model, fixtures, headless mode
 - **[Done] Week 3 — Playwright Polish:** test configuration, test data files, tidied-up test suite (later published standalone as [saucedemo-playwright-tests](https://github.com/livi514/saucedemo-playwright-tests))
 - **[Done] Week 4 — API Testing:** pytest + requests API suite against JSONPlaceholder, CRUD coverage, negative tests, performance and security checks (later published standalone as [jsonplaceholder-api-tests](https://github.com/livi514/jsonplaceholder-api-tests))
-- **[Done] Week 5 — CI/CD with GitHub Actions:** automated linting and testing, multi-job and cross-platform workflows, scheduled runs, dependency caching — core setup working, README and final polish still underway
+- **[Done] Week 5 — CI/CD with GitHub Actions:** automated linting and testing, multi-job and cross-platform workflows, scheduled runs, dependency caching.
 - **[Done] Week 6 — Test Design Techniques pt1:** Boundary Value Analysis, Equivalence Partitioning
-- **[In Progress] Week 7 — Test Design Techniques pt2:** Decision Tables, State Transition Testing, exploratory heuristics
-- **[Not started] Week 8 — Accessibility Testing:** WCAG, Axe DevTools, keyboard navigation, colour contrast
-- **[Not started] Week 9 — SQL for QA (Part 1):** SELECT, WHERE, ORDER BY, filtering
-- **[Not started] Week 10 — SQL for QA (Part 2):** joins, aggregations, validating test data with SQL
-- **[Not started] Week 11 — QA Documentation:** test plans, test cases, bug reports, exploratory testing summaries
-- **[Not started] Week 12 — Finalise QA Portfolio Repo:** proofreading and finalising this repository
-- **[Not started] Week 13 — LinkedIn + CV Polish:** updating profile and CV with new skills
-
-Note: this plan may adapt as I go. Some weeks might take longer than planned, or get adjusted based on what I find most valuable as I progress.
+- **[Done] Week 7 — Test Design Techniques pt2:** Decision Tables, State Transition Testing, exploratory heuristics
  
 ## Repo structure
  
@@ -37,6 +27,7 @@ QA-portfolio/
 ├── week-4-api-testing/         — also published standalone as jsonplaceholder-api-tests
 ├── week-5-ci-cd/                — CI/CD notes (GitHub Actions, workflows, caching, scheduled runs)
 ├── week-6-bva-ep/                — BVA and EP notes, and practical application using the Open-Meteo API          
+├── week-7-test-design-techniques-pt2/ — decision tables, state transitions, and exploratory testing
 ├── requirements.txt
 └── setup.cfg
 ```
@@ -69,7 +60,7 @@ Alongside this overall README, each week folder contains its own `README_weekN.m
    pip install -r requirements.txt
    ```
 
-4. Install Playwright browsers (needed for Weeks 1–3, the UI test suites):
+4. Install Playwright browsers (needed for Weeks 1–3 and Week 7):
    ```
    playwright install
    ```
@@ -78,7 +69,7 @@ Each week's own README then only covers navigating into that week's folder and t
  
 ## CI
  
-Linting and tests run automatically on every push and pull request via GitHub Actions, and on a weekly schedule (8am UTC on Mondays) to catch drift independent of new commits. Linting and testing workflows are kept separate here, as linting applies to the overall repository while the testing workflows only apply to specific folders.
+Linting and tests run automatically on every push and pull request via GitHub Actions, and on a weekly schedule (8am UTC on Mondays) to catch drift independent of new commits. Linting applies to the overall repository; the UI and API test workflows run the Week 3 and Week 4 suites, respectively.
  
 ![UI Tests](https://github.com/livi514/QA-portfolio/actions/workflows/ui_tests.yml/badge.svg)
 ![API Tests](https://github.com/livi514/QA-portfolio/actions/workflows/api_tests.yml/badge.svg)
