@@ -1,8 +1,9 @@
-from conftest import perform_login
 from playwright.sync_api import expect
 from using_pom.pages.cart_page import CartPage
 from using_pom.pages.inventory_page import InventoryPage
 from using_pom.pages.menu_page import MenuPage
+
+from conftest import perform_login
 
 
 def test_empty_cart_state(log_in_to_saucedemo):

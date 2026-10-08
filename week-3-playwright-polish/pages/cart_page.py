@@ -1,5 +1,6 @@
 from playwright.sync_api import expect
 
+
 class CartPage:
     def __init__(self, page):
         self.page = page

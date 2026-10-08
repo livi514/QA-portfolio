@@ -1,7 +1,8 @@
 # Note: I copied the test cases from week 1, and decided to edit them to use fixtures instead of repeating the login steps in each test case.
 
-from conftest import perform_login
 from playwright.sync_api import expect
+
+from conftest import perform_login
 
 
 def test_empty_cart_state(log_in_to_saucedemo):

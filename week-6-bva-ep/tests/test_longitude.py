@@ -1,4 +1,5 @@
 import pytest
+
 from conftest import get_weather_data
 
 # Longitude tests for https://open-meteo.com

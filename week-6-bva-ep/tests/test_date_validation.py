@@ -2,6 +2,7 @@ import datetime
 import re
 
 import pytest
+
 from conftest import get_weather_data
 
 current_date = datetime.date.today()
