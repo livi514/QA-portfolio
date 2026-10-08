@@ -62,11 +62,40 @@ Throughout this week, I went from one big file of random assertions grouped by P
 
 ## How to Run the Tests
 
-For full setup and installation instructions, see the main [README](../README.md).
+From the repository root, create and activate the root virtual environment, then install the project dependencies:
 
-Ensure you are running commands from the `week-1-playwright-basics` folder.
+```bash
+python -m venv .venv
+```
 
-Use `cd week-1-playwright-basics` to navigate to the folder if necessary.
+or 
+
+```
+python3 -m venv .venv
+```
+
+Activate it in your shell:
+
+```bash
+# macOS/Linux
+source .venv/bin/activate
+
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+```
+
+With the environment active, install dependencies and Playwright browsers:
+
+```bash
+python -m pip install -r requirements.txt
+python -m playwright install
+```
+
+Then navigate to this week's folder and run the tests. Keep the virtual environment active so `pytest` uses the installed project dependencies:
+
+```bash
+cd week-1-playwright-basics
+```
 
 Run all tests:
 ```bash

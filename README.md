@@ -66,6 +66,8 @@ Alongside this overall README, each week folder contains its own `README_weekN.m
    ```
 
 Each week's own README then only covers navigating into that week's folder and the specific `pytest` commands relevant to it.
+
+> Running `pytest` from the repository root is intentionally blocked. Each week was built as a separate mini-project with its own fixtures, browser configuration, and API assumptions, so tests should be executed from inside the relevant week folder instead.
  
 ## CI
  

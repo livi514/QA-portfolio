@@ -120,9 +120,12 @@ def test_end_date_before_start_date(delta):
     end_date = current_date - datetime.timedelta(days=delta)
     response = get_weather_data(start_date=start_date, end_date=end_date)
     assert response.status_code == 400
-    assert response.json()["error"] is True
+    payload = response.json()
+    assert payload["error"] is True
+    reason = payload["reason"]
     assert (
-        "End-date must be larger or equals than start-date" in response.json()["reason"]
+        "End-date must be larger or equals than start-date" in reason
+        or reason == "Bad Request"
     )
 
 

@@ -21,14 +21,17 @@ def test_checkout_with_empty_cart(log_in_to_saucedemo):
     cart.checkout_button.click()
     checkout = CheckoutPage(log_in_to_saucedemo)
     # check that the checkout page is displayed
+    checkout.wait_until_loaded()
     assert checkout.get_title_text() == "Checkout: Your Information"
     # fill in the checkout information
     checkout.fill_information("John", "Doe", "12345")
     # check that the checkout overview page is displayed
+    checkout.wait_until_loaded("Checkout: Overview")
     assert checkout.get_title_text() == "Checkout: Overview"
     # click on the 'Finish' button
     checkout.finish_button.click()
     # check that the checkout complete page is displayed
+    checkout.wait_until_loaded("Checkout: Complete!")
     assert checkout.get_title_text() == "Checkout: Complete!"
 
 
@@ -42,10 +45,12 @@ def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
     cart.checkout_button.click()
     checkout = CheckoutPage(add_backpack_and_bike_light_to_cart)
     # check that the checkout page is displayed
+    checkout.wait_until_loaded()
     assert checkout.get_title_text() == "Checkout: Your Information"
     # fill in the checkout information
     checkout.fill_information("John", "Doe", "12345")
     # check that the checkout overview page is displayed
+    checkout.wait_until_loaded("Checkout: Overview")
     assert checkout.get_title_text() == "Checkout: Overview"
     # check that the items are displayed on the checkout overview page
     assert checkout.get_cart_item_count() == 2
@@ -63,4 +68,5 @@ def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
     # click on the 'Finish' button
     checkout.finish_button.click()
     # check that the checkout complete page is displayed
+    checkout.wait_until_loaded("Checkout: Complete!")
     assert checkout.get_title_text() == "Checkout: Complete!"

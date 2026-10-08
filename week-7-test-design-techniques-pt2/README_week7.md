@@ -44,11 +44,34 @@ This week taught me that testing can’t be limited to one technique, and that l
 
 ## How to Run the Tests
 
-For full setup and installation instructions, see the main [README](../README.md).
+From the repository root, create and activate the root virtual environment, then install the project dependencies:
 
-Ensure you are running commands from the `week-7-test-design-techniques-pt2` folder.
+```bash
+python -m venv .venv
+```
 
-Use `cd week-7-test-design-techniques-pt2` to navigate to the folder if necessary.
+Activate it in your shell:
+
+```bash
+# macOS/Linux
+source .venv/bin/activate
+
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+```
+
+With the environment active, install dependencies and the Chromium browser used by these tests:
+
+```bash
+python -m pip install -r requirements.txt
+python -m playwright install chromium
+```
+
+Then navigate to this week's folder and run the tests. Keep the virtual environment active so `pytest` uses the installed project dependencies:
+
+```bash
+cd week-7-test-design-techniques-pt2
+```
 
 Run all tests:
 ```bash

@@ -52,7 +52,7 @@ Overall, my takeaway from this week is that broad coverage is worthless if you'r
 
 ## Checking Workflows
 
-Unlike previous weeks, there are no tests to run manually here — the workflows in `.github/workflows/` run automatically. This section covers how to check their results.
+Unlike previous weeks, this folder has no tests to run locally. You do not need to create or activate a Python environment to read these notes or inspect the workflow files; the workflows in `.github/workflows/` run on GitHub Actions. For local execution of another week's tests, follow the repository-root environment setup in the main [README](../README.md). This section covers how to check workflow results.
 
 **Workflow files:** located in `.github/workflows/` at the repo root — `ui_tests.yml`, `api_tests.yml`, and `lint.yml`.
 

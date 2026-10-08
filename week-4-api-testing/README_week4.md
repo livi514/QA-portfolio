@@ -76,11 +76,33 @@ API tests are also faster and more stable than UI tests since there's no browser
 
 ## How to Run the Tests
 
-For full setup and installation instructions, see the main [README](../README.md).
+From the repository root, create and activate the root virtual environment, then install the project dependencies:
 
-Ensure you are running commands from the `week-4-api-testing` folder.
+```bash
+python -m venv .venv
+```
 
-Use `cd week-4-api-testing` to navigate to the folder if necessary.
+Activate it in your shell:
+
+```bash
+# macOS/Linux
+source .venv/bin/activate
+
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+```
+
+With the environment active, install the dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Then navigate to this week's folder and run the tests. Keep the virtual environment active so `pytest` uses the installed project dependencies:
+
+```bash
+cd week-4-api-testing
+```
 
 Run all tests:
 ```bash

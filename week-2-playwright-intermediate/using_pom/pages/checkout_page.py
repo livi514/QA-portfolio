@@ -1,3 +1,4 @@
+from playwright.sync_api import expect
 class CheckoutPage:
     def __init__(self, page):
         self.page = page
@@ -29,9 +30,6 @@ class CheckoutPage:
 
     # Accessors
 
-    def get_title_text(self) -> str:
-        return self.title.inner_text()
-
     def get_cart_item_count(self) -> int:
         return self.cart_items.count()
 
@@ -48,3 +46,9 @@ class CheckoutPage:
         total_value = float(total_text.split("$")[1])
 
         return item_total_value, tax_value, total_value
+
+    def wait_until_loaded(self, expected_title: str = "Checkout: Your Information"):
+        expect(self.title).to_have_text(expected_title)
+
+    def get_title_text(self) -> str:
+        return self.title.inner_text()

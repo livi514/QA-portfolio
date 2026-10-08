@@ -19,9 +19,10 @@ def test_checkout_with_empty_cart(log_in_to_saucedemo):
     # check that the cart page is displayed
     assert cart.get_title_text() == "Your Cart"
     # click on the 'Checkout' button
-    cart.checkout_button.click()
+    cart.checkout()
     checkout = CheckoutPage(log_in_to_saucedemo)
     # check that the checkout page is displayed
+    checkout.wait_until_loaded()
     assert checkout.get_title_text() == "Checkout: Your Information"
     # fill in the checkout information
     checkout.fill_information(
@@ -30,10 +31,12 @@ def test_checkout_with_empty_cart(log_in_to_saucedemo):
         CHECKOUT_INFO["postal_code"],
     )
     # check that the checkout overview page is displayed
+    checkout.wait_for_overview()
     assert checkout.get_title_text() == "Checkout: Overview"
     # click on the 'Finish' button
-    checkout.finish_button.click()
+    checkout.finish_checkout()
     # check that the checkout complete page is displayed
+    checkout.wait_for_complete()
     assert checkout.get_title_text() == "Checkout: Complete!"
 
 
@@ -44,9 +47,10 @@ def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
     # check the number of items in the cart
     assert cart.get_item_count() == 2
     # click on the 'Checkout' button
-    cart.checkout_button.click()
+    cart.checkout()
     checkout = CheckoutPage(add_backpack_and_bike_light_to_cart)
     # check that the checkout page is displayed
+    checkout.wait_until_loaded()
     assert checkout.get_title_text() == "Checkout: Your Information"
     # fill in the checkout information
     checkout.fill_information(
@@ -55,6 +59,7 @@ def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
         CHECKOUT_INFO["postal_code"],
     )
     # check that the checkout overview page is displayed
+    checkout.wait_for_overview()
     assert checkout.get_title_text() == "Checkout: Overview"
     # check that the items are displayed on the checkout overview page
     assert checkout.get_cart_item_count() == 2
@@ -70,6 +75,7 @@ def test_checkout_with_items(add_backpack_and_bike_light_to_cart):
     # check that the total is equal to item total + tax
     assert total_value == item_total_value + tax_value
     # click on the 'Finish' button
-    checkout.finish_button.click()
+    checkout.finish_checkout()
     # check that the checkout complete page is displayed
+    checkout.wait_for_complete()
     assert checkout.get_title_text() == "Checkout: Complete!"

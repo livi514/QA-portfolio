@@ -1,3 +1,6 @@
+from playwright.sync_api import expect
+
+
 class CheckoutPage:
     def __init__(self, page):
         self.page = page
@@ -17,15 +20,29 @@ class CheckoutPage:
         self.total_label = page.locator(".summary_total_label")
         self.finish_button = page.locator("[data-test='finish']")
 
+    def wait_until_loaded(self):
+        self.page.wait_for_url("**/checkout-step-one.html", timeout=60000)
+        expect(self.title).to_have_text("Checkout: Your Information")
+
+    def wait_for_overview(self):
+        self.page.wait_for_url("**/checkout-step-two.html", timeout=60000)
+        expect(self.title).to_have_text("Checkout: Overview")
+
+    def wait_for_complete(self):
+        self.page.wait_for_url("**/checkout-complete.html", timeout=60000)
+        expect(self.title).to_have_text("Checkout: Complete!")
+
     # Actions
     def fill_information(self, first_name: str, last_name: str, postal_code: str):
         self.first_name_input.fill(first_name)
         self.last_name_input.fill(last_name)
         self.postal_code_input.fill(postal_code)
         self.continue_button.click()
+        self.wait_for_overview()
 
     def finish_checkout(self):
         self.finish_button.click()
+        self.wait_for_complete()
 
     # Accessors
 
